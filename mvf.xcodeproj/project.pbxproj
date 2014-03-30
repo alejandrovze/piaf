@@ -33,6 +33,7 @@
 		C643556218E5DA74008AE100 /* ofxToggle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C643555918E5DA74008AE100 /* ofxToggle.cpp */; };
 		C643557A18E600F3008AE100 /* gvfKinect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C643557818E600F3008AE100 /* gvfKinect.cpp */; };
 		C643557D18E60110008AE100 /* gvfKinectHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C643557B18E6010F008AE100 /* gvfKinectHandler.cpp */; };
+		C67106E818E8D3E0001D3E51 /* gvfKinectGesture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C67106E618E8D3E0001D3E51 /* gvfKinectGesture.cpp */; };
 		C69A72FE18E299750035151A /* OSCSkeleton.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C69A72FC18E299750035151A /* OSCSkeleton.cpp */; };
 		E4328149138ABC9F0047C5CB /* openFrameworksDebug.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E4328148138ABC890047C5CB /* openFrameworksDebug.a */; };
 		E45BE97B0E8CC7DD009D7055 /* AGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BE9710E8CC7DD009D7055 /* AGL.framework */; };
@@ -142,6 +143,8 @@
 		C643557918E600F3008AE100 /* gvfKinect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gvfKinect.h; sourceTree = "<group>"; };
 		C643557B18E6010F008AE100 /* gvfKinectHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = gvfKinectHandler.cpp; sourceTree = "<group>"; };
 		C643557C18E6010F008AE100 /* gvfKinectHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gvfKinectHandler.h; sourceTree = "<group>"; };
+		C67106E618E8D3E0001D3E51 /* gvfKinectGesture.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = gvfKinectGesture.cpp; sourceTree = "<group>"; };
+		C67106E718E8D3E0001D3E51 /* gvfKinectGesture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gvfKinectGesture.h; sourceTree = "<group>"; };
 		C6937888E126BADC8777423B /* OscTypes.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = OscTypes.h; path = ../../../addons/ofxOsc/libs/oscpack/src/osc/OscTypes.h; sourceTree = SOURCE_ROOT; };
 		C69A72FC18E299750035151A /* OSCSkeleton.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OSCSkeleton.cpp; sourceTree = "<group>"; };
 		C69A72FD18E299750035151A /* OSCSkeleton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OSCSkeleton.h; sourceTree = "<group>"; };
@@ -420,6 +423,8 @@
 				E4B69E1F0A3A1BDC003C02F2 /* ofApp.h */,
 				C643557818E600F3008AE100 /* gvfKinect.cpp */,
 				C643557918E600F3008AE100 /* gvfKinect.h */,
+				C67106E618E8D3E0001D3E51 /* gvfKinectGesture.cpp */,
+				C67106E718E8D3E0001D3E51 /* gvfKinectGesture.h */,
 				C643557B18E6010F008AE100 /* gvfKinectHandler.cpp */,
 				C643557C18E6010F008AE100 /* gvfKinectHandler.h */,
 				C643556A18E5FC86008AE100 /* gvf_piano */,
@@ -586,6 +591,7 @@
 				C643556218E5DA74008AE100 /* ofxToggle.cpp in Sources */,
 				C643557A18E600F3008AE100 /* gvfKinect.cpp in Sources */,
 				C643557D18E60110008AE100 /* gvfKinectHandler.cpp in Sources */,
+				C67106E818E8D3E0001D3E51 /* gvfKinectGesture.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
