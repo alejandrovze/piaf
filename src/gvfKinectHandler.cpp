@@ -36,6 +36,7 @@ gvfKinectHandler::gvfKinectHandler()
   // BUILDING OBJECT
   
   mygvf = new ofxGVF();                       // could use mygvf = new ofxGVF(parameters, coefficients);
+  
   mygvf->setup(parameters, coefficients);     // but 'setup' is the 'OF' way ;)
 
 }
@@ -118,13 +119,37 @@ ofxGVF::ofxGVFState gvfKinectHandler::getState() {
   return mygvf->getState();
 }
 
+//-----------------------------------------------------------------------
 int gvfKinectHandler::getTemplateCount()
 {
   return mygvf->getNumberOfTemplates();
 }
 
+//-----------------------------------------------------------------------
 int gvfKinectHandler::getIndexMostProbable()
 {
   return mygvf->getMostProbableGestureIndex();
+}
+
+//-----------------------------------------------------------------------
+RecognitionInfo gvfKinectHandler::getRecogInfoOfMostProbable() {
+  
+  return getRecogInfo(getIndexMostProbable());
+  
+}
+
+//-----------------------------------------------------------------------
+RecognitionInfo gvfKinectHandler::getRecogInfo(int template_id) {
+  
+  RecognitionInfo status_info;
+  
+  // TODO: Check validity of template_id
+  
+  vector<float> status_vector = mygvf->getEstimatedStatus().at(template_id);
+  
+  cout << "Status vector legnth(test): " << status_vector.size() << endl;
+  
+  return status_info;
+  
 }
 

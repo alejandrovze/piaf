@@ -13,7 +13,8 @@
 gvfKinect::gvfKinect():
 current_gesture(-1, "Current"),
 is_playing(false),
-state(ofxGVF::STATE_CLEAR)
+state(ofxGVF::STATE_CLEAR),
+current_template(0)
 {
   
 }
@@ -22,6 +23,10 @@ state(ofxGVF::STATE_CLEAR)
 void gvfKinect::setup(){
   
   skeleton_input.setup();
+  
+  // Setup all the gvf handlers
+  // For the moment just use one GVF with center of mass.
+  gvf_handlers.push_back(new gvfKinectHandler());
   
 }
 
@@ -36,27 +41,40 @@ void gvfKinect::update(){
   skeleton_input.update();
   int user_id = 0;
   
+  SkeletonDataPoint data_point = SkeletonDataPoint(skeleton_input.get_skeleton(user_id),
+                                                   skeleton_input.get_center_of_mass(user_id),
+                                                   skeleton_input.get_bounding_box_min(user_id),
+                                                   skeleton_input.get_bounding_box_max(user_id));
+  
+  update(data_point);
+  
+}
+
+//--------------------------------------------------------------
+void gvfKinect::update(SkeletonDataPoint data_point){
+
+  int user_id = 0;
+  
   if (is_playing) {
     if (state == ofxGVF::STATE_LEARNING) {
       // Add data to template
-      skeleton_templates[current_template].add_data(skeleton_input.get_skeleton(user_id),
-                                                    skeleton_input.get_center_of_mass(user_id),
-                                                    skeleton_input.get_bounding_box_min(user_id),
-                                                    skeleton_input.get_bounding_box_max(user_id));
-
+      skeleton_templates[current_template].add_data(data_point);
       
-      // Send to GVFs
+      
+      // TODO: Send input to each GVF
+      gvf_handlers[0]->gvf_data(data_point.center_of_mass);
+      
       
     }
     else if (state == ofxGVF::STATE_FOLLOWING ) {
       // Add data to current gesture
-      current_gesture.add_data(skeleton_input.get_skeleton(user_id),
-                               skeleton_input.get_center_of_mass(user_id),
-                               skeleton_input.get_bounding_box_min(user_id),
-                               skeleton_input.get_bounding_box_max(user_id));
+      current_gesture.add_data(data_point);
       
       // Send to GVFs
+      // TODO: Send input to each GVF
+      gvf_handlers[0]->gvf_data(skeleton_input.get_center_of_mass(user_id));
       
+      cout << "Most probable is " << gvf_handlers[0]->getIndexMostProbable() << endl;
     }
     else if (state == ofxGVF::STATE_CLEAR) {
       // Do nothing
@@ -65,7 +83,10 @@ void gvfKinect::update(){
   
 }
 
-
+//--------------------------------------------------------------
+void gvfKinect::draw() {
+  
+}
 
 //--------------------------------------------------------------
 //--------------------------------------------------------------
@@ -73,11 +94,13 @@ void gvfKinect::update(){
 //--------------------------------------------------------------
 int gvfKinect::addTemplate() {
   
-  SkeletonGesture new_template(skeleton_templates.size() - 1, "Template");
+  int template_id = skeleton_templates.size();
+  
+  SkeletonGesture new_template(template_id, "Template");
   
   skeleton_templates.push_back(new_template);
   
-  return new_template.id; // Last index
+  return template_id; // Last index
   
 }
 
@@ -88,6 +111,14 @@ void gvfKinect::learn() {
   if (!is_playing) {
   
     state = ofxGVF::STATE_LEARNING;
+    
+    // Set state for each gvf
+    for (std::vector<gvfKinectHandler*>::iterator gvfh = gvf_handlers.begin();
+         gvfh != gvf_handlers.end();
+         ++gvfh) {
+      (*gvfh)->setState(state);
+    }
+    
   }
   else {
     // Do not change states while playing.
@@ -96,9 +127,17 @@ void gvfKinect::learn() {
 
 //--------------------------------------------------------------
 void gvfKinect::follow() {
-  if (!is_playing) {
+  // Only change to following if not currently playing and there are recorded templates. 
+  if (!is_playing && (get_n_templates() > 0)) {
     
     state = ofxGVF::STATE_FOLLOWING;
+    
+    // Set state for each gvf
+    for (std::vector<gvfKinectHandler*>::iterator gvfh = gvf_handlers.begin();
+         gvfh != gvf_handlers.end();
+         ++gvfh) {
+      (*gvfh)->setState(state);
+    }
   }
   else {
     // Do not change states while playing.
@@ -112,6 +151,13 @@ void gvfKinect::clear() {
     skeleton_templates.swap(blank);
     cout << "N templates after clear: " << get_n_templates() << endl;
     state = ofxGVF::STATE_CLEAR;
+    
+    // Set state for each gvf
+    for (std::vector<gvfKinectHandler*>::iterator gvfh = gvf_handlers.begin();
+         gvfh != gvf_handlers.end();
+         ++gvfh) {
+      (*gvfh)->setState(state);
+    }
   }
   else {
     // Do not change states while playing.
@@ -119,7 +165,6 @@ void gvfKinect::clear() {
 }
 
 //MARK: Sets
-// TODO
 //--------------------------------------------------------------
 void gvfKinect::play() {
   if (!is_playing) {
@@ -127,11 +172,18 @@ void gvfKinect::play() {
     if (state == ofxGVF::STATE_LEARNING) {
       current_template = addTemplate();
       
+      // Add template to each gvf
+      for (std::vector<gvfKinectHandler*>::iterator gvfh = gvf_handlers.begin();
+           gvfh != gvf_handlers.end();
+           ++gvfh) {
+        (*gvfh)->addTemplate();
+      }
+      
       is_playing = true;
       
     }
     else if (state == ofxGVF::STATE_FOLLOWING ) {
-      current_gesture.data.clear(); // Reset current_gesture
+      current_gesture.clear(); // Reset current_gesture
       
       is_playing = true;
     }
@@ -152,6 +204,7 @@ void gvfKinect::stop() {
       is_playing = false;
     }
     else if (state == ofxGVF::STATE_FOLLOWING ) {
+      cout << "Followed gesture of length " << current_gesture.get_length() << endl;
       
       is_playing = false;
     }
@@ -159,8 +212,10 @@ void gvfKinect::stop() {
       // Do nothing
     }
   }
-  
 }
+
+//--------------------------------------------------------------
+// TODO: Function sends data to GVFs
 
 //MARK: GETS
 //--------------------------------------------------------------
@@ -173,8 +228,6 @@ bool gvfKinect::get_is_playing() {
   return is_playing;
 }
 
-
-
 //--------------------------------------------------------------
 int gvfKinect::get_n_templates() {
   return skeleton_templates.size();
@@ -183,17 +236,164 @@ int gvfKinect::get_n_templates() {
 //--------------------------------------------------------------
 
 // MARK: Load / Save
-
-// TODO
 //--------------------------------------------------------------
 void gvfKinect::saveGestures(string filename) {
-  //    gvfh->saveGestures(filename);
+  
+  ofxXmlSettings gesture_file;
+  
+  for (int i = 0; i < skeleton_templates.size(); ++i) {
+    // write skeleton gesture (pass file by reference)
+    
+    SkeletonGesture* gesture = &skeleton_templates[i];
+    
+    gesture_file.addTag("Gesture");
+    gesture_file.pushTag("Gesture", i);
+    
+    // Metadata
+    gesture_file.addValue("Id", gesture->get_id());
+    gesture_file.addValue("Name", gesture->get_name());
+    
+    // Data
+    for (int j = 0; j < gesture->get_length(); ++j) {
+      gesture_file.addTag("DataPoint");
+      gesture_file.pushTag("DataPoint", j);
+      
+      SkeletonDataPoint point = gesture->get_data_point(j);
+      
+      gesture_file.addTag("BBoxMin");
+      gesture_file.pushTag("BBoxMin", 0);
+      gesture_file.addValue("X", point.bounding_box_min.x);
+      gesture_file.addValue("Y", point.bounding_box_min.y);
+      gesture_file.addValue("Z", point.bounding_box_min.z);
+      gesture_file.popTag();
+      
+      gesture_file.addTag("BBoxMax");
+      gesture_file.pushTag("BBoxMax", 0);
+      gesture_file.addValue("X", point.bounding_box_max.x);
+      gesture_file.addValue("Y", point.bounding_box_max.y);
+      gesture_file.addValue("Z", point.bounding_box_max.z);
+      gesture_file.popTag();
+      
+      gesture_file.addTag("CenterMass");
+      gesture_file.pushTag("CenterMass", 0);
+      gesture_file.addValue("X", point.center_of_mass.x);
+      gesture_file.addValue("Y", point.center_of_mass.y);
+      gesture_file.addValue("Z", point.center_of_mass.z);
+      gesture_file.popTag();
+      
+      for (int k = 0; k < N_JOINTS; ++k) {
+        
+        ofPoint joint = point.joints[k];
+        
+        gesture_file.addTag("Joints");
+        gesture_file.pushTag("Joints", k);
+        gesture_file.addValue("X", joint.x);
+        gesture_file.addValue("Y", joint.y);
+        gesture_file.addValue("Z", joint.z);
+        gesture_file.popTag();
+        
+      }
+      
+      gesture_file.popTag(); // "Data Point"
+    
+    }
+    
+    gesture_file.popTag(); // Pop Tag "Gesture"
+    
+  }
+  
+  cout << "written to file" << endl;
+  
+  gesture_file.save(filename);
+  
+}
+
+
+
+
+
+
+//--------------------------------------------------------------
+void gvfKinect::loadGestures() {
+  
+  ofFileDialogResult dialogResult = ofSystemLoadDialog("Select the xml file containing gesture data");
+  
+  if(!dialogResult.bSuccess)
+    return;
+  
+  cout << dialogResult.filePath << endl;
+  
+  loadGestures(dialogResult.filePath);
 }
 
 // TODO
 //--------------------------------------------------------------
 void gvfKinect::loadGestures(string filename) {
-  //    gvfh->loadGestures(filename);
-  //    gvfh->gvf_follow();
+  
+  ofxXmlSettings gesture_file;
+  if (!gesture_file.loadFile(filename)) {
+    cout << "file not loaded" << endl;
+    return;
+  }
+  
+  clear();
+  
+  int num_gestures = gesture_file.getNumTags("Gesture");
+  
+  cout << num_gestures << " gestures" << endl;
+  if (num_gestures < 1)
+    return;
+  
+  for (int i = 0; i < num_gestures; ++i) {
+    gesture_file.pushTag("Gesture", i);
+    
+    gesture_file.getValue("Id", -1);
+    gesture_file.getValue("Name", "name");
+    
+    int num_data_points = gesture_file.getNumTags("DataPoint");
+    
+    for (int j = 0; j < num_data_points; ++j) {
+      
+      SkeletonDataPoint new_point;
+      
+      gesture_file.pushTag("DataPoint", j);
+      
+      
+      gesture_file.pushTag("BBoxMin", 0);
+      new_point.bounding_box_min = ofPoint(gesture_file.getValue("X", 0.0),
+                                           gesture_file.getValue("Y", 0.0),
+                                           gesture_file.getValue("Z", 0.0));
+      gesture_file.popTag();
+      
+      gesture_file.pushTag("BBoxMax", 0);
+      new_point.bounding_box_max = ofPoint(gesture_file.getValue("X", 0.0),
+                                           gesture_file.getValue("Y", 0.0),
+                                           gesture_file.getValue("Z", 0.0));
+      gesture_file.popTag();
+      
+      gesture_file.pushTag("CenterMass", 0);
+      new_point.center_of_mass = ofPoint(gesture_file.getValue("X", 0.0),
+                                           gesture_file.getValue("Y", 0.0),
+                                           gesture_file.getValue("Z", 0.0));
+      gesture_file.popTag();
+
+      
+      for (int k = 0; k < N_JOINTS; ++k) {
+        
+        gesture_file.pushTag("Joints", k);
+        new_point.joints.push_back(ofPoint(gesture_file.getValue("X", 0.0),
+                                gesture_file.getValue("Y", 0.0),
+                                gesture_file.getValue("Z", 0.0)));
+        gesture_file.popTag();
+        
+      }
+      
+      gesture_file.popTag(); // "Data Point"
+    }
+    
+    
+    gesture_file.popTag(); // "Gesture"
+  }
+  
 }
 

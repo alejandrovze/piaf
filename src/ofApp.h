@@ -2,6 +2,7 @@
 
 #include "ofMain.h"
 #include "gvfKinect.h"
+#include "gvfKinectInterface.h"
 
 class ofApp : public ofBaseApp {
 	
@@ -20,6 +21,7 @@ public:
 //  void templatesGuiEvent(ofxUIEventArgs &e);
   
   gvfKinect gvf_kinect;
+  gvfKinectInterface kinect_interface;
   
 private:
   

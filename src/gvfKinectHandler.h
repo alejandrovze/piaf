@@ -14,15 +14,15 @@
 
 #include "ofxGVF.h"
 
-// struct to hold information on how a learnt template is being recognised.
-//typedef struct {
-//    float likelihoods;
-//    float probability;
-//    float phase;
-//    float speed;
-//    float scale;
-//    float rotation;
-//}  recognitionInfo;
+// Rather than a vector, struct to hold estimated status for a given vector.
+typedef struct {
+    float likelihoods;
+    float probability;
+    float phase;
+    float speed;
+    float scale;
+    float rotation;
+} RecognitionInfo;
 
 class gvfKinectHandler{
   
@@ -42,12 +42,6 @@ public:
   void setNumberOfParticles(int numParticles);
   
   ofxGVF::ofxGVFState getState();
-  
-  // vector containing one recognitionInfo struct for each template
-  // these structs will contain real time information on how each template is being recognised
-  //    std::vector<recognitionInfo> recogInfo;
-  //    std::vector<recognitionInfo> getRecogInfo();
-  //    recognitionInfo getRecogInfoOfMostProbable();
 
   // amount of templates
   int getTemplateCount();
@@ -55,6 +49,10 @@ public:
   // returns the index of the template that is, most probably,
   // the one the user is trying to perform
   int getIndexMostProbable();
+  RecognitionInfo getRecogInfoOfMostProbable();
+  RecognitionInfo getRecogInfo(int template_id);
+  
+  
   
 private:
   

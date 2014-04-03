@@ -13,96 +13,9 @@
 
 #include "gvfKinectHandler.h"
 #include "OSCSkeleton.h"
-#include "gvfKinectGesture.h"
+#include "SkeletonGesture.h"
 
-
-// ------------------------------------------------------
-// ------------------------------------------------------
-// Skeleton Gesture Structure
-// ------------------------------------------------------
-// ------------------------------------------------------
-
-//
-//typedef struct SkeletonDataPoint {
-//  
-//  // Constructors
-//  SkeletonDataPoint():
-//  joints(N_JOINTS),
-//  center_of_mass(ofPoint(0, 0, 0)),
-//  bounding_box_min(ofPoint(0, 0, 0)),
-//  bounding_box_max(ofPoint(0, 0, 0))
-//  {
-//  }
-//  
-//  SkeletonDataPoint(vector<ofPoint> _joints,
-//                    ofPoint _center_of_mass,
-//                    ofPoint _bounding_box_min,
-//                    ofPoint _bounding_box_max):
-//  joints(N_JOINTS),
-//  center_of_mass(_center_of_mass),
-//  bounding_box_min(_bounding_box_min),
-//  bounding_box_max(_bounding_box_max)
-//  {
-//    for (int i = 0; i < N_JOINTS; ++i)
-//      joints[i] = _joints[i];
-//  }
-//  
-//  ~SkeletonDataPoint()
-//  {
-//    vector<ofPoint> blank;
-//    joints.swap(blank);
-//  }
-//  
-//  // Skeleton data
-//  vector<ofPoint> joints;
-//  
-//} SkeletonDataPoint;
-
-typedef struct SkeletonGesture {
-  
-  SkeletonGesture(int _id, string _name):
-  id(_id),
-  name(_name)
-  {
-  }
-  
-//  ~SkeletonGesture()
-//  {
-//    vector<SkeletonDataPoint> blank;
-//    data.swap(blank);
-//  }
-  
-  void add_data(vector<ofPoint> _joints, ofPoint _center_of_mass, ofPoint _bounding_box_min,
-                ofPoint _bounding_box_max)
-  {
-    vector<vector<ofPoint> > test_data;
-    test_data.push_back(_joints);
-    
-    cout << "length of added data " << _joints.size() << endl;
-    data.push_back(_joints);
-    
-    center_of_mass.push_back(_center_of_mass);
-    bounding_box_min.push_back(_bounding_box_min);
-    bounding_box_max.push_back(_bounding_box_max);
-  }
-  
-  int get_length()
-  {
-    return data.size();
-  }
-  
-  // Metadata
-  int id;
-  string name;
-  
-  // Data
-  vector<vector<ofPoint> > data;
-  vector<ofPoint> center_of_mass;
-  vector<ofPoint> bounding_box_min;
-  vector<ofPoint> bounding_box_max;
-  
-} SkeletonGesture;
-
+#include "ofxXmlSettings.h"
 
 // ------------------------------------------------------
 // ------------------------------------------------------
@@ -121,6 +34,9 @@ public:
   void exit();
   
   void update();
+  void update(SkeletonDataPoint data_point);
+  
+  void draw();
   
   // Set State
   void learn();
@@ -132,6 +48,7 @@ public:
   void stop();
   
   void saveGestures(string filename);
+  void loadGestures();
   void loadGestures(string filename);
   
   // GETS
@@ -142,7 +59,7 @@ public:
   
 private:
   
-  gvfKinectHandler* gvfh;
+  vector<gvfKinectHandler*> gvf_handlers;
   
   // State
   ofxGVF::ofxGVFState state;

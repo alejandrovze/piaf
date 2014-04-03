@@ -18,6 +18,8 @@ void ofApp::setup(){
   
   gvf_kinect.setup();
   
+  kinect_interface.setup(&gvf_kinect);
+  
   initColors();
   
   /* some standard setup stuff*/
@@ -33,6 +35,8 @@ void ofApp::setup(){
 void ofApp::update(){
   
   gvf_kinect.update();
+  
+  kinect_interface.update();
   
 }
 
@@ -61,6 +65,7 @@ void ofApp::draw(){
       break;
   }
   string is_playing;
+  
   if (gvf_kinect.get_is_playing()) {
     is_playing = "Is Playing";
   }
@@ -71,10 +76,16 @@ void ofApp::draw(){
   
   ofDrawBitmapString(state + " " + is_playing + " " + ofToString(n_templates) + "templates", ofGetWidth() - 500, 60);
   
+  gvf_kinect.draw();
+  
+  kinect_interface.draw();
+  
 }
 
 //--------------------------------------------------------------
 void ofApp::exit() {
+  
+  kinect_interface.exit();
   
   gvf_kinect.exit();
   
@@ -83,14 +94,13 @@ void ofApp::exit() {
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
   
-	if (key == 'l' || key == 'L'){
+	if (key == 'l' || key == 'L') {
     gvf_kinect.learn();
 	}
   else if (key == 'f' || key == 'F') {
     gvf_kinect.follow();
   }
-  else if(key == 'c' || key == 'C')
-  {
+  else if(key == 'c' || key == 'C') {
     gvf_kinect.clear();
   }
   else if (key == ' ') {
@@ -99,6 +109,12 @@ void ofApp::keyPressed(int key){
       gvf_kinect.stop();
     else
       gvf_kinect.play();
+  }
+  else if (key == 's' || key == 'S') {
+    gvf_kinect.saveGestures("new_file.xml");
+  }
+  else if (key == 'x' || key == 'X') {
+    gvf_kinect.loadGestures();
   }
 }
 
