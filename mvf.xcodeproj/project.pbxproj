@@ -655,6 +655,13 @@
 			name = kinect;
 			sourceTree = "<group>";
 		};
+		C6E900E218EE361E00C0F2C1 /* openNI */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = openNI;
+			sourceTree = "<group>";
+		};
 		D27B2221A225CA523C019676 /* src */ = {
 			isa = PBXGroup;
 			children = (
@@ -688,6 +695,7 @@
 				E4EB6923138AFD0F00A09F29 /* Project.xcconfig */,
 				E4B69E1C0A3A1BDC003C02F2 /* src */,
 				E4EEC9E9138DF44700A80321 /* openFrameworks */,
+				C6E900E218EE361E00C0F2C1 /* openNI */,
 				BB4B014C10F69532006C3DED /* addons */,
 				C61F57A518EC553700DAF3CC /* ofxXmlSettings */,
 				E45BE5980E8CC70C009D7055 /* frameworks */,

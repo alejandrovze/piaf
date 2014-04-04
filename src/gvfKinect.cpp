@@ -19,14 +19,20 @@ current_template(0)
   
 }
 
+// TODO
+//--------------------------------------------------------------
+gvfKinect::~gvfKinect() {
+  cout << "Destruction" << endl;
+}
+
+
 //--------------------------------------------------------------
 void gvfKinect::setup(){
   
   skeleton_input.setup();
   
-  // Setup all the gvf handlers
-  // For the moment just use one GVF with center of mass.
-  gvf_handlers.push_back(new gvfKinectHandler());
+  // Setup all the gvf handlers (set what data they extract)
+  gvf_handlers.push_back(new gvfKinectHandler(0, "Center of Mass", CENTER_OF_MASS));
   
 }
 
@@ -60,10 +66,8 @@ void gvfKinect::update(SkeletonDataPoint data_point){
       // Add data to template
       skeleton_templates[current_template].add_data(data_point);
       
-      
-      // TODO: Send input to each GVF
-      gvf_handlers[0]->gvf_data(data_point.center_of_mass);
-      
+      // Send to GVFs
+      gvf_input(data_point);
       
     }
     else if (state == ofxGVF::STATE_FOLLOWING ) {
@@ -71,8 +75,7 @@ void gvfKinect::update(SkeletonDataPoint data_point){
       current_gesture.add_data(data_point);
       
       // Send to GVFs
-      // TODO: Send input to each GVF
-      gvf_handlers[0]->gvf_data(skeleton_input.get_center_of_mass(user_id));
+      gvf_input(data_point);
       
       cout << "Most probable is " << gvf_handlers[0]->getIndexMostProbable() << endl;
     }
@@ -215,7 +218,20 @@ void gvfKinect::stop() {
 }
 
 //--------------------------------------------------------------
-// TODO: Function sends data to GVFs
+void gvfKinect::gvf_input(SkeletonDataPoint data_point) {
+  
+  for (vector<gvfKinectHandler *>::iterator handler_it = gvf_handlers.begin();
+       handler_it != gvf_handlers.end();
+       ++handler_it) {
+    
+    (*handler_it)->gvf_data(data_point);
+    
+  }
+  
+}
+
+
+
 
 //MARK: GETS
 //--------------------------------------------------------------
@@ -235,7 +251,27 @@ int gvfKinect::get_n_templates() {
 
 //--------------------------------------------------------------
 
+
+
+
+//--------------------------------------------------------------
 // MARK: Load / Save
+//--------------------------------------------------------------
+
+// Opens Dialog to Save
+//--------------------------------------------------------------
+void gvfKinect::saveGestures() {
+  
+  ofFileDialogResult dialogResult = ofSystemSaveDialog("my_gestures.xml", "Save gestures");
+  
+  if(!dialogResult.bSuccess)
+    return;
+  
+  cout << "Saving to " << dialogResult.filePath << endl;
+  
+  saveGestures(dialogResult.filePath);
+}
+
 //--------------------------------------------------------------
 void gvfKinect::saveGestures(string filename) {
   
@@ -308,11 +344,7 @@ void gvfKinect::saveGestures(string filename) {
   
 }
 
-
-
-
-
-
+// Opens Dialog to Load gestures
 //--------------------------------------------------------------
 void gvfKinect::loadGestures() {
   
@@ -321,12 +353,12 @@ void gvfKinect::loadGestures() {
   if(!dialogResult.bSuccess)
     return;
   
-  cout << dialogResult.filePath << endl;
+  cout << "Loading file " << dialogResult.filePath << endl;
   
   loadGestures(dialogResult.filePath);
 }
 
-// TODO
+// Load Gestures from Given File
 //--------------------------------------------------------------
 void gvfKinect::loadGestures(string filename) {
   
@@ -337,6 +369,7 @@ void gvfKinect::loadGestures(string filename) {
   }
   
   clear();
+  learn();
   
   int num_gestures = gesture_file.getNumTags("Gesture");
   
@@ -346,6 +379,8 @@ void gvfKinect::loadGestures(string filename) {
   
   for (int i = 0; i < num_gestures; ++i) {
     gesture_file.pushTag("Gesture", i);
+    
+    play();
     
     gesture_file.getValue("Id", -1);
     gesture_file.getValue("Name", "name");
@@ -388,9 +423,12 @@ void gvfKinect::loadGestures(string filename) {
         
       }
       
+      update(new_point);
+      
       gesture_file.popTag(); // "Data Point"
     }
     
+    stop();
     
     gesture_file.popTag(); // "Gesture"
   }

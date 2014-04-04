@@ -8,7 +8,10 @@
 
 #include "gvfKinectHandler.h"
 
-gvfKinectHandler::gvfKinectHandler()
+gvfKinectHandler::gvfKinectHandler(int id, string name, KinectFeature feature):
+gvf_id(id),
+gvf_name(name),
+gvf_feature(feature)
 {
   // initialisation of parameters. Functions are provided to change most of them at runtime
   
@@ -51,6 +54,32 @@ void gvfKinectHandler::addTemplate() {
   mygvf->addTemplate();
 }
 
+void gvfKinectHandler::gvf_data(SkeletonDataPoint data_point) {
+  
+  // TODO
+  switch (gvf_feature) {
+    case CENTER_OF_MASS:
+      gvf_data(data_point.center_of_mass);
+      break;
+      
+    case RIGHT_ARM:
+      
+      break;
+      
+    case LEFT_ARM:
+      
+      break;
+      
+    case RIGHT_LEG:
+      
+      break;
+      
+    case LEFT_LEG:
+      
+      break;
+      
+  }
+}
 
 void gvfKinectHandler::gvf_data(ofPoint p)
 {
@@ -143,13 +172,34 @@ RecognitionInfo gvfKinectHandler::getRecogInfo(int template_id) {
   
   RecognitionInfo status_info;
   
-  // TODO: Check validity of template_id
+  if (template_id >= 0 && template_id < getTemplateCount()) {
   
-  vector<float> status_vector = mygvf->getEstimatedStatus().at(template_id);
-  
-  cout << "Status vector legnth(test): " << status_vector.size() << endl;
+    vector<float> status_vector = mygvf->getEstimatedStatus().at(template_id);
+    
+    cout << "Status vector legnth(test): " << status_vector.size() << endl;
+    
+    // TODO Fill status_info
+    
+  }
   
   return status_info;
   
 }
 
+
+//-----------------------------------------------------------------------
+// MARK: Feature Extraction
+//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
+
+ofVec3f gvfKinectHandler::get_limb(ofPoint joint1, ofPoint joint2) {
+  return ofVec3f(joint2 - joint1);
+}
+
+float gvfKinectHandler::get_angle(ofVec3f limb1, ofVec3f limb2) {
+  return limb1.angle(- limb2);
+}
+
+
+
+//-----------------------------------------------------------------------

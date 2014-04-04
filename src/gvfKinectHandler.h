@@ -14,6 +14,21 @@
 
 #include "ofxGVF.h"
 
+#include "SkeletonGesture.h"
+
+// 
+
+typedef enum
+{
+  CENTER_OF_MASS,
+  
+  RIGHT_ARM,
+  LEFT_ARM,
+  RIGHT_LEG,
+  LEFT_LEG
+  
+} KinectFeature;
+
 // Rather than a vector, struct to hold estimated status for a given vector.
 typedef struct {
     float likelihoods;
@@ -27,13 +42,18 @@ typedef struct {
 class gvfKinectHandler{
   
 public:
-  
-  gvfKinectHandler();
+
+  gvfKinectHandler(int _gvf_id, string _gvf_name, KinectFeature feature);
   ~gvfKinectHandler();
   
   void setState(ofxGVF::ofxGVFState state);
   void addTemplate();
+  void gvf_data(SkeletonDataPoint data_point);
   void gvf_data(ofPoint p); // Kinect Input is 3D point.
+  
+  // Metadata
+  int gvf_id;
+  string gvf_name;
   
   // SET parameters
   void setSmoothingCoefficient(float smoothingCoeficient);
@@ -53,10 +73,16 @@ public:
   RecognitionInfo getRecogInfo(int template_id);
   
   
-  
 private:
   
   ofxGVF *mygvf;
+  
+  KinectFeature gvf_feature; // Feature studied
+  
+  // FEATURE EXTRACTION
+  
+  ofVec3f get_limb(ofPoint joint1, ofPoint joint2);
+  float get_angle(ofVec3f limb1, ofVec3f limb2);
   
 };
 

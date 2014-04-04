@@ -28,7 +28,7 @@ class gvfKinect {
 public:
   
   gvfKinect();
-//  ~gvfKinect(); TODO
+  ~gvfKinect();
   
   void setup();
   void exit();
@@ -47,6 +47,8 @@ public:
   void play();
   void stop();
   
+  // LOAD / SAVE
+  void saveGestures();
   void saveGestures(string filename);
   void loadGestures();
   void loadGestures(string filename);
@@ -54,26 +56,28 @@ public:
   // GETS
   ofxGVF::ofxGVFState get_state();
   bool get_is_playing();
-  
   int get_n_templates();
   
 private:
-  
-  vector<gvfKinectHandler*> gvf_handlers;
   
   // State
   ofxGVF::ofxGVFState state;
   bool is_playing;
   
   // Input and gestures;
-  
   OSCSkeleton skeleton_input;
-  
   vector<SkeletonGesture> skeleton_templates;
   SkeletonGesture current_gesture;
   int addTemplate();
   int current_template;
   // TODO: addTemplates with specific metadata
+  
+  // GVF Proccesing
+  
+  vector<gvfKinectHandler*> gvf_handlers;
+  
+  void gvf_input(SkeletonDataPoint data_point);
+  
   
 };
 
