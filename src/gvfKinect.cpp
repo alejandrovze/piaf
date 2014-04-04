@@ -22,7 +22,6 @@ current_template(0)
 // TODO
 //--------------------------------------------------------------
 gvfKinect::~gvfKinect() {
-  cout << "Destruction" << endl;
 }
 
 
@@ -30,6 +29,10 @@ gvfKinect::~gvfKinect() {
 void gvfKinect::setup(){
   
   skeleton_input.setup();
+  
+  
+  // TODO: TESTING INTEGRATING KINECT
+  kinect_input.setup();
   
   // Setup all the gvf handlers (set what data they extract)
   gvf_handlers.push_back(new gvfKinectHandler(0, "Center of Mass", CENTER_OF_MASS));

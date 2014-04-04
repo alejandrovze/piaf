@@ -14,6 +14,7 @@
 #include "gvfKinectHandler.h"
 #include "OSCSkeleton.h"
 #include "SkeletonGesture.h"
+#include "KinectInput.h"
 
 #include "ofxXmlSettings.h"
 
@@ -77,6 +78,10 @@ private:
   vector<gvfKinectHandler*> gvf_handlers;
   
   void gvf_input(SkeletonDataPoint data_point);
+  
+  
+  // TODO: TESTING INTEGRATING KINECT
+  KinectInput kinect_input;
   
   
 };
