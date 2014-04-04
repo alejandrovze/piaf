@@ -83,7 +83,6 @@
 		C643557A18E600F3008AE100 /* gvfKinect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C643557818E600F3008AE100 /* gvfKinect.cpp */; };
 		C643557D18E60110008AE100 /* gvfKinectHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C643557B18E6010F008AE100 /* gvfKinectHandler.cpp */; };
 		C67106EB18E8D421001D3E51 /* SkeletonGesture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C67106E918E8D421001D3E51 /* SkeletonGesture.cpp */; };
-		C69A72FE18E299750035151A /* OSCSkeleton.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C69A72FC18E299750035151A /* OSCSkeleton.cpp */; };
 		C6E900F318EE37B300C0F2C1 /* libNiTE2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C6E900E518EE37B300C0F2C1 /* libNiTE2.dylib */; };
 		C6E9010218EE37D300C0F2C1 /* libOpenNI2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C6E900F618EE37D200C0F2C1 /* libOpenNI2.dylib */; };
 		C6E9010A18EE388A00C0F2C1 /* libOpenNI2.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = C6E900F618EE37D200C0F2C1 /* libOpenNI2.dylib */; };
@@ -377,8 +376,6 @@
 		C67106E918E8D421001D3E51 /* SkeletonGesture.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SkeletonGesture.cpp; sourceTree = "<group>"; };
 		C67106EA18E8D421001D3E51 /* SkeletonGesture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SkeletonGesture.h; sourceTree = "<group>"; };
 		C6937888E126BADC8777423B /* OscTypes.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = OscTypes.h; path = ../../../addons/ofxOsc/libs/oscpack/src/osc/OscTypes.h; sourceTree = SOURCE_ROOT; };
-		C69A72FC18E299750035151A /* OSCSkeleton.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OSCSkeleton.cpp; sourceTree = "<group>"; };
-		C69A72FD18E299750035151A /* OSCSkeleton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OSCSkeleton.h; sourceTree = "<group>"; };
 		C6E900E418EE37B300C0F2C1 /* com.primesense.nite.jar */ = {isa = PBXFileReference; lastKnownFileType = archive.jar; path = com.primesense.nite.jar; sourceTree = "<group>"; };
 		C6E900E518EE37B300C0F2C1 /* libNiTE2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libNiTE2.dylib; sourceTree = "<group>"; };
 		C6E900E618EE37B300C0F2C1 /* libNiTE2.jni.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libNiTE2.jni.dylib; sourceTree = "<group>"; };
@@ -782,11 +779,9 @@
 			children = (
 				C67106E918E8D421001D3E51 /* SkeletonGesture.cpp */,
 				C67106EA18E8D421001D3E51 /* SkeletonGesture.h */,
-				C69A72FC18E299750035151A /* OSCSkeleton.cpp */,
-				C69A72FD18E299750035151A /* OSCSkeleton.h */,
-				C6E9014518EE4E1800C0F2C1 /* NiteSampleUtilities.h */,
 				C6E9014C18EE573E00C0F2C1 /* KinectInput.cpp */,
 				C6E9014D18EE573E00C0F2C1 /* KinectInput.h */,
+				C6E9014518EE4E1800C0F2C1 /* NiteSampleUtilities.h */,
 			);
 			name = kinect;
 			sourceTree = "<group>";
@@ -1142,7 +1137,6 @@
 				C4782ECC372420ACE0615B74 /* OscPrintReceivedElements.cpp in Sources */,
 				0546D1A38E13BD319CC9755B /* OscReceivedElements.cpp in Sources */,
 				879A251454401BC0B6E4F238 /* OscTypes.cpp in Sources */,
-				C69A72FE18E299750035151A /* OSCSkeleton.cpp in Sources */,
 				C643555B18E5DA74008AE100 /* ofxBaseGui.cpp in Sources */,
 				C643555C18E5DA74008AE100 /* ofxButton.cpp in Sources */,
 				C643555D18E5DA74008AE100 /* ofxGuiGroup.cpp in Sources */,

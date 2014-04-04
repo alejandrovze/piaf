@@ -26,10 +26,7 @@ gvfKinect::~gvfKinect() {
 
 
 //--------------------------------------------------------------
-void gvfKinect::setup(){
-  
-  skeleton_input.setup();
-  
+void gvfKinect::setup(){  
   
   // TODO: TESTING INTEGRATING KINECT
   kinect_input.setup();
@@ -47,13 +44,9 @@ void gvfKinect::exit() {
 //--------------------------------------------------------------
 void gvfKinect::update(){
   
-  skeleton_input.update();
   int user_id = 0;
   
-  SkeletonDataPoint data_point = SkeletonDataPoint(skeleton_input.get_skeleton(user_id),
-                                                   skeleton_input.get_center_of_mass(user_id),
-                                                   skeleton_input.get_bounding_box_min(user_id),
-                                                   skeleton_input.get_bounding_box_max(user_id));
+  SkeletonDataPoint data_point = kinect_input.get_data();
   
   update(data_point);
   

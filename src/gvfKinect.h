@@ -12,7 +12,6 @@
 #include <iostream>
 
 #include "gvfKinectHandler.h"
-#include "OSCSkeleton.h"
 #include "SkeletonGesture.h"
 #include "KinectInput.h"
 
@@ -66,7 +65,7 @@ private:
   bool is_playing;
   
   // Input and gestures;
-  OSCSkeleton skeleton_input;
+  
   vector<SkeletonGesture> skeleton_templates;
   SkeletonGesture current_gesture;
   int addTemplate();

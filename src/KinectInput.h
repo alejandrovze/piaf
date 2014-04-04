@@ -18,6 +18,8 @@
 #include "NiteSampleUtilities.h"
 
 
+#define MAX_USERS 1
+
 class KinectInput
 {
 
@@ -38,6 +40,10 @@ private:
   
 	openni::Device device;
 	nite::UserTracker* user_tracker;
+  
+  nite::SkeletonState user_states[MAX_USERS];
+  bool users_lost[MAX_USERS];
+  bool users_visible[MAX_USERS];
   
 };
 

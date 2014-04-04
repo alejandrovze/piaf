@@ -9,7 +9,6 @@
 #include "KinectInput.h"
 
 
-
 KinectInput* KinectInput::ms_self = NULL;
 
 
@@ -18,6 +17,13 @@ KinectInput::KinectInput()
 	ms_self = this;
   
 	user_tracker = new nite::UserTracker;
+  
+  for (int i = 0; i < MAX_USERS; ++i) {
+    user_states[i] = nite::SKELETON_NONE;
+    users_lost[i] = false;
+    users_visible[i] = false;
+  }
+  
 }
 
 KinectInput::~KinectInput()
@@ -56,7 +62,6 @@ openni::Status KinectInput::setup()
 		return rc;
 	}
   
-  
   // Initialize NiTE
 	nite::NiTE::initialize();
   
@@ -65,15 +70,11 @@ openni::Status KinectInput::setup()
 		return openni::STATUS_ERROR;
 	}
   
-  
   // If all else has succeeded. 
   return openni::STATUS_OK;
   
 }
 
-
-
-// TODO: Get Data not finished. 
 SkeletonDataPoint KinectInput::get_data(int user_id) {
   
   SkeletonDataPoint data_point;
@@ -140,42 +141,47 @@ const nite::UserData& KinectInput::get_user(int user_id) {
   
   const nite::UserData& user = users[user_id];
   
-  if (user.isNew())
+  // Print information about user state.
   {
-    fprintf(stderr, "New\n");
-  }
-  else if (user.isVisible()) {
+    if (user.isNew())
+    {
+      fprintf(stderr, "User %d: New\n", user_id);
+    }
+    else if (users_visible[user_id] != user.isVisible()) {
+      if ((users_visible[user_id] = user.isVisible())) {
+        fprintf(stderr, "User %d: Visible user\n", user_id);
+      }
+    }
+    else if (users_lost[user_id] != user.isLost()) {
+      if ((users_lost[user_id] = user.isLost())) {
+        fprintf(stderr, "User %d: Lost user\n", user_id);
+      }
+    }
     
-  }
-  else if (user.isLost())
-  {
-    fprintf(stderr, "Lost\n");
+    if (user_states[user_id] != user.getSkeleton().getState()) {
+      switch(user_states[user_id] = user.getSkeleton().getState()) // Set in array
+      {
+        case nite::SKELETON_NONE:
+          fprintf(stderr, "User %d: Stopped tracking.\n", user_id);
+          break;
+        case nite::SKELETON_CALIBRATING:
+          fprintf(stderr, "User %d: Calibrating.\n", user_id);
+          break;
+        case nite::SKELETON_TRACKED:
+          fprintf(stderr, "User %d: Tracking.\n", user_id);
+          break;
+        case nite::SKELETON_CALIBRATION_ERROR_NOT_IN_POSE:
+        case nite::SKELETON_CALIBRATION_ERROR_HANDS:
+        case nite::SKELETON_CALIBRATION_ERROR_LEGS:
+        case nite::SKELETON_CALIBRATION_ERROR_HEAD:
+        case nite::SKELETON_CALIBRATION_ERROR_TORSO:
+          fprintf(stderr, "User %d: Calibration failed.\n", user_id);
+          break;
+      }
+    }
   }
   
   return user;
-  
-//  if(g_skeletonStates[user.getId()] != user.getSkeleton().getState())
-//  {
-//    switch(g_skeletonStates[user.getId()] = user.getSkeleton().getState())
-//    {
-//      case nite::SKELETON_NONE:
-//        USER_MESSAGE("Stopped tracking.")
-//        break;
-//      case nite::SKELETON_CALIBRATING:
-//        USER_MESSAGE("Calibrating...")
-//        break;
-//      case nite::SKELETON_TRACKED:
-//        USER_MESSAGE("Tracking!")
-//        break;
-//      case nite::SKELETON_CALIBRATION_ERROR_NOT_IN_POSE:
-//      case nite::SKELETON_CALIBRATION_ERROR_HANDS:
-//      case nite::SKELETON_CALIBRATION_ERROR_LEGS:
-//      case nite::SKELETON_CALIBRATION_ERROR_HEAD:
-//      case nite::SKELETON_CALIBRATION_ERROR_TORSO:
-//        USER_MESSAGE("Calibration Failed... :-|")
-//        break;
-//    }
-//  }
 
 }
           
