@@ -15,8 +15,6 @@
 
 #include "SkeletonGesture.h"
 
-#include "NiteSampleUtilities.h"
-
 
 #define MAX_USERS 1
 
@@ -32,7 +30,14 @@ public:
   void close();
   
   SkeletonDataPoint get_data(int user_id = 0);
-  const nite::UserData& get_user(int user_id = 0); // TODO
+  const nite::UserData& get_user(int user_id = 0);
+  openni::VideoFrameRef get_depth_frame();
+  
+  ofPoint convert_world_to_depth(ofPoint coordinates);
+  
+  SkeletonDataPoint get_depth_data(int user_id = 0); // For display
+  
+  bool get_is_running();
   
 private:
   
@@ -40,10 +45,13 @@ private:
   
 	openni::Device device;
 	nite::UserTracker* user_tracker;
+  nite::UserTrackerFrameRef userTrackerFrame;
   
   nite::SkeletonState user_states[MAX_USERS];
   bool users_lost[MAX_USERS];
   bool users_visible[MAX_USERS];
+  
+  bool is_running;
   
 };
 

@@ -9,14 +9,18 @@
 #include "gvfKinectInterface.h"
 
 
+// For kinect depth image
+#define MAX_DEPTH 10000
+
+
 //--------------------------------------------------------------
 void gvfKinectInterface::setup(gvfKinect* _kinect_app) {
   
   status_gui = new ofxUICanvas();
   
-  
   kinect_app = _kinect_app;
   
+  InitialiseKinectGui();
   
 }
 
@@ -30,10 +34,14 @@ void gvfKinectInterface::exit() {
 
 void gvfKinectInterface::update() {
   
+//  UpdateKinectGui();
+  
 }
 
 //--------------------------------------------------------------
 void gvfKinectInterface::draw() {
+  
+  UpdateKinectGui();
   
 }
 
@@ -485,3 +493,176 @@ void gvfKinectInterface::updateStatusGui(){
 //  //
 //  //    }
 //}
+
+
+
+
+
+//--------------------------------------------------------------
+// MARK: Kinect Re-Working
+//--------------------------------------------------------------
+
+
+void gvfKinectInterface::InitialiseKinectGui() {
+  
+  kinect_width = 600;
+  kinect_height = 400;
+  
+  depth_width = 640;
+  depth_height = 480;
+
+}
+
+void gvfKinectInterface::UpdateKinectGui() {
+  
+  if (kinect_app->get_is_live()) {
+    
+    UpdateDepth(kinect_app->get_depth_frame());
+    
+    depth_image.draw(0, 0, kinect_width, kinect_height);
+    
+    UpdateSkeleton(kinect_app->get_depth_data_point());
+    
+  }
+  
+  DisplaySkeleton(kinect_app->get_current_point());
+  
+}
+
+// TODO: Displaying Depth Frame
+//--------------------------------------------------------------
+void gvfKinectInterface::UpdateDepth(openni::VideoFrameRef depth_frame) {
+  
+  if (depth_frame.isValid()) {
+    
+    int res_x = depth_frame.getVideoMode().getResolutionX();
+    int res_y = depth_frame.getVideoMode().getResolutionY();
+    int numPixels = res_x * res_y;
+    
+    float* depth_histogram = CalculateHistogram(MAX_DEPTH, depth_frame);
+    
+    // Allocate image
+    if (!depth_image.isAllocated()) {
+      depth_image.allocate(res_x, res_y, OF_IMAGE_GRAYSCALE);
+      
+      grayPixels = new unsigned char[numPixels];
+      memset(grayPixels, 0, numPixels * sizeof(unsigned char));
+    }
+    
+    
+    const openni::DepthPixel* depthPixels = (const openni::DepthPixel*) depth_frame.getData();
+    
+    for (int i = 0; i < numPixels; i++, depthPixels++) {
+      grayPixels[i] = depth_histogram[*depthPixels];
+    }
+    
+    depth_image.setFromPixels(grayPixels, res_x, res_y, OF_IMAGE_GRAYSCALE);
+    
+    int rowSize = depth_frame.getStrideInBytes() / sizeof(openni::DepthPixel);
+    
+  }
+  
+}
+
+//--------------------------------------------------------------
+float* gvfKinectInterface::CalculateHistogram(int histogramSize, const openni::VideoFrameRef& depthFrame)
+{
+	const openni::DepthPixel* pDepth = (const openni::DepthPixel*)depthFrame.getData();
+	int width = depthFrame.getWidth();
+	int height = depthFrame.getHeight();
+  
+  static float pHistogram[MAX_DEPTH];
+  
+	// Calculate the accumulative histogram (the yellow display...)
+	memset(pHistogram, 0, histogramSize*sizeof(float));
+	int restOfRow = depthFrame.getStrideInBytes() / sizeof(openni::DepthPixel) - width;
+  
+	unsigned int nNumberOfPoints = 0;
+	for (int y = 0; y < height; ++y)
+	{
+		for (int x = 0; x < width; ++x, ++pDepth)
+		{
+			if (*pDepth != 0)
+			{
+				pHistogram[*pDepth]++;
+				nNumberOfPoints++;
+			}
+		}
+		pDepth += restOfRow;
+	}
+	for (int nIndex = 1; nIndex < histogramSize; nIndex++)
+	{
+		pHistogram[nIndex] += pHistogram[nIndex-1];
+	}
+	if (nNumberOfPoints)
+	{
+		for (int nIndex = 1; nIndex < histogramSize; nIndex++)
+		{
+			pHistogram[nIndex] = (256 * (1.0f - (pHistogram[nIndex] / nNumberOfPoints)));
+		}
+	}
+  
+  return pHistogram;
+  
+}
+
+
+//--------------------------------------------------------------
+void gvfKinectInterface::UpdateSkeleton(SkeletonDataPoint new_point) {
+  
+  
+  
+  // Draw CENTER OF MASS
+  int x_pos = (int) ((float) (new_point.center_of_mass.x) * (float) kinect_width / (float) depth_width);
+  int y_pos = (int) ((float) (new_point.center_of_mass.y)* (float) kinect_height / (float) depth_height);
+  
+  ofNoFill();
+  ofSetColor(0, 255, 255);
+  ofCircle(x_pos, y_pos, 5);
+  ofFill();
+  
+  
+  // Draw SKELETON
+  ofSetColor(255, 0, 255);
+  
+  for (int i = 0; i < N_JOINTS; ++i) {
+    
+    x_pos = (int) ((float) (new_point.joints[i].x) * (float) kinect_width / (float) depth_width);
+    y_pos = (int) ((float) (new_point.joints[i].y) * (float) kinect_height / (float) depth_height);
+    
+    ofCircle(x_pos, y_pos, 5);
+  }
+  
+  // TODO: Draw bounding box
+  
+}
+
+// Diplaying a saved point
+//--------------------------------------------------------------
+void gvfKinectInterface::DisplaySkeleton(SkeletonDataPoint new_point) {
+  
+  ofSetColor(255, 255, 0);
+  
+  int x_center = 500;
+  int y_center = 600;
+  
+  ofNoFill();
+  ofSetColor(0, 255, 255);
+  ofCircle(x_center, y_center, 100);
+  ofFill();
+  
+  // Draw SKELETON
+  ofSetColor(255, 0, 255);
+  int x_pos;
+  int y_pos;
+  
+  for (int i = 0; i < N_JOINTS; ++i) {
+    
+    x_pos = x_center + new_point.joints[i].x / 10.0;
+    y_pos = y_center + new_point.joints[i].y / 10.0;
+    
+    ofCircle(x_pos, y_pos, 5);
+  }
+  
+}
+

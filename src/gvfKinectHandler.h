@@ -22,6 +22,12 @@ typedef enum
 {
   CENTER_OF_MASS,
   
+  LEFT_ELBOW,
+  RIGHT_ELBOW,
+  
+  LEFT_KNEE,
+  RIGHT_KNEE,
+  
   RIGHT_ARM,
   LEFT_ARM,
   RIGHT_LEG,
@@ -80,9 +86,8 @@ private:
   KinectFeature gvf_feature; // Feature studied
   
   // FEATURE EXTRACTION
-  
-  ofVec3f get_limb(ofPoint joint1, ofPoint joint2);
-  float get_angle(ofVec3f limb1, ofVec3f limb2);
+  ofVec3f get_segment(ofPoint joint1, ofPoint joint2);
+  float get_angle(ofVec3f segment1, ofVec3f segment2); // Angle between two arm segments. 
   
 };
 

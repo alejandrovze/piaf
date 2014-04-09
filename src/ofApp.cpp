@@ -16,9 +16,13 @@ void ofApp::setup(){
   scrH = wSize.y;
   printf("w: %d h: %d\n", scrW, scrH);
   
+  //------------------------------------
+  
   gvf_kinect.setup();
   
   kinect_interface.setup(&gvf_kinect);
+  
+  //------------------------------------
   
   initColors();
   
@@ -48,6 +52,8 @@ void ofApp::draw(){
   
   ofDisableAlphaBlending();
   
+  ofSetColor(150, 150, 150);
+  
   // show the current frame rate
   ofDrawBitmapString("FPS " + ofToString(ofGetFrameRate(), 0), ofGetWidth() - 200, 25);
   
@@ -73,12 +79,26 @@ void ofApp::draw(){
     is_playing = "Is Not Playing";
   }
   int n_templates = gvf_kinect.get_n_templates();
+  int n_records = gvf_kinect.get_n_records();
+  int current_record = gvf_kinect.get_current_record();
+  string mode;
   
-  ofDrawBitmapString(state + " " + is_playing + " " + ofToString(n_templates) + "templates", ofGetWidth() - 500, 60);
+  if (gvf_kinect.get_is_live()) {
+    mode = "live";
+  }
+  else {
+    mode = "vcr";
+  }
   
-  gvf_kinect.draw();
+  ofDrawBitmapString(state + " " + is_playing + " " + ofToString(n_templates) + "templates", ofGetWidth() - 400, 60);
+  ofDrawBitmapString(state + " " + is_playing + " " + ofToString(n_records) + " records", ofGetWidth() - 400, 80);
+  ofDrawBitmapString(ofToString(current_record) + " is current, mode is " + mode, ofGetWidth() - 400, 100);
+  
+  //------------------------------------
   
   kinect_interface.draw();
+  
+  //------------------------------------
   
 }
 
@@ -110,11 +130,28 @@ void ofApp::keyPressed(int key){
     else
       gvf_kinect.play();
   }
+  else if (key == 'v') {
+    // Toggle "live" mode (kinect vs recorded gestures).
+    gvf_kinect.set_live(!gvf_kinect.get_is_live());
+  }
   else if (key == 's' || key == 'S') {
-    gvf_kinect.saveGestures("new_file.xml");
+    if (!gvf_kinect.get_is_playing())
+      gvf_kinect.saveGestures("new_file.xml");
+    else
+      cout << "Can only load when stopped." << endl;
   }
   else if (key == 'x' || key == 'X') {
-    gvf_kinect.loadGestures();
+    if (!gvf_kinect.get_is_playing())
+      gvf_kinect.loadGestures();
+    else
+      cout << "Can only load when stopped." << endl;
+  }
+  // Switch current gesture
+  else if (key == ',') {
+    gvf_kinect.set_current_record(gvf_kinect.get_current_record() - 1);
+  }
+  else if (key == '.') {
+    gvf_kinect.set_current_record(gvf_kinect.get_current_record() + 1);
   }
 }
 

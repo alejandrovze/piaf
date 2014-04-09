@@ -11,10 +11,11 @@
 
 //--------------------------------------------------------------
 gvfKinect::gvfKinect():
-current_gesture(-1, "Current"),
 is_playing(false),
+is_live(false),
 state(ofxGVF::STATE_CLEAR),
-current_template(0)
+current_template(-1),
+current_record(-1)
 {
   
 }
@@ -28,8 +29,10 @@ gvfKinect::~gvfKinect() {
 //--------------------------------------------------------------
 void gvfKinect::setup(){  
   
-  // TODO: TESTING INTEGRATING KINECT
   kinect_input.setup();
+  
+  if (kinect_input.get_is_running())
+    is_live = true; // Only set to live if correctly set up the kinect.
   
   // Setup all the gvf handlers (set what data they extract)
   gvf_handlers.push_back(new gvfKinectHandler(0, "Center of Mass", CENTER_OF_MASS));
@@ -46,9 +49,26 @@ void gvfKinect::update(){
   
   int user_id = 0;
   
-  SkeletonDataPoint data_point = kinect_input.get_data();
+  if (is_live) {
+    current_point = kinect_input.get_data();
+  }
+  else {
+    if (is_playing && state == ofxGVF::STATE_FOLLOWING) {
+      if (current_record >= 0 && current_record < skeleton_gesture_records.size()) {
+        
+        current_point = skeleton_gesture_records[current_record].get_data_point(playback_position);
+        
+        cout << "current playing back record " << current_record << " position " << playback_position << endl;
+        
+        // Move forward, check whether or not we have reached end of gesture.
+        ++playback_position;
+        if (playback_position >= skeleton_gesture_records[current_record].get_length())
+          stop();
+      }
+    }
+  }
   
-  update(data_point);
+  update(current_point);
   
 }
 
@@ -67,13 +87,15 @@ void gvfKinect::update(SkeletonDataPoint data_point){
       
     }
     else if (state == ofxGVF::STATE_FOLLOWING ) {
-      // Add data to current gesture
-      current_gesture.add_data(data_point);
       
+      // Add data to record
+      if (is_live)
+        skeleton_gesture_records[current_record].add_data(data_point);
+        
       // Send to GVFs
       gvf_input(data_point);
       
-      cout << "Most probable is " << gvf_handlers[0]->getIndexMostProbable() << endl;
+//      cout << "Most probable is " << gvf_handlers[0]->getIndexMostProbable() << endl;
     }
     else if (state == ofxGVF::STATE_CLEAR) {
       // Do nothing
@@ -83,15 +105,10 @@ void gvfKinect::update(SkeletonDataPoint data_point){
 }
 
 //--------------------------------------------------------------
-void gvfKinect::draw() {
-  
-}
-
-//--------------------------------------------------------------
 //--------------------------------------------------------------
 
 //--------------------------------------------------------------
-int gvfKinect::addTemplate() {
+int gvfKinect::add_template() {
   
   int template_id = skeleton_templates.size();
   
@@ -100,6 +117,19 @@ int gvfKinect::addTemplate() {
   skeleton_templates.push_back(new_template);
   
   return template_id; // Last index
+  
+}
+
+// Adds a recorded gesture
+int gvfKinect::add_record() {
+  
+  int record_id = skeleton_gesture_records.size();
+  
+  SkeletonGesture new_record(record_id, "Record");
+  
+  skeleton_gesture_records.push_back(new_record);
+  
+  return record_id; // Last index
   
 }
 
@@ -146,9 +176,12 @@ void gvfKinect::follow() {
 //--------------------------------------------------------------
 void gvfKinect::clear() {
   if (!is_playing) {
-    vector<SkeletonGesture> blank;
-    skeleton_templates.swap(blank);
+    skeleton_templates.clear();
     cout << "N templates after clear: " << get_n_templates() << endl;
+    
+    skeleton_gesture_records.clear();
+    cout << "N records after clear: " << get_n_records() << endl;
+    
     state = ofxGVF::STATE_CLEAR;
     
     // Set state for each gvf
@@ -166,10 +199,15 @@ void gvfKinect::clear() {
 //MARK: Sets
 //--------------------------------------------------------------
 void gvfKinect::play() {
-  if (!is_playing) {
+  
+  // Switch if stopped and in learning or following mode.
+  if (!is_playing && state != ofxGVF::STATE_CLEAR) {
+    
+    // Switch State
+    is_playing = true;
     
     if (state == ofxGVF::STATE_LEARNING) {
-      current_template = addTemplate();
+      current_template = add_template();
       
       // Add template to each gvf
       for (std::vector<gvfKinectHandler*>::iterator gvfh = gvf_handlers.begin();
@@ -178,16 +216,14 @@ void gvfKinect::play() {
         (*gvfh)->addTemplate();
       }
       
-      is_playing = true;
-      
     }
     else if (state == ofxGVF::STATE_FOLLOWING ) {
-      current_gesture.clear(); // Reset current_gesture
       
-      is_playing = true;
-    }
-    else if (state == ofxGVF::STATE_CLEAR) {
-      // Do nothing.
+      if (is_live)
+        current_record = add_record();
+      else
+        playback_position = 0;
+      
     }
     
   }
@@ -203,7 +239,11 @@ void gvfKinect::stop() {
       is_playing = false;
     }
     else if (state == ofxGVF::STATE_FOLLOWING ) {
-      cout << "Followed gesture of length " << current_gesture.get_length() << endl;
+      
+      if (is_live)
+        cout << "Followed gesture of length " << skeleton_gesture_records[current_record].get_length() << endl;
+      else
+        cout << "Played back gesture of length " << skeleton_gesture_records[current_record].get_length() << endl;
       
       is_playing = false;
     }
@@ -228,6 +268,19 @@ void gvfKinect::gvf_input(SkeletonDataPoint data_point) {
 
 
 
+void gvfKinect::set_live(bool _is_live) {
+  is_live = _is_live;
+}
+
+//--------------------------------------------------------------
+void gvfKinect::set_current_record(int _current_record) {
+  
+  if (_current_record >= 0 && _current_record < get_n_records())
+    current_record = _current_record;
+  
+}
+
+
 
 //MARK: GETS
 //--------------------------------------------------------------
@@ -241,12 +294,44 @@ bool gvfKinect::get_is_playing() {
 }
 
 //--------------------------------------------------------------
+bool gvfKinect::get_is_live() {
+  return is_live;
+}
+
+//--------------------------------------------------------------
 int gvfKinect::get_n_templates() {
   return skeleton_templates.size();
 }
 
 //--------------------------------------------------------------
+int gvfKinect::get_n_records() {
+  return skeleton_gesture_records.size();
+}
 
+//--------------------------------------------------------------
+int gvfKinect::get_current_record() {
+  return current_record;
+}
+
+//--------------------------------------------------------------
+openni::VideoFrameRef gvfKinect:: get_depth_frame() {
+  if (is_live)
+    return kinect_input.get_depth_frame();
+  else
+    return;
+}
+
+//--------------------------------------------------------------
+SkeletonDataPoint gvfKinect::get_current_point() {
+  
+  return current_point;
+}
+
+//--------------------------------------------------------------
+SkeletonDataPoint gvfKinect::get_depth_data_point() {
+  
+  return kinect_input.get_depth_data();
+}
 
 
 
@@ -274,69 +359,84 @@ void gvfKinect::saveGestures(string filename) {
   ofxXmlSettings gesture_file;
   
   for (int i = 0; i < skeleton_templates.size(); ++i) {
-    // write skeleton gesture (pass file by reference)
     
-    SkeletonGesture* gesture = &skeleton_templates[i];
+    SkeletonGesture* saved_gesture = &skeleton_templates[i];
     
-    gesture_file.addTag("Gesture");
-    gesture_file.pushTag("Gesture", i);
+    writeGesture(&gesture_file, saved_gesture, i, "Template");
     
-    // Metadata
-    gesture_file.addValue("Id", gesture->get_id());
-    gesture_file.addValue("Name", gesture->get_name());
-    
-    // Data
-    for (int j = 0; j < gesture->get_length(); ++j) {
-      gesture_file.addTag("DataPoint");
-      gesture_file.pushTag("DataPoint", j);
-      
-      SkeletonDataPoint point = gesture->get_data_point(j);
-      
-      gesture_file.addTag("BBoxMin");
-      gesture_file.pushTag("BBoxMin", 0);
-      gesture_file.addValue("X", point.bounding_box_min.x);
-      gesture_file.addValue("Y", point.bounding_box_min.y);
-      gesture_file.addValue("Z", point.bounding_box_min.z);
-      gesture_file.popTag();
-      
-      gesture_file.addTag("BBoxMax");
-      gesture_file.pushTag("BBoxMax", 0);
-      gesture_file.addValue("X", point.bounding_box_max.x);
-      gesture_file.addValue("Y", point.bounding_box_max.y);
-      gesture_file.addValue("Z", point.bounding_box_max.z);
-      gesture_file.popTag();
-      
-      gesture_file.addTag("CenterMass");
-      gesture_file.pushTag("CenterMass", 0);
-      gesture_file.addValue("X", point.center_of_mass.x);
-      gesture_file.addValue("Y", point.center_of_mass.y);
-      gesture_file.addValue("Z", point.center_of_mass.z);
-      gesture_file.popTag();
-      
-      for (int k = 0; k < N_JOINTS; ++k) {
-        
-        ofPoint joint = point.joints[k];
-        
-        gesture_file.addTag("Joints");
-        gesture_file.pushTag("Joints", k);
-        gesture_file.addValue("X", joint.x);
-        gesture_file.addValue("Y", joint.y);
-        gesture_file.addValue("Z", joint.z);
-        gesture_file.popTag();
-        
-      }
-      
-      gesture_file.popTag(); // "Data Point"
-    
-    }
-    
-    gesture_file.popTag(); // Pop Tag "Gesture"
+    cout << "Wrote template of length " << saved_gesture->get_length() << endl;
     
   }
   
-  cout << "written to file" << endl;
+  for (int i = 0; i < skeleton_gesture_records.size(); ++i) {
+    
+    SkeletonGesture* saved_gesture = &skeleton_gesture_records[i];
+    
+    writeGesture(&gesture_file, saved_gesture, i, "Record");
+    
+    cout << "Wrote record of length " << saved_gesture->get_length() << endl;
+    
+  }
   
   gesture_file.save(filename);
+  
+}
+
+void gvfKinect::writeGesture(ofxXmlSettings* gesture_file, SkeletonGesture* saved_gesture, int id, string type) {
+  
+  gesture_file->addTag(type); // Template or Record
+  gesture_file->pushTag(type, id);
+  
+  // Metadata
+  gesture_file->addValue("Id", saved_gesture->get_id());
+  gesture_file->addValue("Name", saved_gesture->get_name());
+  
+  // Data
+  for (int j = 0; j < saved_gesture->get_length(); ++j) {
+    gesture_file->addTag("DataPoint");
+    gesture_file->pushTag("DataPoint", j);
+    
+    SkeletonDataPoint point = saved_gesture->get_data_point(j);
+    
+    gesture_file->addTag("BBoxMin");
+    gesture_file->pushTag("BBoxMin", 0);
+    gesture_file->addValue("X", point.bounding_box_min.x);
+    gesture_file->addValue("Y", point.bounding_box_min.y);
+    gesture_file->addValue("Z", point.bounding_box_min.z);
+    gesture_file->popTag();
+    
+    gesture_file->addTag("BBoxMax");
+    gesture_file->pushTag("BBoxMax", 0);
+    gesture_file->addValue("X", point.bounding_box_max.x);
+    gesture_file->addValue("Y", point.bounding_box_max.y);
+    gesture_file->addValue("Z", point.bounding_box_max.z);
+    gesture_file->popTag();
+    
+    gesture_file->addTag("CenterMass");
+    gesture_file->pushTag("CenterMass", 0);
+    gesture_file->addValue("X", point.center_of_mass.x);
+    gesture_file->addValue("Y", point.center_of_mass.y);
+    gesture_file->addValue("Z", point.center_of_mass.z);
+    gesture_file->popTag();
+    
+    for (int k = 0; k < N_JOINTS; ++k) {
+      
+      ofPoint joint = point.joints[k];
+      
+      gesture_file->addTag("Joints");
+      gesture_file->pushTag("Joints", k);
+      gesture_file->addValue("X", joint.x);
+      gesture_file->addValue("Y", joint.y);
+      gesture_file->addValue("Z", joint.z);
+      gesture_file->popTag();
+      
+    }
+    
+    gesture_file->popTag(); // "Data Point"
+    
+  }
+  
+  gesture_file->popTag(); // Pop Tag Gesture-Type (Template or Record)
   
 }
 
@@ -365,69 +465,95 @@ void gvfKinect::loadGestures(string filename) {
   }
   
   clear();
+  
+  // Load recorded gestures (for playback)
+  int num_records = gesture_file.getNumTags("Record");
+  cout << num_records << " gesture records" << endl;
+  
+  for (int i = 0; i < num_records; ++i) {
+    loadGesture(&gesture_file, i, "Record");
+  }
+  
+  // Learn templates
   learn();
   
-  int num_gestures = gesture_file.getNumTags("Gesture");
+  int num_templates = gesture_file.getNumTags("Template");
+  cout << num_templates << " templates" << endl;
   
-  cout << num_gestures << " gestures" << endl;
-  if (num_gestures < 1)
-    return;
-  
-  for (int i = 0; i < num_gestures; ++i) {
-    gesture_file.pushTag("Gesture", i);
-    
-    play();
-    
-    gesture_file.getValue("Id", -1);
-    gesture_file.getValue("Name", "name");
-    
-    int num_data_points = gesture_file.getNumTags("DataPoint");
-    
-    for (int j = 0; j < num_data_points; ++j) {
-      
-      SkeletonDataPoint new_point;
-      
-      gesture_file.pushTag("DataPoint", j);
-      
-      
-      gesture_file.pushTag("BBoxMin", 0);
-      new_point.bounding_box_min = ofPoint(gesture_file.getValue("X", 0.0),
-                                           gesture_file.getValue("Y", 0.0),
-                                           gesture_file.getValue("Z", 0.0));
-      gesture_file.popTag();
-      
-      gesture_file.pushTag("BBoxMax", 0);
-      new_point.bounding_box_max = ofPoint(gesture_file.getValue("X", 0.0),
-                                           gesture_file.getValue("Y", 0.0),
-                                           gesture_file.getValue("Z", 0.0));
-      gesture_file.popTag();
-      
-      gesture_file.pushTag("CenterMass", 0);
-      new_point.center_of_mass = ofPoint(gesture_file.getValue("X", 0.0),
-                                           gesture_file.getValue("Y", 0.0),
-                                           gesture_file.getValue("Z", 0.0));
-      gesture_file.popTag();
-
-      
-      for (int k = 0; k < N_JOINTS; ++k) {
-        
-        gesture_file.pushTag("Joints", k);
-        new_point.joints.push_back(ofPoint(gesture_file.getValue("X", 0.0),
-                                gesture_file.getValue("Y", 0.0),
-                                gesture_file.getValue("Z", 0.0)));
-        gesture_file.popTag();
-        
-      }
-      
-      update(new_point);
-      
-      gesture_file.popTag(); // "Data Point"
-    }
-    
-    stop();
-    
-    gesture_file.popTag(); // "Gesture"
+  for (int i = 0; i < num_templates; ++i) {
+    loadGesture(&gesture_file, i, "Template");
   }
   
 }
 
+//--------------------------------------------------------------
+void gvfKinect::loadGesture(ofxXmlSettings* gesture_file, int id, string type) {
+  
+  gesture_file->pushTag(type, id);
+  
+  gesture_file->getValue("Id", -1);
+  
+  string name = gesture_file->getValue("Name", "name");
+  
+  bool is_template = (type.compare("Template") == 0);
+  
+  if (is_template)
+    play();
+  else
+    current_record = add_record();
+  
+  int num_data_points = gesture_file->getNumTags("DataPoint");
+  
+  for (int j = 0; j < num_data_points; ++j) {
+    
+    SkeletonDataPoint new_point;
+    
+    gesture_file->pushTag("DataPoint", j);
+    
+    
+    gesture_file->pushTag("BBoxMin", 0);
+    new_point.bounding_box_min = ofPoint(gesture_file->getValue("X", 0.0),
+                                         gesture_file->getValue("Y", 0.0),
+                                         gesture_file->getValue("Z", 0.0));
+    gesture_file->popTag();
+    
+    gesture_file->pushTag("BBoxMax", 0);
+    new_point.bounding_box_max = ofPoint(gesture_file->getValue("X", 0.0),
+                                         gesture_file->getValue("Y", 0.0),
+                                         gesture_file->getValue("Z", 0.0));
+    gesture_file->popTag();
+    
+    gesture_file->pushTag("CenterMass", 0);
+    new_point.center_of_mass = ofPoint(gesture_file->getValue("X", 0.0),
+                                       gesture_file->getValue("Y", 0.0),
+                                       gesture_file->getValue("Z", 0.0));
+    gesture_file->popTag();
+    
+    
+    for (int k = 0; k < N_JOINTS; ++k) {
+      
+      gesture_file->pushTag("Joints", k);
+      new_point.joints.push_back(ofPoint(gesture_file->getValue("X", 0.0),
+                                         gesture_file->getValue("Y", 0.0),
+                                         gesture_file->getValue("Z", 0.0)));
+      gesture_file->popTag();
+      
+    }
+    
+    if (is_template)
+      update(new_point);
+    else
+      skeleton_gesture_records[current_record].add_data(new_point);
+    
+    gesture_file->popTag(); // "Data Point"
+  }
+  
+  if (is_template)
+    stop();
+  
+  gesture_file->popTag(); // "Gesture"
+  
+  // Confirmation
+  cout << type << " added of length " << num_data_points << endl;
+  
+}

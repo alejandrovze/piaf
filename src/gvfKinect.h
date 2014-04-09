@@ -36,8 +36,6 @@ public:
   void update();
   void update(SkeletonDataPoint data_point);
   
-  void draw();
-  
   // Set State
   void learn();
   void follow();
@@ -47,41 +45,66 @@ public:
   void play();
   void stop();
   
+  // Set to live or recorded input
+  void set_live(bool _is_live);
+  
+  
+  // SETS
+  void set_current_record(int _current_record);
+  
+  // GETS
+  ofxGVF::ofxGVFState get_state();
+  bool get_is_playing();
+  bool get_is_live();
+  int get_n_templates();
+  int get_n_records();
+  int get_current_record();
+  SkeletonDataPoint get_current_point();
+  SkeletonDataPoint get_depth_data_point(); // For drawing
+  
+  openni::VideoFrameRef get_depth_frame();
+  
   // LOAD / SAVE
   void saveGestures();
   void saveGestures(string filename);
   void loadGestures();
   void loadGestures(string filename);
   
-  // GETS
-  ofxGVF::ofxGVFState get_state();
-  bool get_is_playing();
-  int get_n_templates();
-  
 private:
   
   // State
   ofxGVF::ofxGVFState state;
   bool is_playing;
+  bool is_live;
   
-  // Input and gestures;
+  // ---------------------------------------
+  
+  // Kinect Input
+  
+  KinectInput kinect_input;
+  
+  SkeletonDataPoint current_point;
   
   vector<SkeletonGesture> skeleton_templates;
-  SkeletonGesture current_gesture;
-  int addTemplate();
+  int add_template();
   int current_template;
-  // TODO: addTemplates with specific metadata
+  
+  vector<SkeletonGesture> skeleton_gesture_records;
+  int add_record();
+  int current_record;
+  int playback_position;
+  
+  // ---------------------------------------
   
   // GVF Proccesing
   
   vector<gvfKinectHandler*> gvf_handlers;
-  
   void gvf_input(SkeletonDataPoint data_point);
   
+  // ---------------------------------------
   
-  // TODO: TESTING INTEGRATING KINECT
-  KinectInput kinect_input;
-  
+  void writeGesture(ofxXmlSettings* gesture_file, SkeletonGesture* saved_gesture, int id, string type);
+  void loadGesture(ofxXmlSettings* gesture_file, int id, string type);
   
 };
 

@@ -418,7 +418,6 @@
 		C6E9013B18EE393400C0F2C1 /* PrimeSense.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PrimeSense.h; path = "../../../../../openNI_2/OpenNI-MacOSX-x64-2.2/Include/PrimeSense.h"; sourceTree = "<group>"; };
 		C6E9013C18EE393400C0F2C1 /* PS1080.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PS1080.h; path = "../../../../../openNI_2/OpenNI-MacOSX-x64-2.2/Include/PS1080.h"; sourceTree = "<group>"; };
 		C6E9013D18EE393400C0F2C1 /* PSLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PSLink.h; path = "../../../../../openNI_2/OpenNI-MacOSX-x64-2.2/Include/PSLink.h"; sourceTree = "<group>"; };
-		C6E9014518EE4E1800C0F2C1 /* NiteSampleUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NiteSampleUtilities.h; sourceTree = "<group>"; };
 		C6E9014818EE556300C0F2C1 /* libFreenectDriver.0.4.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libFreenectDriver.0.4.1.dylib; sourceTree = "<group>"; };
 		C6E9014C18EE573E00C0F2C1 /* KinectInput.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KinectInput.cpp; sourceTree = "<group>"; };
 		C6E9014D18EE573E00C0F2C1 /* KinectInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KinectInput.h; sourceTree = "<group>"; };
@@ -601,6 +600,26 @@
 			name = src;
 			sourceTree = "<group>";
 		};
+		C60B710118EF49090097565F /* Interface */ = {
+			isa = PBXGroup;
+			children = (
+				C61F54ED18EC4B8000DAF3CC /* gvfKinectInterface.cpp */,
+				C61F54EE18EC4B8000DAF3CC /* gvfKinectInterface.h */,
+			);
+			name = Interface;
+			sourceTree = "<group>";
+		};
+		C60B710218EF49150097565F /* gvfKinect */ = {
+			isa = PBXGroup;
+			children = (
+				C643557818E600F3008AE100 /* gvfKinect.cpp */,
+				C643557918E600F3008AE100 /* gvfKinect.h */,
+				C643557B18E6010F008AE100 /* gvfKinectHandler.cpp */,
+				C643557C18E6010F008AE100 /* gvfKinectHandler.h */,
+			);
+			name = gvfKinect;
+			sourceTree = "<group>";
+		};
 		C61F54F018EC52D100DAF3CC /* ofxUI */ = {
 			isa = PBXGroup;
 			children = (
@@ -781,7 +800,6 @@
 				C67106EA18E8D421001D3E51 /* SkeletonGesture.h */,
 				C6E9014C18EE573E00C0F2C1 /* KinectInput.cpp */,
 				C6E9014D18EE573E00C0F2C1 /* KinectInput.h */,
-				C6E9014518EE4E1800C0F2C1 /* NiteSampleUtilities.h */,
 			);
 			name = kinect;
 			sourceTree = "<group>";
@@ -975,12 +993,8 @@
 				E4B69E1D0A3A1BDC003C02F2 /* main.cpp */,
 				E4B69E1E0A3A1BDC003C02F2 /* ofApp.cpp */,
 				E4B69E1F0A3A1BDC003C02F2 /* ofApp.h */,
-				C643557818E600F3008AE100 /* gvfKinect.cpp */,
-				C643557918E600F3008AE100 /* gvfKinect.h */,
-				C643557B18E6010F008AE100 /* gvfKinectHandler.cpp */,
-				C643557C18E6010F008AE100 /* gvfKinectHandler.h */,
-				C61F54ED18EC4B8000DAF3CC /* gvfKinectInterface.cpp */,
-				C61F54EE18EC4B8000DAF3CC /* gvfKinectInterface.h */,
+				C60B710218EF49150097565F /* gvfKinect */,
+				C60B710118EF49090097565F /* Interface */,
 				C6A49F4E18E31BD600C28D49 /* kinect */,
 			);
 			path = src;

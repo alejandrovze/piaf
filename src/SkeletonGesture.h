@@ -12,6 +12,12 @@
 #include <iostream>
 #include "ofMain.h"
 
+typedef enum
+{
+  GESTURE_TEMPLATE,
+  GESTURE_RECORD
+  
+} GestureType;
 
 #define N_USERS 1
 #define N_JOINTS 15

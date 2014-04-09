@@ -192,12 +192,12 @@ RecognitionInfo gvfKinectHandler::getRecogInfo(int template_id) {
 //-----------------------------------------------------------------------
 //-----------------------------------------------------------------------
 
-ofVec3f gvfKinectHandler::get_limb(ofPoint joint1, ofPoint joint2) {
+ofVec3f gvfKinectHandler::get_segment(ofPoint joint1, ofPoint joint2) {
   return ofVec3f(joint2 - joint1);
 }
 
-float gvfKinectHandler::get_angle(ofVec3f limb1, ofVec3f limb2) {
-  return limb1.angle(- limb2);
+float gvfKinectHandler::get_angle(ofVec3f segment1, ofVec3f segment2) {
+  return segment1.angle(- segment2);
 }
 
 

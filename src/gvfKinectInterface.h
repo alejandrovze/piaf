@@ -16,8 +16,6 @@
 
 #include "gvfKinect.h"
 
-#endif /* defined(__mvf__gvfKinectInterface__) */
-
 class gvfKinectInterface {
   
 public:
@@ -38,6 +36,30 @@ private:
   ofxUICanvas* status_gui;
   void initialiseStatusGui();
   void updateStatusGui();
+  // -------------------
+  
+  // --- KINECT GUI ---
+  void InitialiseKinectGui();
+  void UpdateKinectGui();
+  
+  ofImage depth_image;
+  unsigned char *grayPixels;
+  
+  // Dimensions of frame in which to display Kinect.
+  int kinect_width;
+  int kinect_height;
+  // Dimensions of original depth image. 
+  int depth_width;
+  int depth_height;
+  
+  void UpdateDepth(openni::VideoFrameRef depth_frame);
+  float* CalculateHistogram(int histogramSize, const openni::VideoFrameRef& depthFrame);
+  
+  void UpdateSkeleton(SkeletonDataPoint new_point);
+  void DisplaySkeleton(SkeletonDataPoint new_point);
+  // -------------------
+  
+  
 
 //  ofParameter<string> currentState;
 //  ofParameter<bool> inputOnOff;
@@ -109,3 +131,6 @@ private:
   
   
 };
+
+
+#endif /* defined(__mvf__gvfKinectInterface__) */

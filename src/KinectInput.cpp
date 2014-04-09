@@ -12,7 +12,8 @@
 KinectInput* KinectInput::ms_self = NULL;
 
 
-KinectInput::KinectInput()
+KinectInput::KinectInput():
+is_running(false)
 {
 	ms_self = this;
   
@@ -70,7 +71,10 @@ openni::Status KinectInput::setup()
 		return openni::STATUS_ERROR;
 	}
   
-  // If all else has succeeded. 
+  // If all else has succeeded.
+  
+  is_running = true;
+  
   return openni::STATUS_OK;
   
 }
@@ -92,19 +96,25 @@ SkeletonDataPoint KinectInput::get_data(int user_id) {
     
     if (user.getSkeleton().getState() == nite::SKELETON_TRACKED)
     {
+      
+      // Center of Mass
+      
+      ofPoint com = ofPoint(user.getCenterOfMass().x, user.getCenterOfMass().y, user.getCenterOfMass().z);
+      
+      data_point.center_of_mass = com;
+      
       // Joints
       
       for (nite::JointType joint = nite::JOINT_HEAD; joint < nite::JOINT_RIGHT_FOOT; joint++) {
         
         const nite::Point3f joint_pos = user.getSkeleton().getJoint(joint).getPosition();
         
-        data_point.joints.push_back(ofPoint(joint_pos.x, joint_pos.y, joint_pos.z));
+        // Joint position relative to center of mass.
+        data_point.joints.at(joint) = (com - ofPoint(joint_pos.x, joint_pos.y, joint_pos.z));
         
       }
       
-      // Center of Mass
-      
-      data_point.center_of_mass = ofPoint(user.getCenterOfMass().x, user.getCenterOfMass().y, user.getCenterOfMass().z);
+      // TODO: bounding box
       
       data_point.bounding_box_min = ofPoint(user.getBoundingBox().min.x, user.getBoundingBox().min.y, user.getBoundingBox().min.z);
       
@@ -116,12 +126,48 @@ SkeletonDataPoint KinectInput::get_data(int user_id) {
   
 }
 
-
-// TODO: Get State
-const nite::UserData& KinectInput::get_user(int user_id) {
+SkeletonDataPoint KinectInput::get_depth_data(int user_id) {
   
-  // Update Data
-  nite::UserTrackerFrameRef userTrackerFrame;
+  SkeletonDataPoint depth_data_point;
+  
+  const nite::UserData& user = get_user(user_id);
+  
+  nite::UserTracker* pUserTracker;
+  
+  if (user.isNew())
+  {
+    user_tracker->startSkeletonTracking(user.getId());
+  }
+  else if (!user.isLost())
+  {
+    
+    if (user.getSkeleton().getState() == nite::SKELETON_TRACKED)
+    {
+      // Joints
+      
+      for (nite::JointType joint = nite::JOINT_HEAD; joint < nite::JOINT_RIGHT_FOOT; joint++) {
+        
+        const nite::Point3f joint_pos = user.getSkeleton().getJoint(joint).getPosition();
+        
+        depth_data_point.joints.at(joint) = convert_world_to_depth(ofPoint(joint_pos.x, joint_pos.y, joint_pos.z));
+        
+      }
+      
+      // Center of Mass
+      
+      depth_data_point.center_of_mass = convert_world_to_depth(ofPoint(user.getCenterOfMass().x, user.getCenterOfMass().y, user.getCenterOfMass().z));
+      
+      depth_data_point.bounding_box_min = convert_world_to_depth(ofPoint(user.getBoundingBox().min.x, user.getBoundingBox().min.y, user.getBoundingBox().min.z));
+      
+      depth_data_point.bounding_box_max = convert_world_to_depth(ofPoint(user.getBoundingBox().max.x, user.getBoundingBox().max.y, user.getBoundingBox().max.z));
+    }
+  }
+  
+  return depth_data_point;
+}
+
+
+const nite::UserData& KinectInput::get_user(int user_id) {
   
 	nite::Status rc = user_tracker->readFrame(&userTrackerFrame);
   
@@ -184,5 +230,31 @@ const nite::UserData& KinectInput::get_user(int user_id) {
   return user;
 
 }
-          
+
+
+
+
+
+openni::VideoFrameRef KinectInput::get_depth_frame() {
+
+  return userTrackerFrame.getDepthFrame();
+  
+}
+
+
+ofPoint KinectInput::convert_world_to_depth(ofPoint coordinates) {
+  
+  float x;
+  float y;
+  
+  user_tracker->convertJointCoordinatesToDepth(coordinates.x, coordinates.y, coordinates.z, &x, &y);
+  
+  return ofPoint(x,y);
+  
+}
+
+bool KinectInput::get_is_running() {
+  return is_running;
+}
+
           
