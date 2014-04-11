@@ -16,24 +16,41 @@
 
 #include "SkeletonGesture.h"
 
-// 
-
 typedef enum
 {
   CENTER_OF_MASS,
+  HEAD,
   
   LEFT_ELBOW,
   RIGHT_ELBOW,
   
   LEFT_KNEE,
-  RIGHT_KNEE,
-  
-  RIGHT_ARM,
-  LEFT_ARM,
-  RIGHT_LEG,
-  LEFT_LEG
+  RIGHT_KNEE
   
 } KinectFeature;
+
+typedef enum
+{
+	JOINT_HEAD,
+	JOINT_NECK,
+  
+	JOINT_LEFT_SHOULDER,
+	JOINT_RIGHT_SHOULDER,
+	JOINT_LEFT_ELBOW,
+	JOINT_RIGHT_ELBOW,
+	JOINT_LEFT_HAND,
+	JOINT_RIGHT_HAND,
+  
+	JOINT_TORSO,
+  
+	JOINT_LEFT_HIP,
+	JOINT_RIGHT_HIP,
+	JOINT_LEFT_KNEE,
+	JOINT_RIGHT_KNEE,
+	JOINT_LEFT_FOOT,
+	JOINT_RIGHT_FOOT,
+} JointType;
+
 
 // Rather than a vector, struct to hold estimated status for a given vector.
 typedef struct {
@@ -49,13 +66,15 @@ class gvfKinectHandler{
   
 public:
 
-  gvfKinectHandler(int _gvf_id, string _gvf_name, KinectFeature feature);
+  gvfKinectHandler(int _gvf_id, string _gvf_name, KinectFeature feature, int n_dimensions);
   ~gvfKinectHandler();
   
   void setState(ofxGVF::ofxGVFState state);
   void addTemplate();
   void gvf_data(SkeletonDataPoint data_point);
   void gvf_data(ofPoint p); // Kinect Input is 3D point.
+  void gvf_data(float f);
+  void gvf_data(vector<float> vect);
   
   // Metadata
   int gvf_id;

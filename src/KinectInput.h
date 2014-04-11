@@ -28,10 +28,13 @@ public:
   
 	virtual openni::Status setup();
   void close();
+  void update();
   
   SkeletonDataPoint get_data(int user_id = 0);
   const nite::UserData& get_user(int user_id = 0);
   openni::VideoFrameRef get_depth_frame();
+  
+  nite::SkeletonState get_state(int user_id = 0);
   
   ofPoint convert_world_to_depth(ofPoint coordinates);
   

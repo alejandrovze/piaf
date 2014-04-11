@@ -23,6 +23,7 @@ current_record(-1)
 // TODO
 //--------------------------------------------------------------
 gvfKinect::~gvfKinect() {
+  
 }
 
 
@@ -35,7 +36,14 @@ void gvfKinect::setup(){
     is_live = true; // Only set to live if correctly set up the kinect.
   
   // Setup all the gvf handlers (set what data they extract)
-  gvf_handlers.push_back(new gvfKinectHandler(0, "Center of Mass", CENTER_OF_MASS));
+  
+  // MARK: Setup Handlers
+  gvf_handlers.push_back(new gvfKinectHandler(0, "Head", HEAD, 3));
+  gvf_handlers.push_back(new gvfKinectHandler(1, "Center of Mass", CENTER_OF_MASS, 3));
+  gvf_handlers.push_back(new gvfKinectHandler(2, "Right Elbow", RIGHT_ELBOW, 1));
+  gvf_handlers.push_back(new gvfKinectHandler(3, "Left Elbow", LEFT_ELBOW, 1));
+  gvf_handlers.push_back(new gvfKinectHandler(4, "Right Knee", RIGHT_KNEE, 1));
+  gvf_handlers.push_back(new gvfKinectHandler(5, "Left Knee", LEFT_KNEE, 1));
   
 }
 
@@ -50,6 +58,8 @@ void gvfKinect::update(){
   int user_id = 0;
   
   if (is_live) {
+    kinect_input.update();
+    
     current_point = kinect_input.get_data();
   }
   else {
@@ -57,8 +67,6 @@ void gvfKinect::update(){
       if (current_record >= 0 && current_record < skeleton_gesture_records.size()) {
         
         current_point = skeleton_gesture_records[current_record].get_data_point(playback_position);
-        
-        cout << "current playing back record " << current_record << " position " << playback_position << endl;
         
         // Move forward, check whether or not we have reached end of gesture.
         ++playback_position;
@@ -79,6 +87,7 @@ void gvfKinect::update(SkeletonDataPoint data_point){
   
   if (is_playing) {
     if (state == ofxGVF::STATE_LEARNING) {
+      
       // Add data to template
       skeleton_templates[current_template].add_data(data_point);
       
@@ -91,17 +100,15 @@ void gvfKinect::update(SkeletonDataPoint data_point){
       // Add data to record
       if (is_live)
         skeleton_gesture_records[current_record].add_data(data_point);
-        
+      
       // Send to GVFs
       gvf_input(data_point);
       
-//      cout << "Most probable is " << gvf_handlers[0]->getIndexMostProbable() << endl;
     }
     else if (state == ofxGVF::STATE_CLEAR) {
       // Do nothing
     }
   }
-  
 }
 
 //--------------------------------------------------------------
@@ -262,12 +269,15 @@ void gvfKinect::gvf_input(SkeletonDataPoint data_point) {
     
     (*handler_it)->gvf_data(data_point);
     
+//    int gvf_index = std::distance(gvf_handlers.begin(), handler_it);
+//    
+//    cout << "Most probable is " << (*handler_it)->getIndexMostProbable() << " of "
+//    << (*handler_it)->getTemplateCount() << " templates" << endl;
   }
   
 }
 
-
-
+//--------------------------------------------------------------
 void gvfKinect::set_live(bool _is_live) {
   is_live = _is_live;
 }
@@ -275,9 +285,10 @@ void gvfKinect::set_live(bool _is_live) {
 //--------------------------------------------------------------
 void gvfKinect::set_current_record(int _current_record) {
   
-  if (_current_record >= 0 && _current_record < get_n_records())
-    current_record = _current_record;
-  
+  if (!is_playing) {
+    if (_current_record >= 0 && _current_record < get_n_records())
+      current_record = _current_record;
+  }
 }
 
 
@@ -323,17 +334,90 @@ openni::VideoFrameRef gvfKinect:: get_depth_frame() {
 
 //--------------------------------------------------------------
 SkeletonDataPoint gvfKinect::get_current_point() {
-  
   return current_point;
 }
 
 //--------------------------------------------------------------
 SkeletonDataPoint gvfKinect::get_depth_data_point() {
-  
   return kinect_input.get_depth_data();
 }
 
+//--------------------------------------------------------------
+string gvfKinect::get_tracking_state() {
+  
+  switch(kinect_input.get_state())
+  {
+    case nite::SKELETON_NONE:
+      return "NOT TRACKING";
+      break;
+    case nite::SKELETON_CALIBRATING:
+      return "CALIBRATING";
+      break;
+    case nite::SKELETON_TRACKED:
+      return "TRACKING";
+      break;
+    case nite::SKELETON_CALIBRATION_ERROR_NOT_IN_POSE:
+    case nite::SKELETON_CALIBRATION_ERROR_HANDS:
+    case nite::SKELETON_CALIBRATION_ERROR_LEGS:
+    case nite::SKELETON_CALIBRATION_ERROR_HEAD:
+    case nite::SKELETON_CALIBRATION_ERROR_TORSO:
+      return "ERROR";
+      break;
+  }
+}
 
+//--------------------------------------------------------------
+int gvfKinect::get_playback_position() {
+  return playback_position;
+}
+
+//--------------------------------------------------------------
+int gvfKinect::get_current_record_length() {
+  if (skeleton_gesture_records.size() > current_record)
+    return skeleton_gesture_records[current_record].get_length();
+  else
+    return 0;
+}
+
+int gvfKinect::get_n_gvfs() {
+  return gvf_handlers.size();
+}
+
+// TODO: weighting to get "most probable gesture"
+int gvfKinect::get_most_probable() {
+  return -1;
+}
+
+int gvfKinect::get_most_probable(int gvf_index) {
+  
+  if (gvf_index < gvf_handlers.size()) {
+    return gvf_handlers[gvf_index]->getIndexMostProbable();
+  }
+  
+  else {
+    cout << "PROBLEM" << endl;
+    return -1;
+  }
+}
+
+string gvfKinect::get_gvf_name(int gvf_index) {
+  if (gvf_index < gvf_handlers.size()) {
+    return gvf_handlers[gvf_index]->gvf_name;
+  }
+  return "NOT ACTIVE";
+}
+
+
+//--------------------------------------------------------------
+SkeletonGesture* gvfKinect::get_template(int template_index) {
+  
+  if (template_index >= -1 && template_index < skeleton_templates.size()) {
+    return &skeleton_templates[template_index];
+  }
+  else
+    return NULL;
+  
+}
 
 //--------------------------------------------------------------
 // MARK: Load / Save
@@ -533,9 +617,9 @@ void gvfKinect::loadGesture(ofxXmlSettings* gesture_file, int id, string type) {
     for (int k = 0; k < N_JOINTS; ++k) {
       
       gesture_file->pushTag("Joints", k);
-      new_point.joints.push_back(ofPoint(gesture_file->getValue("X", 0.0),
+      new_point.joints[k] = ofPoint(gesture_file->getValue("X", 0.0),
                                          gesture_file->getValue("Y", 0.0),
-                                         gesture_file->getValue("Z", 0.0)));
+                                         gesture_file->getValue("Z", 0.0));
       gesture_file->popTag();
       
     }
@@ -555,5 +639,23 @@ void gvfKinect::loadGesture(ofxXmlSettings* gesture_file, int id, string type) {
   
   // Confirmation
   cout << type << " added of length " << num_data_points << endl;
+  
+}
+
+// TODO
+//--------------------------------------------------------------
+void gvfKinect::delete_template(int template_index) {
+  
+  if (!is_playing) {
+    if (template_index >= -1 && template_index < skeleton_templates.size()) {
+      // remove from template gestures
+      // 
+      
+      return &skeleton_templates[template_index];
+    }
+    else {
+      // No action
+    }
+  }
   
 }

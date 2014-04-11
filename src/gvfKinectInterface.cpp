@@ -16,11 +16,13 @@
 //--------------------------------------------------------------
 void gvfKinectInterface::setup(gvfKinect* _kinect_app) {
   
-  status_gui = new ofxUICanvas();
+//  status_gui = new ofxUICanvas();
   
   kinect_app = _kinect_app;
   
   InitialiseKinectGui();
+  
+  InitialiseTemplatesGui();
   
 }
 
@@ -42,6 +44,8 @@ void gvfKinectInterface::update() {
 void gvfKinectInterface::draw() {
   
   UpdateKinectGui();
+  
+  UpdateTemplatesGui();
   
 }
 
@@ -233,50 +237,7 @@ void gvfKinectInterface::updateStatusGui(){
 //}
 //
 
-//
-////--------------------------------------------------------------
-////MARK: Inputs GUI
-////--------------------------------------------------------------
-//// TODO: Generalize
-//
-////--------------------------------------------------------------
-//void gvfPianoInterface::initialiseInputsGui(){
-//  
-//  inputsGui.setup("Data Inputs");
-//  
-//  inputsInfo = piano_follower_p->getInputsInfo();
-//  
-//  inputSliders.reserve(inputsInfo.size());
-//  
-//  // !!!: Potentially dangerous memory management.
-//  for (std::vector<gvfInputInfo>::iterator it = inputsInfo.begin();
-//       it != inputsInfo.end(); ++it) {
-//    
-//    inputSliders.push_back(ofxVec3SliderDisplay());
-//    inputsGui.add(inputSliders.back().setup(it->inputName, ofVec3f(0.3,0.1, -0.1),
-//                                            ofVec3f(-1.,-1.,-1.), ofVec3f(1.,1.,1.))); //TODO: complete.
-//    
-//    cout << it->inputName << "\n";
-//  }
-//  
-//  inputsGui.setShape(ofRectangle(30, 110, 250, 100));
-//  inputsGui.setPosition(0, 330);
-//  inputsGui.setWidthElements(250);
-//  
-//}
-//
-//// FIXME: Using ofVec3f, not the most generalizable, should be normal vectors really.
-////--------------------------------------------------------------
-//void gvfPianoInterface::updateInputsGui(vector<float> inputData){
-//  
-//  // We are assuming inputs are all 3-dimensional (for now...)
-//  for (int i = 0; i < inputsInfo.size(); i++) {
-//    ofVec3f updated_input(inputData.at(i*3+0), inputData.at(i*3+1), inputData.at(i*3+2));
-//    inputSliders.at(i).displayValue(updated_input);
-//  }
-//  
-//}
-//
+
 ////--------------------------------------------------------------
 ////MARK: Gestures GUI
 ////--------------------------------------------------------------
@@ -399,110 +360,15 @@ void gvfKinectInterface::updateStatusGui(){
 ////}
 //
 //
-//// --------------------------------
-//// MARK: Load/Save
-//// --------------------------------
-////--------------------------------------------------------------
-//void gvfPianoInterface::saveGestures() {
-//  
-//  string filename;
-//  
-//  ofFileDialogResult dialogResult = ofSystemSaveDialog("my_gestures", "Save gestures");
-//  if(!dialogResult.bSuccess)
-//    return;
-//  
-//  stringstream ss;
-//  ss << dialogResult.filePath;
-//  filename = ss.str();
-//  cout << filename;
-//  
-//  piano_follower_p->saveGestures(filename);
-//  cout << "Gestures saved.\n";
-//}
-//
-////--------------------------------------------------------------
-//void gvfPianoInterface::loadGestures() {
-//  string filename;
-//  
-//  ofFileDialogResult dialogResult = ofSystemLoadDialog("Select the file containing gesture data");
-//  if(!dialogResult.bSuccess)
-//    return;
-//  
-//  stringstream ss;
-//  ss << dialogResult.filePath;
-//  filename = ss.str();
-//  cout << filename;
-//  
-//  piano_follower_p->loadGestures(filename);
-//  cout << "Gestures loaded.\n";
-//}
-//
-//
-//
-//// !!!: Maybe just get rid of this
-//void gvfPianoInterface::drawString() {
-//  //
-//  //    if(state == STATE_FOLLOWING){
-//  //
-//  //        //        state_string.append(" ]\nSTATE_FOLLOWING [X]\nSTATE_CLEAR     [ ]");
-//  //
-//  //        //        if(displayParticles)
-//  //        //            gvfh.printParticleInfo(currentGesture);
-//  //
-//  //        // temp will have the partial representation of how gvf is recognising the gesture being performed
-//  //        //        gvfGesture temp = gvfh.getRecognisedGestureRepresentation();
-//  //        //        if(temp.isValid)
-//  //        //        {
-//  //        //            // the estimated gesture will be drawn on the same area
-//  //        //            // as the gesture being performed and starting on the same point
-//  //        ////            ofRectangle da = currentGesture.getDrawArea();
-//  //        //            ofPoint p = currentGesture->getInitialOfPoint();
-//  //        //
-//  //        //            /*
-//  //        //            if(displayEstimatedGesture)
-//  //        //            {
-//  //        //                temp.setAppearance(ofColor(0,255,0), 5, 255, 180, 1);
-//  //        //                temp.draw(templatesScale);
-//  //        //
-//  //        //                temp.setDrawArea(da);
-//  //        //                temp.setInitialPoint(p + 1);
-//  //        //                temp.centraliseDrawing = false;
-//  //        //                temp.draw();
-//  //        //            }
-//  //        //            */
-//  //        //
-//  //        //            /*
-//  //        //            if(displayTemplate)
-//  //        //            {
-//  //        //                // draw the original template for the gesture being recognised
-//  //        //                gvfGesture g = gvfh.getTemplateGesture(gvfh.getIndexMostProbable());
-//  //        //                g.setDrawArea(da);
-//  //        //                g.setInitialPoint(p + 1);
-//  //        //                g.centraliseDrawing = false;
-//  //        //
-//  //        //                // the template's opacity is determined by how probable the recognition is
-//  //        //                g.setAppearance(g.getColor(),
-//  //        //                                1.5, 255, 50,
-//  //        //                                ofLerp(1/gvfh.getTemplateCount(),
-//  //        //                                1,
-//  //        //                                gvfh.getRecogInfoOfMostProbable().probability));
-//  //        //               g.draw();
-//  //        //            }
-//  //        //             */
-//  //        //        }
-//  //
-//  //    }
-//}
-
 
 
 
 
 //--------------------------------------------------------------
-// MARK: Kinect Re-Working
+// MARK: Kinect Display (Live)
 //--------------------------------------------------------------
 
-
+//--------------------------------------------------------------
 void gvfKinectInterface::InitialiseKinectGui() {
   
   kinect_width = 600;
@@ -523,9 +389,12 @@ void gvfKinectInterface::UpdateKinectGui() {
     
     UpdateSkeleton(kinect_app->get_depth_data_point());
     
+    string state = kinect_app->get_tracking_state();
+    ofDrawBitmapString("TRACKING STATE: " + state, 0, 420);
+    
   }
   
-  DisplaySkeleton(kinect_app->get_current_point());
+  DisplaySkeleton(kinect_app->get_current_point(), ofPoint(500, 600));
   
 }
 
@@ -639,12 +508,15 @@ void gvfKinectInterface::UpdateSkeleton(SkeletonDataPoint new_point) {
 
 // Diplaying a saved point
 //--------------------------------------------------------------
-void gvfKinectInterface::DisplaySkeleton(SkeletonDataPoint new_point) {
+void gvfKinectInterface::DisplaySkeleton(SkeletonDataPoint new_point, ofPoint location) {
   
   ofSetColor(255, 255, 0);
   
-  int x_center = 500;
-  int y_center = 600;
+//  int x_center = 500;
+//  int y_center = 600;
+
+  int x_center = location.x;
+  int y_center = location.y;
   
   ofNoFill();
   ofSetColor(0, 255, 255);
@@ -652,11 +524,15 @@ void gvfKinectInterface::DisplaySkeleton(SkeletonDataPoint new_point) {
   ofFill();
   
   // Draw SKELETON
-  ofSetColor(255, 0, 255);
   int x_pos;
   int y_pos;
   
   for (int i = 0; i < N_JOINTS; ++i) {
+    
+    if (i == 0)
+      ofSetColor(0, 50, 255);
+    else
+      ofSetColor(255, 0, 255);
     
     x_pos = x_center + new_point.joints[i].x / 10.0;
     y_pos = y_center + new_point.joints[i].y / 10.0;
@@ -664,5 +540,58 @@ void gvfKinectInterface::DisplaySkeleton(SkeletonDataPoint new_point) {
     ofCircle(x_pos, y_pos, 5);
   }
   
+}
+
+
+//--------------------------------------------------------------
+// MARK: Templates Display
+//--------------------------------------------------------------
+
+//--------------------------------------------------------------
+void gvfKinectInterface::InitialiseTemplatesGui() {
+  
+  template_id = -1;
+  template_position = 0;
+  
+  current_template = NULL;
+  
+  template_location = ofPoint(300, 600);
+  
+}
+
+//--------------------------------------------------------------
+void gvfKinectInterface::UpdateTemplatesGui() {
+  
+  ofDrawBitmapString("TEMPLATE: " + ofToString(template_id), template_location.x, template_location.y + 100);
+  
+  
+  if (current_template != NULL) {
+    
+    // Update position
+    
+    template_position = (template_position + 1) % current_template->get_length();
+    
+    DisplaySkeleton(current_template->get_data_point(template_position), template_location);
+    
+  }
+  
+}
+
+//--------------------------------------------------------------
+int gvfKinectInterface::get_template_id() {
+  
+  return template_id;
+  
+}
+
+//--------------------------------------------------------------
+void gvfKinectInterface::set_template_id(int _template_id) {
+  
+  if (kinect_app->get_template(_template_id) != NULL) {
+    current_template = kinect_app->get_template(_template_id);
+    template_id = _template_id;
+    template_position = 0;
+  }
+  // Else do nothing
 }
 

@@ -27,6 +27,12 @@ public:
   void draw();
   
   
+  // TEMPLATES
+  int get_template_id();
+  void set_template_id(int _template_id);
+  
+  
+  
 private:
   
   gvfKinect* kinect_app;
@@ -36,6 +42,18 @@ private:
   ofxUICanvas* status_gui;
   void initialiseStatusGui();
   void updateStatusGui();
+  
+//  ofParameter<string> currentState;
+//  ofParameter<bool> inputOnOff;
+//
+//  ofParameterGroup mostProbableStatus;
+//  ofParameter<int> mostProbableIndex;
+//  ofParameter<float> mostProbablePhase;
+//  ofParameter<float> mostProbableSpeed;
+//  ofParameter<float> mostProbableScale;
+
+//  void drawString(); // ??? Instructions etc. Do we want this?
+  
   // -------------------
   
   // --- KINECT GUI ---
@@ -56,22 +74,29 @@ private:
   float* CalculateHistogram(int histogramSize, const openni::VideoFrameRef& depthFrame);
   
   void UpdateSkeleton(SkeletonDataPoint new_point);
-  void DisplaySkeleton(SkeletonDataPoint new_point);
+  void DisplaySkeleton(SkeletonDataPoint new_point, ofPoint location);
+  // -------------------
+  
+  // --- TEMPLATES GUI ---
+  void InitialiseTemplatesGui();
+  void UpdateTemplatesGui();
+  
+  ofPoint template_location;
+  int template_id;
+  int template_position; // Playback position
+  SkeletonGesture* current_template;
   // -------------------
   
   
 
-//  ofParameter<string> currentState;
-//  ofParameter<bool> inputOnOff;
-//
-//  ofParameterGroup mostProbableStatus;
-//  ofParameter<int> mostProbableIndex;
-//  ofParameter<float> mostProbablePhase;
-//  ofParameter<float> mostProbableSpeed;
-//  ofParameter<float> mostProbableScale;
+  //  // --- TEMPLATES GUI ---
+  //
+  //  ofxUICanvas* templates_gui;
+  //  void initialiseTemplatesGui();
+  //  void updateTemplatesGui(int nTemplates);
+  //  vector<templateVisualiser> templates;
+  //  void updateTemplates(int nTemplates);
   
-//  void drawString(); // ??? Instructions etc. Do we want this?
-//  
 //  // --- SETTINGS GUI ---
 //  ofxPanel settingsGui;
 //  void initialiseSettingsGui();
@@ -92,26 +117,8 @@ private:
 //  void smoothingCoefficientChanged(float & smoothingCoefficient);
 //  void varianceCoefficentsChanged(float & coefficent);
 //  
-//  ofxButton save;
-//  ofxButton load;
-//  
-//  void saveGestures();
-//  void loadGestures();
-//  
 
-//  
-//  // --- INPUTS GUI ---
-//  ofxPanel inputsGui;
-//  void initialiseInputsGui();
-//  void updateInputsGui(vector<float> inputData);
-//  
-//  vector<gvfInputInfo> inputsInfo;
-//  
-//  int nAccelerometers;
-//  vector<ofxVec3SliderDisplay> inputSliders; // FIXME: Generalize dimensions?
-//  ofxVec3SliderDisplay accSlider1;
-//  ofxVec3SliderDisplay accSlider2;
-//  ofxVec3SliderDisplay kinectSlider;
+
 //  
 //  // --- GESTURE GUI ---
 //  
@@ -121,13 +128,7 @@ private:
 //  void updateGestureGui();
 //  
 //  
-//  // --- TEMPLATES GUI ---
-//  
-//  ofxUICanvas* templates_gui;
-//  void initialiseTemplatesGui();
-//  void updateTemplatesGui(int nTemplates);
-//  vector<templateVisualiser> templates;
-//  void updateTemplates(int nTemplates);
+
   
   
 };

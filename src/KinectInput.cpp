@@ -79,6 +79,67 @@ openni::Status KinectInput::setup()
   
 }
 
+void KinectInput::update() {
+  
+  nite::Status rc = user_tracker->readFrame(&userTrackerFrame);
+  
+	if (rc != nite::STATUS_OK)
+	{
+		printf("GetNextData failed\n");
+		return;
+	}
+  const nite::Array<nite::UserData>& users = userTrackerFrame.getUsers();
+  
+  int user_id = 0; // Late generalize?
+  
+  if (user_id >= users.getSize()) {
+    // Error
+    return;
+  }
+  
+  const nite::UserData& user = users[user_id];
+  
+  // Print information about user state.
+  {
+    if (user.isNew())
+    {
+      fprintf(stderr, "User %d: New\n", user_id);
+    }
+    else if (users_visible[user_id] != user.isVisible()) {
+      if ((users_visible[user_id] = user.isVisible())) {
+        fprintf(stderr, "User %d: Visible user\n", user_id);
+      }
+    }
+    else if (users_lost[user_id] != user.isLost()) {
+      if ((users_lost[user_id] = user.isLost())) {
+        fprintf(stderr, "User %d: Lost user\n", user_id);
+      }
+    }
+    
+    if (user_states[user_id] != user.getSkeleton().getState()) {
+      switch(user_states[user_id] = user.getSkeleton().getState()) // Set in array
+      {
+        case nite::SKELETON_NONE:
+          fprintf(stderr, "User %d: Stopped tracking.\n", user_id);
+          break;
+        case nite::SKELETON_CALIBRATING:
+          fprintf(stderr, "User %d: Calibrating.\n", user_id);
+          break;
+        case nite::SKELETON_TRACKED:
+          fprintf(stderr, "User %d: Tracking.\n", user_id);
+          break;
+        case nite::SKELETON_CALIBRATION_ERROR_NOT_IN_POSE:
+        case nite::SKELETON_CALIBRATION_ERROR_HANDS:
+        case nite::SKELETON_CALIBRATION_ERROR_LEGS:
+        case nite::SKELETON_CALIBRATION_ERROR_HEAD:
+        case nite::SKELETON_CALIBRATION_ERROR_TORSO:
+          fprintf(stderr, "User %d: Calibration failed.\n", user_id);
+          break;
+      }
+    }
+  }
+}
+
 SkeletonDataPoint KinectInput::get_data(int user_id) {
   
   SkeletonDataPoint data_point;
@@ -169,16 +230,8 @@ SkeletonDataPoint KinectInput::get_depth_data(int user_id) {
 
 const nite::UserData& KinectInput::get_user(int user_id) {
   
-	nite::Status rc = user_tracker->readFrame(&userTrackerFrame);
-  
-	if (rc != nite::STATUS_OK)
-	{
-		printf("GetNextData failed\n");
-		return;
-	}
   
 	const nite::Array<nite::UserData>& users = userTrackerFrame.getUsers();
-
   
   if (user_id >= users.getSize()) {
     // Error
@@ -187,48 +240,14 @@ const nite::UserData& KinectInput::get_user(int user_id) {
   
   const nite::UserData& user = users[user_id];
   
-  // Print information about user state.
-  {
-    if (user.isNew())
-    {
-      fprintf(stderr, "User %d: New\n", user_id);
-    }
-    else if (users_visible[user_id] != user.isVisible()) {
-      if ((users_visible[user_id] = user.isVisible())) {
-        fprintf(stderr, "User %d: Visible user\n", user_id);
-      }
-    }
-    else if (users_lost[user_id] != user.isLost()) {
-      if ((users_lost[user_id] = user.isLost())) {
-        fprintf(stderr, "User %d: Lost user\n", user_id);
-      }
-    }
-    
-    if (user_states[user_id] != user.getSkeleton().getState()) {
-      switch(user_states[user_id] = user.getSkeleton().getState()) // Set in array
-      {
-        case nite::SKELETON_NONE:
-          fprintf(stderr, "User %d: Stopped tracking.\n", user_id);
-          break;
-        case nite::SKELETON_CALIBRATING:
-          fprintf(stderr, "User %d: Calibrating.\n", user_id);
-          break;
-        case nite::SKELETON_TRACKED:
-          fprintf(stderr, "User %d: Tracking.\n", user_id);
-          break;
-        case nite::SKELETON_CALIBRATION_ERROR_NOT_IN_POSE:
-        case nite::SKELETON_CALIBRATION_ERROR_HANDS:
-        case nite::SKELETON_CALIBRATION_ERROR_LEGS:
-        case nite::SKELETON_CALIBRATION_ERROR_HEAD:
-        case nite::SKELETON_CALIBRATION_ERROR_TORSO:
-          fprintf(stderr, "User %d: Calibration failed.\n", user_id);
-          break;
-      }
-    }
-  }
-  
   return user;
 
+}
+
+nite::SkeletonState KinectInput::get_state(int user_id) {
+  
+  return user_states[user_id];
+  
 }
 
 

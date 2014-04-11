@@ -544,6 +544,7 @@
 		BB4B014C10F69532006C3DED /* addons */ = {
 			isa = PBXGroup;
 			children = (
+				C61F57A518EC553700DAF3CC /* ofxXmlSettings */,
 				C61F54F018EC52D100DAF3CC /* ofxUI */,
 				C643554818E5DA73008AE100 /* ofxGui */,
 				19EE47091DEB38B0FAB3D09C /* ofxGVF */,
@@ -981,7 +982,6 @@
 				C6E9012418EE38E100C0F2C1 /* openNI Includes */,
 				C6E900E218EE361E00C0F2C1 /* openNI frameworks */,
 				BB4B014C10F69532006C3DED /* addons */,
-				C61F57A518EC553700DAF3CC /* ofxXmlSettings */,
 				E45BE5980E8CC70C009D7055 /* frameworks */,
 				E4B69B5B0A3A1756003C02F2 /* mvfDebug.app */,
 			);

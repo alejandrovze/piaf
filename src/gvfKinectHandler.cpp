@@ -8,7 +8,7 @@
 
 #include "gvfKinectHandler.h"
 
-gvfKinectHandler::gvfKinectHandler(int id, string name, KinectFeature feature):
+gvfKinectHandler::gvfKinectHandler(int id, string name, KinectFeature feature, int n_dimensions):
 gvf_id(id),
 gvf_name(name),
 gvf_feature(feature)
@@ -18,13 +18,13 @@ gvf_feature(feature)
   // PARAMETERS
   ofxGVF::ofxGVFParameters parameters;
   
-  parameters.inputDimensions = 3; // MARK: input dimensions default is 3
+  parameters.inputDimensions = n_dimensions; // MARK: input dimensions default is 3
   parameters.numberParticles = 2000;
-  parameters.tolerance = 1.0; // "Smoothing Coefficient"
+  parameters.tolerance = 2.0; // "Smoothing Coefficient"
   parameters.resamplingThreshold = 500;
   parameters.distribution = 0.1f;
   parameters.translate = true;
-  parameters.allowSegmentation = false;
+  parameters.allowSegmentation = true;
   
   // COEFFICIENTS
   
@@ -34,7 +34,6 @@ gvf_feature(feature)
   coefficients.speedVariance      = 0.001;
   coefficients.scaleVariance      = 0.00001;
   coefficients.rotationVariance   = 0.000001;
-
 
   // BUILDING OBJECT
   
@@ -58,30 +57,65 @@ void gvfKinectHandler::gvf_data(SkeletonDataPoint data_point) {
   
   // TODO
   switch (gvf_feature) {
+      
     case CENTER_OF_MASS:
       gvf_data(data_point.center_of_mass);
       break;
       
-    case RIGHT_ARM:
-      
+    case HEAD:
+      gvf_data(data_point.joints[0]);
       break;
       
-    case LEFT_ARM:
-      
+    case RIGHT_ELBOW: {
+      ofVec3f right_forearm = get_segment(data_point.joints[JOINT_RIGHT_HAND], data_point.joints[JOINT_RIGHT_ELBOW]);
+      ofVec3f right_arm = get_segment(data_point.joints[JOINT_RIGHT_ELBOW], data_point.joints[JOINT_RIGHT_SHOULDER]);
+      float right_elbow = get_angle(right_forearm, right_arm);
+      gvf_data(right_elbow);
       break;
+    }
       
-    case RIGHT_LEG:
-      
+    case LEFT_ELBOW: {
+      ofVec3f left_forearm = get_segment(data_point.joints[JOINT_LEFT_HAND], data_point.joints[JOINT_LEFT_ELBOW]);
+      ofVec3f left_arm = get_segment(data_point.joints[JOINT_LEFT_ELBOW], data_point.joints[JOINT_LEFT_SHOULDER]);
+      float left_elbow = get_angle(left_forearm, left_arm);
+      gvf_data(left_elbow);
       break;
+    }
       
-    case LEFT_LEG:
-      
+    case RIGHT_KNEE: {
+      ofVec3f right_calf = get_segment(data_point.joints[JOINT_RIGHT_FOOT], data_point.joints[JOINT_RIGHT_KNEE]);
+      ofVec3f right_thigh = get_segment(data_point.joints[JOINT_RIGHT_KNEE], data_point.joints[JOINT_RIGHT_HIP]);
+      float right_knee = get_angle(right_calf, right_thigh);
+      gvf_data(right_knee);
       break;
+    }
       
+    case LEFT_KNEE: {
+      ofVec3f left_calf = get_segment(data_point.joints[JOINT_LEFT_FOOT], data_point.joints[JOINT_LEFT_KNEE]);
+      ofVec3f left_thigh = get_segment(data_point.joints[JOINT_LEFT_KNEE], data_point.joints[JOINT_LEFT_HIP]);
+      float left_knee = get_angle(left_calf, left_thigh);
+      gvf_data(left_knee);
+      break;
+    }
+      
+
   }
 }
 
-void gvfKinectHandler::gvf_data(ofPoint p)
+void gvfKinectHandler::gvf_data(ofPoint p) {
+  vector<float> vect(3);
+  for (int k = 0; k < 3; k++)
+    vect[k] = p[k];
+  gvf_data(vect);
+}
+
+void gvfKinectHandler::gvf_data(float f) {
+  vector<float> vect(1);
+  vect[0] = f;
+  gvf_data(vect);
+}
+
+void gvfKinectHandler::gvf_data(vector<float> vect)
 {
   int state = mygvf->getState();
   
@@ -91,26 +125,16 @@ void gvfKinectHandler::gvf_data(ofPoint p)
   }
   if(state == ofxGVF::STATE_LEARNING)
   {
-    // Create vector from input point.
-    vector<float> vect(3);
-    for (int k = 0; k < 3; k++)
-      vect[k] = p[k];
-    
     // Fill template (The last template)
     mygvf->fillTemplate(mygvf->getNumberOfTemplates() - 1, vect);
     
   }
   else if(state == ofxGVF::STATE_FOLLOWING) // If the state if FOLLOWING
   {
-    // create a vector with input dimension arguments
-    vector<float> vect(3);
-    
-    // fill the vector with the incoming data
-    for (int k = 0; k < 3; k++)
-      vect[k] = p[k];
-    
     // make inference
     mygvf->infer(vect);
+    
+//    cout << "index checker " << mygvf->getMostProbableGestureIndex() << endl;
   }
 }
 

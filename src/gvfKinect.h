@@ -63,12 +63,25 @@ public:
   SkeletonDataPoint get_depth_data_point(); // For drawing
   
   openni::VideoFrameRef get_depth_frame();
+  string get_tracking_state();
+  
+  int get_playback_position();
+  int get_current_record_length();
+  
+  int get_most_probable();
+  int get_most_probable(int gvf_index);
+  int get_n_gvfs();
+  string get_gvf_name(int gvf_index);
+  
+  SkeletonGesture* get_template(int template_index);
   
   // LOAD / SAVE
   void saveGestures();
   void saveGestures(string filename);
   void loadGestures();
   void loadGestures(string filename);
+  
+  void delete_template(int template_index); // TODO
   
 private:
   

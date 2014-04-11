@@ -81,6 +81,8 @@ void ofApp::draw(){
   int n_templates = gvf_kinect.get_n_templates();
   int n_records = gvf_kinect.get_n_records();
   int current_record = gvf_kinect.get_current_record();
+  int playback_position = gvf_kinect.get_playback_position();
+  int current_record_length = gvf_kinect.get_current_record_length();
   string mode;
   
   if (gvf_kinect.get_is_live()) {
@@ -93,6 +95,14 @@ void ofApp::draw(){
   ofDrawBitmapString(state + " " + is_playing + " " + ofToString(n_templates) + "templates", ofGetWidth() - 400, 60);
   ofDrawBitmapString(state + " " + is_playing + " " + ofToString(n_records) + " records", ofGetWidth() - 400, 80);
   ofDrawBitmapString(ofToString(current_record) + " is current, mode is " + mode, ofGetWidth() - 400, 100);
+  ofDrawBitmapString(ofToString(playback_position) + " of " + ofToString(current_record_length), ofGetWidth() - 400, 120);
+  
+  for (int i = 0; i < gvf_kinect.get_n_gvfs(); ++i) {
+    
+    ofDrawBitmapString(gvf_kinect.get_gvf_name(i) + " returns most probable " +
+                       ofToString(gvf_kinect.get_most_probable(i)), ofGetWidth() - 400, 140 + 20 * i);
+    
+  }
   
   //------------------------------------
   
@@ -152,6 +162,13 @@ void ofApp::keyPressed(int key){
   }
   else if (key == '.') {
     gvf_kinect.set_current_record(gvf_kinect.get_current_record() + 1);
+  }
+  // Switch template gesture (display only)
+  else if (key == ';') {
+    kinect_interface.set_template_id(kinect_interface.get_template_id() - 1);
+  }
+  else if (key == '\'') {
+    kinect_interface.set_template_id(kinect_interface.get_template_id() + 1);
   }
 }
 
