@@ -83,6 +83,7 @@
 		C643557A18E600F3008AE100 /* gvfKinect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C643557818E600F3008AE100 /* gvfKinect.cpp */; };
 		C643557D18E60110008AE100 /* gvfKinectHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C643557B18E6010F008AE100 /* gvfKinectHandler.cpp */; };
 		C67106EB18E8D421001D3E51 /* SkeletonGesture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C67106E918E8D421001D3E51 /* SkeletonGesture.cpp */; };
+		C6D394C618F7AAC30043DD1C /* OSCInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6D394C418F7AAC20043DD1C /* OSCInterface.cpp */; };
 		C6E900F318EE37B300C0F2C1 /* libNiTE2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C6E900E518EE37B300C0F2C1 /* libNiTE2.dylib */; };
 		C6E9010218EE37D300C0F2C1 /* libOpenNI2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C6E900F618EE37D200C0F2C1 /* libOpenNI2.dylib */; };
 		C6E9010A18EE388A00C0F2C1 /* libOpenNI2.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = C6E900F618EE37D200C0F2C1 /* libOpenNI2.dylib */; };
@@ -376,6 +377,8 @@
 		C67106E918E8D421001D3E51 /* SkeletonGesture.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SkeletonGesture.cpp; sourceTree = "<group>"; };
 		C67106EA18E8D421001D3E51 /* SkeletonGesture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SkeletonGesture.h; sourceTree = "<group>"; };
 		C6937888E126BADC8777423B /* OscTypes.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = OscTypes.h; path = ../../../addons/ofxOsc/libs/oscpack/src/osc/OscTypes.h; sourceTree = SOURCE_ROOT; };
+		C6D394C418F7AAC20043DD1C /* OSCInterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OSCInterface.cpp; sourceTree = "<group>"; };
+		C6D394C518F7AAC30043DD1C /* OSCInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OSCInterface.h; sourceTree = "<group>"; };
 		C6E900E418EE37B300C0F2C1 /* com.primesense.nite.jar */ = {isa = PBXFileReference; lastKnownFileType = archive.jar; path = com.primesense.nite.jar; sourceTree = "<group>"; };
 		C6E900E518EE37B300C0F2C1 /* libNiTE2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libNiTE2.dylib; sourceTree = "<group>"; };
 		C6E900E618EE37B300C0F2C1 /* libNiTE2.jni.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libNiTE2.jni.dylib; sourceTree = "<group>"; };
@@ -805,6 +808,15 @@
 			name = kinect;
 			sourceTree = "<group>";
 		};
+		C6D394C718F7AAC70043DD1C /* OSC */ = {
+			isa = PBXGroup;
+			children = (
+				C6D394C418F7AAC20043DD1C /* OSCInterface.cpp */,
+				C6D394C518F7AAC30043DD1C /* OSCInterface.h */,
+			);
+			name = OSC;
+			sourceTree = "<group>";
+		};
 		C6E900E218EE361E00C0F2C1 /* openNI frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -993,6 +1005,7 @@
 				E4B69E1D0A3A1BDC003C02F2 /* main.cpp */,
 				E4B69E1E0A3A1BDC003C02F2 /* ofApp.cpp */,
 				E4B69E1F0A3A1BDC003C02F2 /* ofApp.h */,
+				C6D394C718F7AAC70043DD1C /* OSC */,
 				C60B710218EF49150097565F /* gvfKinect */,
 				C60B710118EF49090097565F /* Interface */,
 				C6A49F4E18E31BD600C28D49 /* kinect */,
@@ -1212,6 +1225,7 @@
 				C61F57B018EC553700DAF3CC /* tinyxmlparser.cpp in Sources */,
 				C61F57B118EC553700DAF3CC /* ofxXmlSettings.cpp in Sources */,
 				C6E9014E18EE573E00C0F2C1 /* KinectInput.cpp in Sources */,
+				C6D394C618F7AAC30043DD1C /* OSCInterface.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

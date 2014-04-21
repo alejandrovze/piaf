@@ -3,6 +3,7 @@
 #include "ofMain.h"
 #include "gvfKinect.h"
 #include "gvfKinectInterface.h"
+#include "OSCInterface.h"
 
 class ofApp : public ofBaseApp {
 	
@@ -33,6 +34,6 @@ private:
   ofColor generateRandomColor();
   std::vector<ofColor> colors;
   
+  OSCInterface osc_interface;
+  
 };
-
-

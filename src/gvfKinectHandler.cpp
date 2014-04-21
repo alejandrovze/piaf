@@ -24,10 +24,10 @@ gvf_feature(feature)
   parameters.resamplingThreshold = 500;
   parameters.distribution = 0.1f;
   parameters.translate = true;
-  parameters.allowSegmentation = true;
+  parameters.allowSegmentation = true; // Results seem to be better when true. 
+  
   
   // COEFFICIENTS
-  
   ofxGVF::ofxGVFVarianceCoefficents coefficients;
   
   coefficients.phaseVariance      = 0.00005;
@@ -35,8 +35,8 @@ gvf_feature(feature)
   coefficients.scaleVariance      = 0.00001;
   coefficients.rotationVariance   = 0.000001;
 
-  // BUILDING OBJECT
   
+  // BUILDING OBJECT
   mygvf = new ofxGVF();                       // could use mygvf = new ofxGVF(parameters, coefficients);
   
   mygvf->setup(parameters, coefficients);     // but 'setup' is the 'OF' way ;)
@@ -63,7 +63,7 @@ void gvfKinectHandler::gvf_data(SkeletonDataPoint data_point) {
       break;
       
     case HEAD:
-      gvf_data(data_point.joints[0]);
+      gvf_data(data_point.joints[JOINT_HEAD]);
       break;
       
     case RIGHT_ELBOW: {
@@ -98,6 +98,11 @@ void gvfKinectHandler::gvf_data(SkeletonDataPoint data_point) {
       break;
     }
       
+    case BREADTH: {
+      ofVec3f breadth = data_point.joints[JOINT_LEFT_HAND] - data_point.joints[JOINT_RIGHT_HAND];
+      gvf_data(breadth);
+      break;
+    }
 
   }
 }
@@ -203,6 +208,17 @@ RecognitionInfo gvfKinectHandler::getRecogInfo(int template_id) {
     cout << "Status vector legnth(test): " << status_vector.size() << endl;
     
     // TODO Fill status_info
+    
+    //cached most probable status [phase, speed, scale[, rotation], probability
+    
+    int length = status_vector.size();
+    
+    status_info.phase = status_vector[0];
+    status_info.speed = status_vector[1];
+    status_info.scale;
+    status_info.rotation;
+    
+    status_info.probability = status_vector[length - 1];
     
   }
   

@@ -22,6 +22,8 @@ void ofApp::setup(){
   
   kinect_interface.setup(&gvf_kinect);
   
+  osc_interface.setup();
+  
   //------------------------------------
   
   initColors();
@@ -41,6 +43,8 @@ void ofApp::update(){
   gvf_kinect.update();
   
   kinect_interface.update();
+  
+  osc_interface.update();
   
 }
 

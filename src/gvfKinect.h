@@ -34,7 +34,6 @@ public:
   void exit();
   
   void update();
-  void update(SkeletonDataPoint data_point);
   
   // Set State
   void learn();
@@ -45,26 +44,26 @@ public:
   void play();
   void stop();
   
-  // Set to live or recorded input
-  void set_live(bool _is_live);
-  
   
   // SETS
   void set_current_record(int _current_record);
+  void set_live(bool _is_live); // Set to live or recorded input
+  // ------------------------------------
   
   // GETS
   ofxGVF::ofxGVFState get_state();
   bool get_is_playing();
   bool get_is_live();
-  int get_n_templates();
-  int get_n_records();
-  int get_current_record();
   SkeletonDataPoint get_current_point();
   SkeletonDataPoint get_depth_data_point(); // For drawing
   
   openni::VideoFrameRef get_depth_frame();
   string get_tracking_state();
   
+  int get_n_templates();
+  
+  int get_n_records();
+  int get_current_record();
   int get_playback_position();
   int get_current_record_length();
   
@@ -74,6 +73,7 @@ public:
   string get_gvf_name(int gvf_index);
   
   SkeletonGesture* get_template(int template_index);
+  // ------------------------------------
   
   // LOAD / SAVE
   void saveGestures();
@@ -82,6 +82,7 @@ public:
   void loadGestures(string filename);
   
   void delete_template(int template_index); // TODO
+  // ------------------------------------
   
 private:
   
@@ -107,12 +108,16 @@ private:
   int current_record;
   int playback_position;
   
+  void update(SkeletonDataPoint data_point);
+  
   // ---------------------------------------
   
   // GVF Proccesing
   
   vector<gvfKinectHandler*> gvf_handlers;
   void gvf_input(SkeletonDataPoint data_point);
+  
+  void update_status();
   
   // ---------------------------------------
   

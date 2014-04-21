@@ -25,7 +25,9 @@ typedef enum
   RIGHT_ELBOW,
   
   LEFT_KNEE,
-  RIGHT_KNEE
+  RIGHT_KNEE,
+  
+  BREADTH
   
 } KinectFeature;
 
@@ -54,12 +56,13 @@ typedef enum
 
 // Rather than a vector, struct to hold estimated status for a given vector.
 typedef struct {
-    float likelihoods;
+  
     float probability;
     float phase;
     float speed;
     float scale;
     float rotation;
+  
 } RecognitionInfo;
 
 class gvfKinectHandler{

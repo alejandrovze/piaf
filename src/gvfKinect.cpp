@@ -44,6 +44,7 @@ void gvfKinect::setup(){
   gvf_handlers.push_back(new gvfKinectHandler(3, "Left Elbow", LEFT_ELBOW, 1));
   gvf_handlers.push_back(new gvfKinectHandler(4, "Right Knee", RIGHT_KNEE, 1));
   gvf_handlers.push_back(new gvfKinectHandler(5, "Left Knee", LEFT_KNEE, 1));
+  gvf_handlers.push_back(new gvfKinectHandler(6, "Breadth", BREADTH, 1));
   
 }
 
@@ -104,12 +105,32 @@ void gvfKinect::update(SkeletonDataPoint data_point){
       // Send to GVFs
       gvf_input(data_point);
       
+      update_status();
+      
     }
     else if (state == ofxGVF::STATE_CLEAR) {
       // Do nothing
     }
   }
 }
+
+//
+//--------------------------------------------------------------
+void gvfKinect::update_status() {
+  
+  // Update probabilities for each "meta-gesture"
+  
+  
+  
+  // Update variations for each "meta-gesture"
+  
+  
+  
+  // Set "most probable gesture". 
+  
+  
+}
+
 
 //--------------------------------------------------------------
 //--------------------------------------------------------------
