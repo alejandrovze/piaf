@@ -35,7 +35,9 @@ public:
   float timers[NUM_MSG_STRINGS];
   
   
-  int get_time();
+  int get_time(int phrase_length);
+  int get_clock();
+  
   float clock_time;
 
   

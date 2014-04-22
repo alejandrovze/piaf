@@ -39,12 +39,13 @@ void gvfKinect::setup(){
   
   // MARK: Setup Handlers
   gvf_handlers.push_back(new gvfKinectHandler(0, "Head", HEAD, 3));
-  gvf_handlers.push_back(new gvfKinectHandler(1, "Center of Mass", CENTER_OF_MASS, 3));
-  gvf_handlers.push_back(new gvfKinectHandler(2, "Right Elbow", RIGHT_ELBOW, 1));
-  gvf_handlers.push_back(new gvfKinectHandler(3, "Left Elbow", LEFT_ELBOW, 1));
-  gvf_handlers.push_back(new gvfKinectHandler(4, "Right Knee", RIGHT_KNEE, 1));
-  gvf_handlers.push_back(new gvfKinectHandler(5, "Left Knee", LEFT_KNEE, 1));
-  gvf_handlers.push_back(new gvfKinectHandler(6, "Breadth", BREADTH, 1));
+  gvf_handlers.push_back(new gvfKinectHandler(1, "Right Elbow", RIGHT_ELBOW, 1));
+  gvf_handlers.push_back(new gvfKinectHandler(2, "Left Elbow", LEFT_ELBOW, 1));
+  
+//  gvf_handlers.push_back(new gvfKinectHandler(1, "Center of Mass", CENTER_OF_MASS, 3));
+//  gvf_handlers.push_back(new gvfKinectHandler(4, "Right Knee", RIGHT_KNEE, 1));
+//  gvf_handlers.push_back(new gvfKinectHandler(5, "Left Knee", LEFT_KNEE, 1));
+//  gvf_handlers.push_back(new gvfKinectHandler(6, "Breadth", BREADTH, 1));
   
 }
 
@@ -62,6 +63,8 @@ void gvfKinect::update(){
     kinect_input.update();
     
     current_point = kinect_input.get_data();
+    
+    current_point.timing;
   }
   else {
     if (is_playing && state == ofxGVF::STATE_FOLLOWING) {

@@ -24,6 +24,8 @@ void gvfKinectInterface::setup(gvfKinect* _kinect_app) {
   
   InitialiseTemplatesGui();
   
+  InitialiseSettingsGui();
+  
 }
 
 //--------------------------------------------------------------
@@ -46,6 +48,8 @@ void gvfKinectInterface::draw() {
   UpdateKinectGui();
   
   UpdateTemplatesGui();
+  
+  settingsGui.draw();
   
 }
 
@@ -99,6 +103,21 @@ void gvfKinectInterface::updateStatusGui(){
 //  mostProbableSpeed.set(infoMostProbable.speed);
 //  //    mostProbableScale.set(infoMostProbable.scale); // ???: position not updated
   
+}
+
+////--------------------------------------------------------------
+void gvfKinectInterface::InitialiseSettingsGui(){
+
+  settingsGui.setup("ofxGVF Settings");
+
+  settingsGui.add(phrase_length.set("Phrase Length", 8, 1, 32));
+  
+  settingsGui.setPosition(0, 500);
+
+}
+
+int gvfKinectInterface::get_phrase_length() {
+  return phrase_length;
 }
 
 
@@ -492,12 +511,15 @@ void gvfKinectInterface::UpdateSkeleton(SkeletonDataPoint new_point) {
   
   
   // Draw SKELETON
-  ofSetColor(255, 0, 255);
   
-  for (int i = 0; i < N_JOINTS; ++i) {
+  for (int i = 0; i < N_JOINTS + 1; ++i) {
     
     x_pos = (int) ((float) (new_point.joints[i].x) * (float) kinect_width / (float) depth_width);
     y_pos = (int) ((float) (new_point.joints[i].y) * (float) kinect_height / (float) depth_height);
+    
+    ofSetColor(255, 0, 255);
+    
+//    ofSetColor(255, 0, 255, new_point.confidences[i]);
     
     ofCircle(x_pos, y_pos, 5);
   }
@@ -527,7 +549,7 @@ void gvfKinectInterface::DisplaySkeleton(SkeletonDataPoint new_point, ofPoint lo
   int x_pos;
   int y_pos;
   
-  for (int i = 0; i < N_JOINTS; ++i) {
+  for (int i = 0; i < N_JOINTS + 1; ++i) {
     
     if (i == 0)
       ofSetColor(0, 50, 255);

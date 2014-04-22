@@ -16,20 +16,53 @@
 
 #include "SkeletonGesture.h"
 
+// 17 BODY PARTS
 typedef enum
 {
-  CENTER_OF_MASS,
-  HEAD,
+  BODY,
   
-  LEFT_ELBOW,
-  RIGHT_ELBOW,
+  LOWER_BODY,
+  UPPER_BODY,
   
+  LEFT_LEG,
+  RIGHT_LEG,
+  WAIST,
+  
+  LEFT_ARM,
+  RIGHT_ARM,
+  BUST,
+  
+  LEFT_HIP,
   LEFT_KNEE,
+  
+  RIGHT_HIP,
   RIGHT_KNEE,
   
-  BREADTH
+  LEFT_SHOULDER,
+  LEFT_ELBOW,
   
-} KinectFeature;
+  RIGHT_SHOULDER,
+  RIGHT_ELBOW,
+  
+  HEAD,
+  NECK
+  
+} BodyPart;
+
+//typedef enum
+//{
+//  CENTER_OF_MASS,
+//  HEAD,
+//  
+//  LEFT_ELBOW,
+//  RIGHT_ELBOW,
+//  
+//  LEFT_KNEE,
+//  RIGHT_KNEE,
+//  
+//  BREADTH
+//  
+//} KinectFeature;
 
 typedef enum
 {
@@ -69,7 +102,7 @@ class gvfKinectHandler{
   
 public:
 
-  gvfKinectHandler(int _gvf_id, string _gvf_name, KinectFeature feature, int n_dimensions);
+  gvfKinectHandler(int _gvf_id, string _gvf_name, BodyPart feature, int n_dimensions);
   ~gvfKinectHandler();
   
   void setState(ofxGVF::ofxGVFState state);
@@ -105,7 +138,7 @@ private:
   
   ofxGVF *mygvf;
   
-  KinectFeature gvf_feature; // Feature studied
+  BodyPart gvf_feature; // Feature studied
   
   // FEATURE EXTRACTION
   ofVec3f get_segment(ofPoint joint1, ofPoint joint2);

@@ -32,6 +32,9 @@ public:
   void set_template_id(int _template_id);
   
   
+  int get_phrase_length();
+  
+  
   
 private:
   
@@ -88,7 +91,14 @@ private:
   // -------------------
   
   
-
+  // --- SETTINGS GUI ---
+  ofxPanel settingsGui;
+  void InitialiseSettingsGui();
+  
+  ofParameter<int> phrase_length;
+  
+  
+  
   //  // --- TEMPLATES GUI ---
   //
   //  ofxUICanvas* templates_gui;

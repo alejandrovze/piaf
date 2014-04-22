@@ -8,7 +8,7 @@
 
 #include "gvfKinectHandler.h"
 
-gvfKinectHandler::gvfKinectHandler(int id, string name, KinectFeature feature, int n_dimensions):
+gvfKinectHandler::gvfKinectHandler(int id, string name, BodyPart feature, int n_dimensions):
 gvf_id(id),
 gvf_name(name),
 gvf_feature(feature)
@@ -58,9 +58,9 @@ void gvfKinectHandler::gvf_data(SkeletonDataPoint data_point) {
   // TODO
   switch (gvf_feature) {
       
-    case CENTER_OF_MASS:
-      gvf_data(data_point.center_of_mass);
-      break;
+//    case CENTER_OF_MASS:
+//      gvf_data(data_point.center_of_mass);
+//      break;
       
     case HEAD:
       gvf_data(data_point.joints[JOINT_HEAD]);
@@ -98,11 +98,11 @@ void gvfKinectHandler::gvf_data(SkeletonDataPoint data_point) {
       break;
     }
       
-    case BREADTH: {
-      ofVec3f breadth = data_point.joints[JOINT_LEFT_HAND] - data_point.joints[JOINT_RIGHT_HAND];
-      gvf_data(breadth);
-      break;
-    }
+//    case BREADTH: {
+//      ofVec3f breadth = data_point.joints[JOINT_LEFT_HAND] - data_point.joints[JOINT_RIGHT_HAND];
+//      gvf_data(breadth);
+//      break;
+//    }
 
   }
 }

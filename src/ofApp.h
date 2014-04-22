@@ -36,4 +36,8 @@ private:
   
   OSCInterface osc_interface;
   
+  int current_position;
+  
+  bool timing_on;
+  
 };

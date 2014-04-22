@@ -24,6 +24,10 @@ void ofApp::setup(){
   
   osc_interface.setup();
   
+  timing_on = false;
+  
+//  phrase_length = 8; // MARK: later to be parameter that can be modified.
+  
   //------------------------------------
   
   initColors();
@@ -40,11 +44,28 @@ void ofApp::setup(){
 //--------------------------------------------------------------
 void ofApp::update(){
   
+  if (timing_on) {
+  
+    if ((current_position == (kinect_interface.get_phrase_length() - 1)) && (osc_interface.get_time(kinect_interface.get_phrase_length()) == 0)) {
+      // SEGMENT
+      if (gvf_kinect.get_is_playing()) {
+        gvf_kinect.stop();
+        gvf_kinect.play();
+      }
+    }
+    
+    current_position = osc_interface.get_time(kinect_interface.get_phrase_length());
+    
+  }
+  
+  
   gvf_kinect.update();
   
   kinect_interface.update();
   
   osc_interface.update();
+  
+
   
 }
 
@@ -60,6 +81,8 @@ void ofApp::draw(){
   
   // show the current frame rate
   ofDrawBitmapString("FPS " + ofToString(ofGetFrameRate(), 0), ofGetWidth() - 200, 25);
+  if (timing_on)
+    ofDrawBitmapString("clock time " + ofToString(current_position), ofGetWidth() - 200, 40);
   
   // Display state
   string state;
@@ -78,7 +101,7 @@ void ofApp::draw(){
   
   if (gvf_kinect.get_is_playing()) {
     is_playing = "Is Playing";
-  }
+  } 
   else {
     is_playing = "Is Not Playing";
   }
@@ -149,10 +172,12 @@ void ofApp::keyPressed(int key){
     gvf_kinect.set_live(!gvf_kinect.get_is_live());
   }
   else if (key == 's' || key == 'S') {
-    if (!gvf_kinect.get_is_playing())
-      gvf_kinect.saveGestures("new_file.xml");
+    if (!gvf_kinect.get_is_playing()) {
+//      gvf_kinect.saveGestures("new_file.xml");
+      gvf_kinect.saveGestures(); // Open dialog to get file name.
+    }
     else
-      cout << "Can only load when stopped." << endl;
+      cout << "Can only save when stopped." << endl;
   }
   else if (key == 'x' || key == 'X') {
     if (!gvf_kinect.get_is_playing())
@@ -173,6 +198,9 @@ void ofApp::keyPressed(int key){
   }
   else if (key == '\'') {
     kinect_interface.set_template_id(kinect_interface.get_template_id() + 1);
+  }
+  else if (key == 't' || key == 'T') {
+    timing_on = !timing_on; // toggle timing.
   }
 }
 

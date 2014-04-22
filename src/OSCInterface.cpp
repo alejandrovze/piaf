@@ -94,7 +94,15 @@ void OSCInterface::update(){
 
 }
 
-int OSCInterface::get_time() {
+// returns position in phrase
+int OSCInterface::get_time(int phrase_length) {
+  
+  int time = ((int) clock_time) % phrase_length;
+  
+  return time;
+}
+
+int OSCInterface::get_clock() {
   return clock_time;
 }
 

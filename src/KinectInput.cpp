@@ -206,11 +206,14 @@ SkeletonDataPoint KinectInput::get_depth_data(int user_id) {
     {
       // Joints
       
-      for (nite::JointType joint = nite::JOINT_HEAD; joint < nite::JOINT_RIGHT_FOOT; joint++) {
+      for (nite::JointType joint = nite::JOINT_HEAD; joint <= nite::JOINT_RIGHT_FOOT; joint++) {
         
         const nite::Point3f joint_pos = user.getSkeleton().getJoint(joint).getPosition();
         
+        const float joint_conf = user.getSkeleton().getJoint(joint).getPositionConfidence();
+        
         depth_data_point.joints.at(joint) = convert_world_to_depth(ofPoint(joint_pos.x, joint_pos.y, joint_pos.z));
+        depth_data_point.confidences.at(joint) = joint_conf;
         
       }
       
