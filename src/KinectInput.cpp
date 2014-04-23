@@ -172,6 +172,14 @@ SkeletonDataPoint KinectInput::get_data(int user_id) {
         
         // Joint position relative to center of mass.
         data_point.joints.at(joint) = (com - ofPoint(joint_pos.x, joint_pos.y, joint_pos.z));
+        data_point.confidences.at(joint) = user.getSkeleton().getJoint(joint).getPositionConfidence();
+        
+        // Joint orientations.
+        
+        // Convert from NiteQuaternion to ofQuaternion
+        NiteQuaternion orientation = user.getSkeleton().getJoint(joint).getOrientation();
+        data_point.joint_orientations.at(joint) = ofQuaternion(orientation.x, orientation.y, orientation.z, orientation.w);
+        data_point.orientation_confidences.at(joint) = user.getSkeleton().getJoint(joint).getOrientationConfidence();
         
       }
       

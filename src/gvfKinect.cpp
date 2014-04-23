@@ -531,12 +531,25 @@ void gvfKinect::writeGesture(ofxXmlSettings* gesture_file, SkeletonGesture* save
       
       ofPoint joint = point.joints[k];
       
-      gesture_file->addTag("Joints");
+      gesture_file->addTag("Joints"); // Position
       gesture_file->pushTag("Joints", k);
       gesture_file->addValue("X", joint.x);
       gesture_file->addValue("Y", joint.y);
       gesture_file->addValue("Z", joint.z);
-      gesture_file->popTag();
+      gesture_file->addValue("Confidence", point.confidences[k]); // !!!: Added later.
+      gesture_file->popTag(); // Pop "Joints"
+      
+      
+      ofQuaternion orientation = point.joint_orientations[k];
+      
+      gesture_file->addTag("Orientation");
+      gesture_file->pushTag("Orientation", k);
+      gesture_file->addValue("X", orientation.x());
+      gesture_file->addValue("Y", orientation.y());
+      gesture_file->addValue("Z", orientation.z());
+      gesture_file->addValue("W", orientation.w());
+      gesture_file->addValue("Confidence", point.orientation_confidences[k]); // !!!: Added later.
+      gesture_file->popTag(); // Pop "Orientation". 
       
     }
     
@@ -644,8 +657,19 @@ void gvfKinect::loadGesture(ofxXmlSettings* gesture_file, int id, string type) {
       new_point.joints[k] = ofPoint(gesture_file->getValue("X", 0.0),
                                          gesture_file->getValue("Y", 0.0),
                                          gesture_file->getValue("Z", 0.0));
+      new_point.confidences[k] = gesture_file->getValue("Confidence", 1.0); // Default confidence 1.0 (if not recorded). 
       gesture_file->popTag();
       
+      // Confidence
+      if (gesture_file->tagExists("Orientation", k)) {
+        gesture_file->pushTag("Orientation", k);
+        new_point.joint_orientations[k] = ofQuaternion(gesture_file->getValue("X", 0.0),
+                                      gesture_file->getValue("Y", 0.0),
+                                      gesture_file->getValue("Z", 0.0),
+                                      gesture_file->getValue("W", 0.0));
+        new_point.orientation_confidences[k] = gesture_file->getValue("Confidence", 0.0); // Default confidence 0.0 (might not have orientation in older records).
+        gesture_file->popTag();
+      }
     }
     
     if (is_template)

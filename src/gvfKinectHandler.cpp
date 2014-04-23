@@ -240,6 +240,10 @@ float gvfKinectHandler::get_angle(ofVec3f segment1, ofVec3f segment2) {
   return segment1.angle(- segment2);
 }
 
+vector<float> gvfKinectHandler::get_body_part(SkeletonDataPoint data_point, BodyPart part) {
+  
+}
+
 
 
 //-----------------------------------------------------------------------

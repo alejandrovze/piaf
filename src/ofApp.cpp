@@ -66,7 +66,6 @@ void ofApp::update(){
   osc_interface.update();
   
 
-  
 }
 
 //--------------------------------------------------------------
@@ -245,7 +244,6 @@ ofColor ofApp::generateRandomColor()
 }
 
 
-
 ////---------------------
 //
 //void ofApp::guiEvent(ofxUIEventArgs &e)
@@ -261,3 +259,4 @@ ofColor ofApp::generateRandomColor()
 //void ofApp::templatesGuiEvent(ofxUIEventArgs &e) {
 //  //    gvfh.templateGuiEvent(e);
 //}
+

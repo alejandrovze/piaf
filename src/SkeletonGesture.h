@@ -35,6 +35,8 @@ typedef struct SkeletonDataPoint {
   SkeletonDataPoint():
   joints(N_JOINTS),
   confidences(N_JOINTS),
+  joint_orientations(N_JOINTS),
+  orientation_confidences(N_JOINTS),
   center_of_mass(ofPoint(0, 0, 0)),
   bounding_box_min(ofPoint(0, 0, 0)),
   bounding_box_max(ofPoint(0, 0, 0))
@@ -43,11 +45,15 @@ typedef struct SkeletonDataPoint {
 
   SkeletonDataPoint(vector<ofPoint> _joints,
                     vector<float> _confidences,
+                    vector<ofQuaternion> _joint_orientations,
+                    vector<float> _orientation_confidences,
                     ofPoint _center_of_mass,
                     ofPoint _bounding_box_min,
                     ofPoint _bounding_box_max):
   joints(N_JOINTS),
   confidences(N_JOINTS),
+  joint_orientations(N_JOINTS),
+  orientation_confidences(N_JOINTS),
   center_of_mass(_center_of_mass),
   bounding_box_min(_bounding_box_min),
   bounding_box_max(_bounding_box_max)
@@ -55,6 +61,8 @@ typedef struct SkeletonDataPoint {
     for (int i = 0; i < N_JOINTS; ++i) {
       joints[i] = _joints[i];
       confidences[i] = _confidences[i];
+      joint_orientations[i] = _joint_orientations[i];
+      orientation_confidences[i] = _orientation_confidences[i];
     }
   }
 
@@ -62,11 +70,15 @@ typedef struct SkeletonDataPoint {
   {
     joints.clear();
     confidences.clear();
+    joint_orientations.clear();
+    orientation_confidences.clear();
   }
 
   // Skeleton data
   vector<ofPoint> joints;
   vector<float> confidences;
+  vector<ofQuaternion> joint_orientations;
+  vector<float> orientation_confidences;
   ofPoint center_of_mass;
   ofPoint bounding_box_min;
   ofPoint bounding_box_max;

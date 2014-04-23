@@ -498,8 +498,6 @@ float* gvfKinectInterface::CalculateHistogram(int histogramSize, const openni::V
 //--------------------------------------------------------------
 void gvfKinectInterface::UpdateSkeleton(SkeletonDataPoint new_point) {
   
-  
-  
   // Draw CENTER OF MASS
   int x_pos = (int) ((float) (new_point.center_of_mass.x) * (float) kinect_width / (float) depth_width);
   int y_pos = (int) ((float) (new_point.center_of_mass.y)* (float) kinect_height / (float) depth_height);
@@ -512,14 +510,13 @@ void gvfKinectInterface::UpdateSkeleton(SkeletonDataPoint new_point) {
   
   // Draw SKELETON
   
-  for (int i = 0; i < N_JOINTS + 1; ++i) {
+  for (int i = 0; i < N_JOINTS; ++i) {
     
     x_pos = (int) ((float) (new_point.joints[i].x) * (float) kinect_width / (float) depth_width);
     y_pos = (int) ((float) (new_point.joints[i].y) * (float) kinect_height / (float) depth_height);
     
     ofSetColor(255, 0, 255);
     
-//    ofSetColor(255, 0, 255, new_point.confidences[i]);
     
     ofCircle(x_pos, y_pos, 5);
   }
@@ -549,7 +546,7 @@ void gvfKinectInterface::DisplaySkeleton(SkeletonDataPoint new_point, ofPoint lo
   int x_pos;
   int y_pos;
   
-  for (int i = 0; i < N_JOINTS + 1; ++i) {
+  for (int i = 0; i < N_JOINTS; ++i) {
     
     if (i == 0)
       ofSetColor(0, 50, 255);
@@ -558,6 +555,8 @@ void gvfKinectInterface::DisplaySkeleton(SkeletonDataPoint new_point, ofPoint lo
     
     x_pos = x_center + new_point.joints[i].x / 10.0;
     y_pos = y_center + new_point.joints[i].y / 10.0;
+    
+    ofSetColor(255, 0, 255, new_point.confidences[i] * 255.0);
     
     ofCircle(x_pos, y_pos, 5);
   }

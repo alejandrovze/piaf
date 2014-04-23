@@ -19,50 +19,51 @@
 // 17 BODY PARTS
 typedef enum
 {
+  
+  // LEVEL 0
   BODY,
   
-  LOWER_BODY,
+  // LEVEL 1
   UPPER_BODY,
+  LOWER_BODY,
   
-  LEFT_LEG,
-  RIGHT_LEG,
-  WAIST,
-  
+  // LEVEL 2
+  // - UPPER_BODY
   LEFT_ARM,
   RIGHT_ARM,
   BUST,
   
-  LEFT_HIP,
-  LEFT_KNEE,
+  // - LOWER_BODY
+  LEFT_LEG,
+  RIGHT_LEG,
+  WAIST,
   
-  RIGHT_HIP,
-  RIGHT_KNEE,
-  
+  // LEVEL 3
+  // - UPPER_BODY
+  // --- LEFT_ARM
   LEFT_SHOULDER,
   LEFT_ELBOW,
   
+  // --- RIGHT_ARM
   RIGHT_SHOULDER,
   RIGHT_ELBOW,
   
+  // --- BUST
   HEAD,
-  NECK
+  NECK,
+  
+  // - LOWER_BODY
+  // --- LEFT_LEG
+  LEFT_HIP,
+  LEFT_KNEE,
+  
+  // --- RIGHT_LEG
+  RIGHT_HIP,
+  RIGHT_KNEE
+  
+  // --- WAIST
   
 } BodyPart;
-
-//typedef enum
-//{
-//  CENTER_OF_MASS,
-//  HEAD,
-//  
-//  LEFT_ELBOW,
-//  RIGHT_ELBOW,
-//  
-//  LEFT_KNEE,
-//  RIGHT_KNEE,
-//  
-//  BREADTH
-//  
-//} KinectFeature;
 
 typedef enum
 {
