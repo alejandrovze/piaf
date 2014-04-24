@@ -140,6 +140,7 @@ private:
   ofxGVF *mygvf;
   
   BodyPart gvf_feature; // Feature studied
+  vector<float> get_body_part(SkeletonDataPoint data_point, BodyPart part);
   
   // FEATURE EXTRACTION
   ofVec3f get_segment(ofPoint joint1, ofPoint joint2);
