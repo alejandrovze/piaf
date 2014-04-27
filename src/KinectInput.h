@@ -15,7 +15,6 @@
 
 #include "SkeletonGesture.h"
 
-
 #define MAX_USERS 1
 
 class KinectInput

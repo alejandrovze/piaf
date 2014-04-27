@@ -171,7 +171,8 @@ SkeletonDataPoint KinectInput::get_data(int user_id) {
         const nite::Point3f joint_pos = user.getSkeleton().getJoint(joint).getPosition();
         
         // Joint position relative to center of mass.
-        data_point.joints.at(joint) = (com - ofPoint(joint_pos.x, joint_pos.y, joint_pos.z));
+        data_point.joints.at(joint) = (ofPoint(joint_pos.x, joint_pos.y, joint_pos.z) - com);
+        
         data_point.confidences.at(joint) = user.getSkeleton().getJoint(joint).getPositionConfidence();
         
         // Joint orientations.
@@ -222,6 +223,13 @@ SkeletonDataPoint KinectInput::get_depth_data(int user_id) {
         
         depth_data_point.joints.at(joint) = convert_world_to_depth(ofPoint(joint_pos.x, joint_pos.y, joint_pos.z));
         depth_data_point.confidences.at(joint) = joint_conf;
+        
+        // Joint orientations.
+        
+        // Convert from NiteQuaternion to ofQuaternion
+        NiteQuaternion orientation = user.getSkeleton().getJoint(joint).getOrientation();
+        depth_data_point.joint_orientations.at(joint) = ofQuaternion(orientation.x, orientation.y, orientation.z, orientation.w);
+        depth_data_point.orientation_confidences.at(joint) = user.getSkeleton().getJoint(joint).getOrientationConfidence();
         
       }
       

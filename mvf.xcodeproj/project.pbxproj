@@ -83,6 +83,7 @@
 		C643557A18E600F3008AE100 /* gvfKinect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C643557818E600F3008AE100 /* gvfKinect.cpp */; };
 		C643557D18E60110008AE100 /* gvfKinectHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C643557B18E6010F008AE100 /* gvfKinectHandler.cpp */; };
 		C67106EB18E8D421001D3E51 /* SkeletonGesture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C67106E918E8D421001D3E51 /* SkeletonGesture.cpp */; };
+		C6B015D1190C7B5800A5BF82 /* ofxCsv.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6B015CD190C7B5800A5BF82 /* ofxCsv.cpp */; };
 		C6D394C618F7AAC30043DD1C /* OSCInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6D394C418F7AAC20043DD1C /* OSCInterface.cpp */; };
 		C6E900F318EE37B300C0F2C1 /* libNiTE2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C6E900E518EE37B300C0F2C1 /* libNiTE2.dylib */; };
 		C6E9010218EE37D300C0F2C1 /* libOpenNI2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C6E900F618EE37D200C0F2C1 /* libOpenNI2.dylib */; };
@@ -377,6 +378,8 @@
 		C67106E918E8D421001D3E51 /* SkeletonGesture.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SkeletonGesture.cpp; sourceTree = "<group>"; };
 		C67106EA18E8D421001D3E51 /* SkeletonGesture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SkeletonGesture.h; sourceTree = "<group>"; };
 		C6937888E126BADC8777423B /* OscTypes.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = OscTypes.h; path = ../../../addons/ofxOsc/libs/oscpack/src/osc/OscTypes.h; sourceTree = SOURCE_ROOT; };
+		C6B015CD190C7B5800A5BF82 /* ofxCsv.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxCsv.cpp; sourceTree = "<group>"; };
+		C6B015CE190C7B5800A5BF82 /* ofxCsv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxCsv.h; sourceTree = "<group>"; };
 		C6D394C418F7AAC20043DD1C /* OSCInterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OSCInterface.cpp; sourceTree = "<group>"; };
 		C6D394C518F7AAC30043DD1C /* OSCInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OSCInterface.h; sourceTree = "<group>"; };
 		C6E900E418EE37B300C0F2C1 /* com.primesense.nite.jar */ = {isa = PBXFileReference; lastKnownFileType = archive.jar; path = com.primesense.nite.jar; sourceTree = "<group>"; };
@@ -547,6 +550,7 @@
 		BB4B014C10F69532006C3DED /* addons */ = {
 			isa = PBXGroup;
 			children = (
+				C6B015B9190C7B5700A5BF82 /* ofxCsv */,
 				C61F57A518EC553700DAF3CC /* ofxXmlSettings */,
 				C61F54F018EC52D100DAF3CC /* ofxUI */,
 				C643554818E5DA73008AE100 /* ofxGui */,
@@ -806,6 +810,24 @@
 				C6E9014D18EE573E00C0F2C1 /* KinectInput.h */,
 			);
 			name = kinect;
+			sourceTree = "<group>";
+		};
+		C6B015B9190C7B5700A5BF82 /* ofxCsv */ = {
+			isa = PBXGroup;
+			children = (
+				C6B015CC190C7B5800A5BF82 /* src */,
+			);
+			name = ofxCsv;
+			path = ../../../addons/ofxCsv;
+			sourceTree = "<group>";
+		};
+		C6B015CC190C7B5800A5BF82 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				C6B015CD190C7B5800A5BF82 /* ofxCsv.cpp */,
+				C6B015CE190C7B5800A5BF82 /* ofxCsv.h */,
+			);
+			path = src;
 			sourceTree = "<group>";
 		};
 		C6D394C718F7AAC70043DD1C /* OSC */ = {
@@ -1226,6 +1248,7 @@
 				C61F57B118EC553700DAF3CC /* ofxXmlSettings.cpp in Sources */,
 				C6E9014E18EE573E00C0F2C1 /* KinectInput.cpp in Sources */,
 				C6D394C618F7AAC30043DD1C /* OSCInterface.cpp in Sources */,
+				C6B015D1190C7B5800A5BF82 /* ofxCsv.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1361,6 +1384,7 @@
 					../../../addons/ofxUI/src,
 					../../../addons/ofxXmlSettings/src,
 					../../../addons/ofxXmlSettings/lib,
+					../../../addons/ofxCsv/src,
 				);
 				ICON = "$(ICON_NAME_DEBUG)";
 				ICON_FILE = "$(ICON_FILE_PATH)$(ICON)";
@@ -1467,6 +1491,7 @@
 					../../../addons/ofxUI/src,
 					../../../addons/ofxXmlSettings/src,
 					../../../addons/ofxXmlSettings/lib,
+					../../../addons/ofxCsv/src,
 				);
 				ICON = "$(ICON_NAME_RELEASE)";
 				ICON_FILE = "$(ICON_FILE_PATH)$(ICON)";

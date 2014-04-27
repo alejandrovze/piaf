@@ -10,6 +10,7 @@
 #define __mvf__SkeletonGesture__
 
 #include <iostream>
+
 #include "ofMain.h"
 
 typedef enum

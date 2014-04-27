@@ -16,6 +16,37 @@
 #include "KinectInput.h"
 
 #include "ofxXmlSettings.h"
+#include "ofxCsv.h"
+
+// FOR LOADING MS KINECT CSV FILES
+
+typedef enum {
+  NUI_SKELETON_POSITION_HIP_CENTER = 0,
+  NUI_SKELETON_POSITION_SPINE = 1,
+  NUI_SKELETON_POSITION_SHOULDER_CENTER = 2,
+  NUI_SKELETON_POSITION_HEAD = 3,
+  NUI_SKELETON_POSITION_SHOULDER_LEFT = 4,
+  NUI_SKELETON_POSITION_ELBOW_LEFT = 5,
+  NUI_SKELETON_POSITION_WRIST_LEFT = 6,
+  NUI_SKELETON_POSITION_HAND_LEFT = 7,
+  NUI_SKELETON_POSITION_SHOULDER_RIGHT = 8,
+  NUI_SKELETON_POSITION_ELBOW_RIGHT = 9,
+  NUI_SKELETON_POSITION_WRIST_RIGHT = 10,
+  NUI_SKELETON_POSITION_HAND_RIGHT = 11,
+  NUI_SKELETON_POSITION_HIP_LEFT = 12,
+  NUI_SKELETON_POSITION_KNEE_LEFT = 13,
+  NUI_SKELETON_POSITION_ANKLE_LEFT = 14,
+  NUI_SKELETON_POSITION_FOOT_LEFT = 15,
+  NUI_SKELETON_POSITION_HIP_RIGHT = 16,
+  NUI_SKELETON_POSITION_KNEE_RIGHT = 17,
+  NUI_SKELETON_POSITION_ANKLE_RIGHT = 18,
+  NUI_SKELETON_POSITION_FOOT_RIGHT = 19,
+
+  NUI_SKELETON_POSITION_COUNT = 20
+  
+} MSKinectJoints;
+
+
 
 // ------------------------------------------------------
 // ------------------------------------------------------
@@ -80,6 +111,7 @@ public:
   void saveGestures(string filename);
   void loadGestures();
   void loadGestures(string filename);
+  void loadCsv();
   
   void delete_template(int template_index); // TODO
   // ------------------------------------
