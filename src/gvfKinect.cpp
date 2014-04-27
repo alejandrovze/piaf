@@ -38,13 +38,18 @@ void gvfKinect::setup(){
   // Setup all the gvf handlers (set what data they extract)
   
   // MARK: Setup Handlers
-  gvf_handlers.push_back(new gvfKinectHandler(0, "Head", HEAD, 3));
-  gvf_handlers.push_back(new gvfKinectHandler(1, "Right Elbow", RIGHT_ELBOW, 1));
-  gvf_handlers.push_back(new gvfKinectHandler(2, "Left Elbow", LEFT_ELBOW, 1));
+  gvf_handlers.push_back(new gvfKinectHandler("Head", HEAD, 3));
+  gvf_handlers.push_back(new gvfKinectHandler("Right Elbow", RIGHT_ELBOW, 1));
+  gvf_handlers.push_back(new gvfKinectHandler("Left Elbow", LEFT_ELBOW, 1));
+  gvf_handlers.push_back(new gvfKinectHandler("Right Knee", RIGHT_KNEE, 1));
+  gvf_handlers.push_back(new gvfKinectHandler("Left Knee", LEFT_KNEE, 1));
+  gvf_handlers.push_back(new gvfKinectHandler("Right Shoulder", RIGHT_SHOULDER, 1));
+  gvf_handlers.push_back(new gvfKinectHandler("Left Shoulder", LEFT_SHOULDER, 1));
+  gvf_handlers.push_back(new gvfKinectHandler("Right Hand", RIGHT_HAND, 3));
+  gvf_handlers.push_back(new gvfKinectHandler("Left Hand", LEFT_HAND, 3));
+  
   
 //  gvf_handlers.push_back(new gvfKinectHandler(1, "Center of Mass", CENTER_OF_MASS, 3));
-//  gvf_handlers.push_back(new gvfKinectHandler(4, "Right Knee", RIGHT_KNEE, 1));
-//  gvf_handlers.push_back(new gvfKinectHandler(5, "Left Knee", LEFT_KNEE, 1));
 //  gvf_handlers.push_back(new gvfKinectHandler(6, "Breadth", BREADTH, 1));
   
 }
@@ -572,7 +577,108 @@ void gvfKinect::loadGestures() {
   
   cout << "Loading file " << dialogResult.filePath << endl;
   
+  
   loadGestures(dialogResult.filePath);
+}
+
+//--------------------------------------------------------------
+void gvfKinect::loadCsv() {
+  
+  ofFileDialogResult dialogResult = ofSystemLoadDialog("Select the csv file containing gesture data");
+  
+  if(!dialogResult.bSuccess)
+    return;
+  
+  string filename = dialogResult.filePath;
+  
+  wng::ofxCsv data_file;
+  
+  data_file.loadFile(filename, " ");
+  
+  
+  cout << "Num rows of new file is " << data_file.numRows << endl;
+  cout << "Num columns of new file is " << data_file.numCols << endl;
+  
+  int nui_joint_pos[N_JOINTS];
+  
+  nui_joint_pos[JOINT_HEAD] = NUI_SKELETON_POSITION_HEAD;
+  nui_joint_pos[JOINT_NECK] = NUI_SKELETON_POSITION_SHOULDER_CENTER;
+  nui_joint_pos[JOINT_LEFT_SHOULDER] = NUI_SKELETON_POSITION_SHOULDER_LEFT;
+  nui_joint_pos[JOINT_RIGHT_SHOULDER] = NUI_SKELETON_POSITION_SHOULDER_RIGHT;
+  nui_joint_pos[JOINT_LEFT_ELBOW] =  NUI_SKELETON_POSITION_ELBOW_LEFT;
+  nui_joint_pos[JOINT_RIGHT_ELBOW] = NUI_SKELETON_POSITION_ELBOW_RIGHT;
+  nui_joint_pos[JOINT_LEFT_HAND] = NUI_SKELETON_POSITION_HAND_LEFT;
+  nui_joint_pos[JOINT_RIGHT_HAND] = NUI_SKELETON_POSITION_HAND_RIGHT;
+  nui_joint_pos[JOINT_TORSO] = NUI_SKELETON_POSITION_SPINE;
+  nui_joint_pos[JOINT_LEFT_HIP] =NUI_SKELETON_POSITION_HIP_LEFT;
+  nui_joint_pos[JOINT_RIGHT_HIP] = NUI_SKELETON_POSITION_HIP_RIGHT;
+  nui_joint_pos[JOINT_LEFT_KNEE] = NUI_SKELETON_POSITION_KNEE_LEFT;
+  nui_joint_pos[JOINT_RIGHT_KNEE] = NUI_SKELETON_POSITION_KNEE_RIGHT;
+  nui_joint_pos[JOINT_LEFT_FOOT] = NUI_SKELETON_POSITION_FOOT_LEFT;
+  nui_joint_pos[JOINT_RIGHT_FOOT] = NUI_SKELETON_POSITION_FOOT_RIGHT;
+  
+//  NUI_SKELETON_POSITION_HIP_CENTER = 0,
+//  NUI_SKELETON_POSITION_WRIST_RIGHT = 10,
+//  NUI_SKELETON_POSITION_ANKLE_LEFT = 14,
+//  NUI_SKELETON_POSITION_FOOT_LEFT = 15,
+//  NUI_SKELETON_POSITION_ANKLE_RIGHT = 18,
+  
+  
+  clear();
+  
+  learn();
+  
+  play();
+  
+  
+  for (int i = 0; i < data_file.numRows; ++i) {
+    
+    SkeletonDataPoint new_point;
+    
+    // No bounding box.
+    
+    // No center of mass.
+    
+    // Get joints
+    
+    for (int k = 0; k < N_JOINTS; ++k) {
+      
+      int joint_index = 4 * nui_joint_pos[k] + 1;
+      
+      new_point.joints[k] = ofPoint(atof(data_file.data[i][joint_index].c_str()),
+                                    atof(data_file.data[i][joint_index + 1].c_str()),
+                                    atof(data_file.data[i][joint_index + 2].c_str())) * (- 1000.);
+      
+      new_point.confidences[k] = 1.0;
+      
+      
+    }
+    
+    
+    // No orientations
+    
+    update(new_point);
+  }
+  
+  stop();
+  
+  
+  cout << "Loaded CSV template of length " << data_file.numRows << endl;
+  
+//    
+//    for (int k = 0; k < N_JOINTS; ++k) {
+//      
+//      gesture_file->pushTag("Joints", k);
+//      new_point.joints[k] = ofPoint(gesture_file->getValue("X", 0.0),
+//                                    gesture_file->getValue("Y", 0.0),
+//                                    gesture_file->getValue("Z", 0.0));
+//      new_point.confidences[k] = gesture_file->getValue("Confidence", 1.0); // Default confidence 1.0 (if not recorded).
+//      gesture_file->popTag();
+//      
+//      }
+//    }
+
+
 }
 
 // Load Gestures from Given File

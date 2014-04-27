@@ -184,6 +184,12 @@ void ofApp::keyPressed(int key){
     else
       cout << "Can only load when stopped." << endl;
   }
+  else if (key == 'z' || key == 'Z') {
+    if (!gvf_kinect.get_is_playing())
+      gvf_kinect.loadCsv();
+    else
+      cout << "Can only load when stopped." << endl;
+  }
   // Switch current gesture
   else if (key == ',') {
     gvf_kinect.set_current_record(gvf_kinect.get_current_record() - 1);

@@ -59,9 +59,14 @@ typedef enum
   
   // --- RIGHT_LEG
   RIGHT_HIP,
-  RIGHT_KNEE
+  RIGHT_KNEE,
   
   // --- WAIST
+  
+  // ------------------------------
+  // LEVEL 4 - extremities
+  LEFT_HAND,
+  RIGHT_HAND
   
 } BodyPart;
 
@@ -103,7 +108,7 @@ class gvfKinectHandler{
   
 public:
 
-  gvfKinectHandler(int _gvf_id, string _gvf_name, BodyPart feature, int n_dimensions);
+  gvfKinectHandler(string _gvf_name, BodyPart feature, int n_dimensions);
   ~gvfKinectHandler();
   
   void setState(ofxGVF::ofxGVFState state);
@@ -114,7 +119,6 @@ public:
   void gvf_data(vector<float> vect);
   
   // Metadata
-  int gvf_id;
   string gvf_name;
   
   // SET parameters

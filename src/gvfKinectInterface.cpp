@@ -495,6 +495,7 @@ float* gvfKinectInterface::CalculateHistogram(int histogramSize, const openni::V
 }
 
 
+// Live skeleton display
 //--------------------------------------------------------------
 void gvfKinectInterface::UpdateSkeleton(SkeletonDataPoint new_point) {
   
@@ -510,14 +511,48 @@ void gvfKinectInterface::UpdateSkeleton(SkeletonDataPoint new_point) {
   
   // Draw SKELETON
   
+//  ofQuaternion torso_orientation = new_point.joint_orientations[JOINT_TORSO];
+//  ofPoint torso_point = new_point.joints[JOINT_TORSO];
+//  ofPoint torso_end = ofPoint(torso_point.x + torso_orientation.x() * 500.0, torso_point.y + torso_orientation.y() * 500.0, torso_point.z + torso_orientation.z() * 500.0);
+
+  
+//  float tx0 = (int) ((float) (torso_point.x) * (float) kinect_width / (float) depth_width);
+//  float ty0 = (int) ((float) (torso_point.y) * (float) kinect_height / (float) depth_height);
+//  float tx1 = (int) ((float) (torso_end.x) * (float) kinect_width / (float) depth_width);
+//  float ty1 = (int) ((float) (torso_end.y) * (float) kinect_height / (float) depth_height);
+  
+  
   for (int i = 0; i < N_JOINTS; ++i) {
     
-    x_pos = (int) ((float) (new_point.joints[i].x) * (float) kinect_width / (float) depth_width);
-    y_pos = (int) ((float) (new_point.joints[i].y) * (float) kinect_height / (float) depth_height);
+//    ofQuaternion orientation = new_point.joint_orientations[i];
+//    float angle;
+//    ofVec3f orientation_vec;
+//    float& r_angle = angle;
+//    ofVec3f& r_orientation_vec = orientation_vec;
+//    
+//    orientation.getRotate(r_angle, r_orientation_vec);
+    
+//    cout << "angle " << angle << " rotate " << orientation_vec.x << " " << orientation_vec.y << " " << orientation_vec.z << endl;
+    
+    
+//    ofPoint point = new_point.joints[i];
+//    ofPoint point_end =  ofPoint(point.x + orientation_vec.x * 500.0, point.y + orientation_vec.y * 500.0, point.z + orientation_vec.z * 500.0);
+//    cout << "or vec " << orientation_vec.x << " " << orientation_vec.y << " " << orientation_vec.z << endl;
+//    ofPoint point_end =  ofPoint(point.x + orientation.x() * 500.0, point.y + orientation.y() * 500.0, point.z + orientation.z() * 500.0);
+//    
+//    float tx0 = (int) ((float) (point.x) * (float) kinect_width / (float) depth_width);
+//    float ty0 = (int) ((float) (point.y) * (float) kinect_height / (float) depth_height);
+//    float tx1 = (int) ((float) (point_end.x) * (float) kinect_width / (float) depth_width);
+//    float ty1 = (int) ((float) (point_end.y) * (float) kinect_height / (float) depth_height);
+//    
+//
+//    ofSetColor(90, 80, 255);
+//    ofLine(tx0, ty0, tx1, ty1);
     
     ofSetColor(255, 0, 255);
     
-    
+    x_pos = (int) ((float) (new_point.joints[i].x) * (float) kinect_width / (float) depth_width);
+    y_pos = (int) ((float) (new_point.joints[i].y) * (float) kinect_height / (float) depth_height);
     ofCircle(x_pos, y_pos, 5);
   }
   
@@ -525,6 +560,8 @@ void gvfKinectInterface::UpdateSkeleton(SkeletonDataPoint new_point) {
   
 }
 
+
+// This is for TEMPLATES.
 // Diplaying a saved point
 //--------------------------------------------------------------
 void gvfKinectInterface::DisplaySkeleton(SkeletonDataPoint new_point, ofPoint location) {

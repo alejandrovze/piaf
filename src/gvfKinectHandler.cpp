@@ -6,12 +6,9 @@
 //
 //
 
-//reworking to the skeleton
-
 #include "gvfKinectHandler.h"
 
-gvfKinectHandler::gvfKinectHandler(int id, string name, BodyPart feature, int n_dimensions):
-gvf_id(id),
+gvfKinectHandler::gvfKinectHandler(string name, BodyPart feature, int n_dimensions):
 gvf_name(name),
 gvf_feature(feature)
 {
@@ -207,10 +204,29 @@ vector<float> gvfKinectHandler::get_body_part(SkeletonDataPoint data_point, Body
       break;
     }
       
+    case RIGHT_SHOULDER: {
+      ofVec3f right_torso = get_segment(data_point.joints[JOINT_RIGHT_SHOULDER], data_point.joints[JOINT_RIGHT_HIP]);
+      ofVec3f right_arm = get_segment(data_point.joints[JOINT_RIGHT_ELBOW], data_point.joints[JOINT_RIGHT_SHOULDER]);
+      vector<float> right_shoulder = vector<float>(1, get_angle(right_arm, right_torso));
+      cout << "right shoulder " << right_shoulder[0] << endl;
+      return right_shoulder;
+      break;
+    }
+      
+    case LEFT_SHOULDER: {
+      ofVec3f left_torso = get_segment(data_point.joints[JOINT_LEFT_SHOULDER], data_point.joints[JOINT_LEFT_HIP]);
+      ofVec3f left_arm = get_segment(data_point.joints[JOINT_LEFT_ELBOW], data_point.joints[JOINT_LEFT_SHOULDER]);
+      vector<float> left_shoulder = vector<float>(1, get_angle(left_arm, left_torso));
+      cout << "left shoulder " << left_shoulder[0] << endl;
+      return left_shoulder;
+      break;
+    }
+      
     case RIGHT_ELBOW: {
       ofVec3f right_forearm = get_segment(data_point.joints[JOINT_RIGHT_HAND], data_point.joints[JOINT_RIGHT_ELBOW]);
       ofVec3f right_arm = get_segment(data_point.joints[JOINT_RIGHT_ELBOW], data_point.joints[JOINT_RIGHT_SHOULDER]);
       vector<float> right_elbow = vector<float>(1, get_angle(right_forearm, right_arm));
+      cout << "right elbow " << right_elbow[0] << endl;
       return right_elbow;
       break;
     }
@@ -219,6 +235,7 @@ vector<float> gvfKinectHandler::get_body_part(SkeletonDataPoint data_point, Body
       ofVec3f left_forearm = get_segment(data_point.joints[JOINT_LEFT_HAND], data_point.joints[JOINT_LEFT_ELBOW]);
       ofVec3f left_arm = get_segment(data_point.joints[JOINT_LEFT_ELBOW], data_point.joints[JOINT_LEFT_SHOULDER]);
       vector<float> left_elbow = vector<float>(1, get_angle(left_forearm, left_arm));
+      cout << "left elbow " << left_elbow[0] << endl;
       return left_elbow;
       break;
     }
@@ -227,6 +244,7 @@ vector<float> gvfKinectHandler::get_body_part(SkeletonDataPoint data_point, Body
       ofVec3f right_calf = get_segment(data_point.joints[JOINT_RIGHT_FOOT], data_point.joints[JOINT_RIGHT_KNEE]);
       ofVec3f right_thigh = get_segment(data_point.joints[JOINT_RIGHT_KNEE], data_point.joints[JOINT_RIGHT_HIP]);
       vector<float> right_knee = vector<float>(1, get_angle(right_calf, right_thigh));
+      cout << "right knee " << right_knee[0] << endl;
       return right_knee;
       break;
     }
@@ -235,7 +253,30 @@ vector<float> gvfKinectHandler::get_body_part(SkeletonDataPoint data_point, Body
       ofVec3f left_calf = get_segment(data_point.joints[JOINT_LEFT_FOOT], data_point.joints[JOINT_LEFT_KNEE]);
       ofVec3f left_thigh = get_segment(data_point.joints[JOINT_LEFT_KNEE], data_point.joints[JOINT_LEFT_HIP]);
       vector<float> left_knee = vector<float>(1, get_angle(left_calf, left_thigh));
+      cout << "left knee " << left_knee[0] << endl;
       return left_knee;
+      break;
+    }
+      
+    case RIGHT_HAND: {
+      vector<float> right_hand = vector<float>(3);
+      
+      right_hand[0] = data_point.joints[JOINT_RIGHT_HAND].x;
+      right_hand[1] = data_point.joints[JOINT_RIGHT_HAND].y;
+      right_hand[2] = data_point.joints[JOINT_RIGHT_HAND].z;
+      
+      return right_hand;
+      break;
+    }
+      
+    case LEFT_HAND: {
+      vector<float> left_hand = vector<float>(3);
+      
+      left_hand[0] = data_point.joints[JOINT_LEFT_HAND].x;
+      left_hand[1] = data_point.joints[JOINT_LEFT_HAND].y;
+      left_hand[2] = data_point.joints[JOINT_LEFT_HAND].z;
+      
+      return left_hand;
       break;
     }
       
