@@ -13,6 +13,7 @@
 void OSCInterface::setup(){
   
 	// open an outgoing connection to HOST:PORT
+	cout << "sending osc messages on port " << OUT_PORT << "\n";
 	sender.setup(HOST, OUT_PORT);
   
   // listen on the given port
@@ -24,18 +25,35 @@ void OSCInterface::setup(){
 }
 
 //--------------------------------------------------------------
-void OSCInterface::update(){
+void OSCInterface::update(RecognitionData recog_data){
   
   
   // SENDER
   
-  ofxOscMessage m;
-  m.setAddress("/test");
-  m.addIntArg(1);
-  m.addFloatArg(3.5f);
-  m.addStringArg("hello");
-  m.addFloatArg(ofGetElapsedTimef());
-  sender.sendMessage(m);
+//  ofxOscMessage m;
+//  m.setAddress("/test");
+//  m.addIntArg(1);
+//  m.addFloatArg(3.5f);
+//  m.addStringArg("hello");
+//  m.addFloatArg(ofGetElapsedTimef());
+//  sender.sendMessage(m);
+//  
+  for (int i = 0; i < recog_data.n_gvf; ++i) {
+    
+    ofxOscMessage gvf_info;
+    
+    gvf_info.setAddress("/gvf_info");
+    gvf_info.addIntArg(i); // gvf ID
+    gvf_info.addStringArg(recog_data.gvf_names[i]);
+    gvf_info.addIntArg(recog_data.most_probable_gesture[i]);
+    
+//    recog_data.recognition_info[i];
+    
+    sender.sendMessage(gvf_info);
+    
+  }
+  
+  return recog_data;
   
   
   // RECEIVER

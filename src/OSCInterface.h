@@ -11,6 +11,7 @@
 
 #include <iostream>
 #include "ofxOsc.h"
+#include "gvfKinect.h"
 
 #define HOST "localhost"
 #define IN_PORT 7400
@@ -23,7 +24,7 @@ class OSCInterface {
 public:
   
   void setup();
-  void update();
+  void update(RecognitionData recog_data);
   
   ofTrueTypeFont font;
   ofxOscSender sender;

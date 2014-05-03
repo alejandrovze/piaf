@@ -63,8 +63,7 @@ void ofApp::update(){
   
   kinect_interface.update();
   
-  osc_interface.update();
-  
+  osc_interface.update(gvf_kinect.get_recognition_data());
 
 }
 

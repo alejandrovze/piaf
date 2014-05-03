@@ -46,6 +46,15 @@ typedef enum {
   
 } MSKinectJoints;
 
+typedef struct {
+  
+  int n_gvf;
+  
+  vector<string> gvf_names;
+  vector<int> most_probable_gesture;
+  vector<RecognitionInfo> recognition_info; // For each GVF
+  
+} RecognitionData;
 
 
 // ------------------------------------------------------
@@ -98,6 +107,7 @@ public:
   int get_playback_position();
   int get_current_record_length();
   
+  RecognitionData get_recognition_data();
   int get_most_probable();
   int get_most_probable(int gvf_index);
   int get_n_gvfs();

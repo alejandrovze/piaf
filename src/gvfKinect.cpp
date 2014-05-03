@@ -39,14 +39,14 @@ void gvfKinect::setup(){
   
   // MARK: Setup Handlers
   gvf_handlers.push_back(new gvfKinectHandler("Head", HEAD, 3));
-  gvf_handlers.push_back(new gvfKinectHandler("Right Elbow", RIGHT_ELBOW, 1));
-  gvf_handlers.push_back(new gvfKinectHandler("Left Elbow", LEFT_ELBOW, 1));
-  gvf_handlers.push_back(new gvfKinectHandler("Right Knee", RIGHT_KNEE, 1));
-  gvf_handlers.push_back(new gvfKinectHandler("Left Knee", LEFT_KNEE, 1));
-  gvf_handlers.push_back(new gvfKinectHandler("Right Shoulder", RIGHT_SHOULDER, 1));
-  gvf_handlers.push_back(new gvfKinectHandler("Left Shoulder", LEFT_SHOULDER, 1));
-  gvf_handlers.push_back(new gvfKinectHandler("Right Hand", RIGHT_HAND, 3));
-  gvf_handlers.push_back(new gvfKinectHandler("Left Hand", LEFT_HAND, 3));
+  gvf_handlers.push_back(new gvfKinectHandler("Right_Elbow", RIGHT_ELBOW, 1));
+  gvf_handlers.push_back(new gvfKinectHandler("Left_Elbow", LEFT_ELBOW, 1));
+  gvf_handlers.push_back(new gvfKinectHandler("Right_Knee", RIGHT_KNEE, 1));
+  gvf_handlers.push_back(new gvfKinectHandler("Left_Knee", LEFT_KNEE, 1));
+  gvf_handlers.push_back(new gvfKinectHandler("Right_Shoulder", RIGHT_SHOULDER, 1));
+  gvf_handlers.push_back(new gvfKinectHandler("Left_Shoulder", LEFT_SHOULDER, 1));
+//  gvf_handlers.push_back(new gvfKinectHandler("Right_Hand", RIGHT_HAND, 3));
+//  gvf_handlers.push_back(new gvfKinectHandler("Left_Hand", LEFT_HAND, 3));
   
   
 //  gvf_handlers.push_back(new gvfKinectHandler(1, "Center of Mass", CENTER_OF_MASS, 3));
@@ -412,6 +412,33 @@ int gvfKinect::get_n_gvfs() {
   return gvf_handlers.size();
 }
 
+
+//--------------------------------------------------------------
+RecognitionData gvfKinect::get_recognition_data() {
+  
+  RecognitionData recog_data;
+  
+  recog_data.n_gvf = gvf_handlers.size(); // Number of GVFs
+  
+  for (std::vector<gvfKinectHandler*>::iterator gvfh = gvf_handlers.begin();
+       gvfh != gvf_handlers.end();
+       ++gvfh) {
+    
+    recog_data.gvf_names.push_back((*gvfh)->gvf_name);
+    
+    recog_data.most_probable_gesture.push_back((*gvfh)->getIndexMostProbable());
+  
+    recog_data.recognition_info.push_back((*gvfh)->getRecogInfoOfMostProbable());
+    
+  }
+  
+  return recog_data;
+  
+}
+
+
+
+//--------------------------------------------------------------
 // TODO: weighting to get "most probable gesture"
 int gvfKinect::get_most_probable() {
   return -1;
