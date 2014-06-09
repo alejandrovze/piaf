@@ -75,6 +75,8 @@ openni::Status KinectInput::setup()
   
   is_running = true;
   
+  cout << "Opened successfully\n";
+  
   return openni::STATUS_OK;
   
 }

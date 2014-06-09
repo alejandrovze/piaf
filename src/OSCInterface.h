@@ -11,7 +11,6 @@
 
 #include <iostream>
 #include "ofxOsc.h"
-#include "gvfKinect.h"
 
 #define HOST "localhost"
 #define IN_PORT 7400
@@ -24,7 +23,7 @@ class OSCInterface {
 public:
   
   void setup();
-  void update(RecognitionData recog_data);
+//  void update(RecognitionData recog_data);
   
   ofTrueTypeFont font;
   ofxOscSender sender;
@@ -35,11 +34,11 @@ public:
   string msg_strings[NUM_MSG_STRINGS];
   float timers[NUM_MSG_STRINGS];
   
-  
-  int get_time(int phrase_length);
-  int get_clock();
-  
-  float clock_time;
+//  
+//  int get_time(int phrase_length);
+//  int get_clock();
+//  
+//  float clock_time;
 
   
 };

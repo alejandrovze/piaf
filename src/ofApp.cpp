@@ -14,197 +14,145 @@ void ofApp::setup(){
   ofPoint wSize = ofGetWindowSize();
   scrW = wSize.x;
   scrH = wSize.y;
-  printf("w: %d h: %d\n", scrW, scrH);
+  //printf("w: %d h: %d\n", scrW, scrH);
   
-  //------------------------------------
   
-  gvf_kinect.setup();
+  //application.setup();
   
-  kinect_interface.setup(&gvf_kinect);
+  isFollowing = false;
   
-  osc_interface.setup();
-  
-  timing_on = false;
-  
-//  phrase_length = 8; // MARK: later to be parameter that can be modified.
-  
-  //------------------------------------
+  // SETUP ELEMETNS
+  inputs.setup();                         // inputs devices
+  handler.setup(inputs.getInputSize());   // gvf
+  interface.setup(&handler, &inputs, 0, inputs.get_kinect_input());  // interface
   
   initColors();
   
-  /* some standard setup stuff*/
+  // some standard setup stuff
 	ofEnableAlphaBlending();
 	ofSetupScreen();
 	ofBackground(0, 0, 0);
 	ofSetFrameRate(60);
   
+  
+  // MARK: Midi Input
+  // ================
+  //	midiIn.openPort(1);
+  //	midiIn.ignoreTypes(false, false, false);
+  //	midiIn.addListener(this);
+  //	midiIn.setVerbose(true);
+  //    cout << midiIn.getName(); // Check port
+  
+  
+  // MARK: AUDIO SETUP
+  // =================
+  // 2 output channels,
+	// 1 input channels
+	// 44100 samples per second
+	// 4 num buffers (latency)
+  
+//	sampleRate 			= 44100; /* Sampling Rate */
+//	initialBufferSize	= 512;	/* Buffer Size. you have to fill this buffer with sound*/
+//  nOutputChannels = 2;
+//  nInputChannels = 1;
+//  nBuffers = 4;
+//  
+//  
+//	ofSoundStreamSetup(nOutputChannels, nInputChannels, this, sampleRate, initialBufferSize, nBuffers);
 }
 
 
 //--------------------------------------------------------------
 void ofApp::update(){
   
-  if (timing_on) {
+  inputs.update();
   
-    if ((current_position == (kinect_interface.get_phrase_length() - 1)) && (osc_interface.get_time(kinect_interface.get_phrase_length()) == 0)) {
-      // SEGMENT
-      if (gvf_kinect.get_is_playing()) {
-        gvf_kinect.stop();
-        gvf_kinect.play();
-      }
-    }
-    
-    current_position = osc_interface.get_time(kinect_interface.get_phrase_length());
-    
+  //inputData = inputs.getInputData();
+  
+  if (isFollowing) {
+    handler.gvf_data(inputs.getInputData());
+    //handler->gvf_data(inputData);
+    //gesture_data.push_back(inputData);
   }
   
+  interface.update();
   
-  gvf_kinect.update();
-  
-  kinect_interface.update();
-  
-  osc_interface.update(gvf_kinect.get_recognition_data());
-
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
   
+  float templatesScale = 1.0f; //Leave scale at 1.0.
   ofBackgroundGradient(ofColor(2), ofColor(40), OF_GRADIENT_CIRCULAR);
   ofPushMatrix();
   
-  ofDisableAlphaBlending();
+  interface.draw();
   
-  ofSetColor(150, 150, 150);
+  stringstream reportStream;
+  ofDisableAlphaBlending();
   
   // show the current frame rate
   ofDrawBitmapString("FPS " + ofToString(ofGetFrameRate(), 0), ofGetWidth() - 200, 25);
-  if (timing_on)
-    ofDrawBitmapString("clock time " + ofToString(current_position), ofGetWidth() - 200, 40);
-  
-  // Display state
-  string state;
-  switch (gvf_kinect.get_state()) {
-    case ofxGVF::STATE_CLEAR:
-      state = "clear";
-      break;
-    case ofxGVF::STATE_LEARNING:
-      state = "learn";
-      break;
-    case ofxGVF::STATE_FOLLOWING:
-      state = "follow";
-      break;
-  }
-  string is_playing;
-  
-  if (gvf_kinect.get_is_playing()) {
-    is_playing = "Is Playing";
-  } 
-  else {
-    is_playing = "Is Not Playing";
-  }
-  int n_templates = gvf_kinect.get_n_templates();
-  int n_records = gvf_kinect.get_n_records();
-  int current_record = gvf_kinect.get_current_record();
-  int playback_position = gvf_kinect.get_playback_position();
-  int current_record_length = gvf_kinect.get_current_record_length();
-  string mode;
-  
-  if (gvf_kinect.get_is_live()) {
-    mode = "live";
-  }
-  else {
-    mode = "vcr";
-  }
-  
-  ofDrawBitmapString(state + " " + is_playing + " " + ofToString(n_templates) + "templates", ofGetWidth() - 400, 60);
-  ofDrawBitmapString(state + " " + is_playing + " " + ofToString(n_records) + " records", ofGetWidth() - 400, 80);
-  ofDrawBitmapString(ofToString(current_record) + " is current, mode is " + mode, ofGetWidth() - 400, 100);
-  ofDrawBitmapString(ofToString(playback_position) + " of " + ofToString(current_record_length), ofGetWidth() - 400, 120);
-  
-  for (int i = 0; i < gvf_kinect.get_n_gvfs(); ++i) {
-    
-    ofDrawBitmapString(gvf_kinect.get_gvf_name(i) + " returns most probable " +
-                       ofToString(gvf_kinect.get_most_probable(i)), ofGetWidth() - 400, 140 + 20 * i);
-    
-  }
-  
-  //------------------------------------
-  
-  kinect_interface.draw();
-  
-  //------------------------------------
-  
 }
 
 //--------------------------------------------------------------
 void ofApp::exit() {
+  // ???: Close Kinect?
   
-  kinect_interface.exit();
+  interface.exit();
+}
+
+//--------------------------------------------------------------
+void ofApp::newMidiMessage(ofxMidiMessage& msg) {
   
-  gvf_kinect.exit();
+	// make a copy of the latest message
+	midiMessage = msg;
   
+  // Press is start, release is stop when learning
+  // Release (or press) triggers for following
+  
+  
+  
+  /*
+   // Pedal Input Control Number: 64
+   if (midiMessage.control == 64) {
+   if (application.getState() == ofxGVF::STATE_LEARNING) {
+   if (midiMessage.value == 0) {
+   application.setFollowing(true);
+   }
+   else if (midiMessage.value == 127) {
+   application.setFollowing(false);
+   }
+   }
+   else {
+   if (midiMessage.value == 127) {
+   // Toggle Following
+   application.setFollowing(!application.getFollowing());
+   }
+   }
+   }
+   */
 }
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
   
-	if (key == 'l' || key == 'L') {
-    gvf_kinect.learn();
+	if (key == 'l' || key == 'L'){
+    //application.setState(ofxGVF::STATE_LEARNING);
+    handler.getGVF()->setState(ofxGVF::STATE_LEARNING); // fishy
 	}
   else if (key == 'f' || key == 'F') {
-    gvf_kinect.follow();
+    //application.setState(ofxGVF::STATE_FOLLOWING);
+    handler.getGVF()->setState(ofxGVF::STATE_FOLLOWING); // fishy
   }
-  else if(key == 'c' || key == 'C') {
-    gvf_kinect.clear();
+  else if(key == 'c' || key == 'C')
+  {
+    //application.setState(ofxGVF::STATE_CLEAR);
+    handler.getGVF()->setState(ofxGVF::STATE_CLEAR); // fishy
   }
   else if (key == ' ') {
-    // Toggle Playing
-    if (gvf_kinect.get_is_playing())
-      gvf_kinect.stop();
-    else
-      gvf_kinect.play();
-  }
-  else if (key == 'v') {
-    // Toggle "live" mode (kinect vs recorded gestures).
-    gvf_kinect.set_live(!gvf_kinect.get_is_live());
-  }
-  else if (key == 's' || key == 'S') {
-    if (!gvf_kinect.get_is_playing()) {
-//      gvf_kinect.saveGestures("new_file.xml");
-      gvf_kinect.saveGestures(); // Open dialog to get file name.
-    }
-    else
-      cout << "Can only save when stopped." << endl;
-  }
-  else if (key == 'x' || key == 'X') {
-    if (!gvf_kinect.get_is_playing())
-      gvf_kinect.loadGestures();
-    else
-      cout << "Can only load when stopped." << endl;
-  }
-  else if (key == 'z' || key == 'Z') {
-    if (!gvf_kinect.get_is_playing())
-      gvf_kinect.loadCsv();
-    else
-      cout << "Can only load when stopped." << endl;
-  }
-  // Switch current gesture
-  else if (key == ',') {
-    gvf_kinect.set_current_record(gvf_kinect.get_current_record() - 1);
-  }
-  else if (key == '.') {
-    gvf_kinect.set_current_record(gvf_kinect.get_current_record() + 1);
-  }
-  // Switch template gesture (display only)
-  else if (key == ';') {
-    kinect_interface.set_template_id(kinect_interface.get_template_id() - 1);
-  }
-  else if (key == '\'') {
-    kinect_interface.set_template_id(kinect_interface.get_template_id() + 1);
-  }
-  else if (key == 't' || key == 'T') {
-    timing_on = !timing_on; // toggle timing.
+    //application.setFollowing(!application.getFollowing());
+    
   }
 }
 
@@ -242,26 +190,27 @@ ofColor ofApp::generateRandomColor()
   int colorsRemaining = colors.size();
   
   int index = ofRandom(0, colorsRemaining - 1);
-  //cout << index << endl;
+  
   c = colors[index];
   colors.erase(colors.begin() + index);
   return c;
 }
 
 
-////---------------------
-//
-//void ofApp::guiEvent(ofxUIEventArgs &e)
-//{
-//	string name = e.widget->getName();
-//	int kind = e.widget->getKind();
-//  
-//	cout << "got event from: " << name << endl;
-//	
-//}
-//
-////!!!: Event handling not implemented with restructuring.
-//void ofApp::templatesGuiEvent(ofxUIEventArgs &e) {
-//  //    gvfh.templateGuiEvent(e);
-//}
+
+//---------------------
+
+void ofApp::guiEvent(ofxUIEventArgs &e)
+{
+	string name = e.widget->getName();
+	int kind    = e.widget->getKind();
+  
+	cout << "got event from: " << name << endl;
+	
+}
+
+//!!!: Event handling not implemented with restructuring.
+void ofApp::templatesGuiEvent(ofxUIEventArgs &e) {
+  //    gvfh.templateGuiEvent(e);
+}
 
