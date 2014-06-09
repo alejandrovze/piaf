@@ -53,8 +53,6 @@ void OSCInterface::update(RecognitionData recog_data){
     
   }
   
-  return recog_data;
-  
   
   // RECEIVER
   

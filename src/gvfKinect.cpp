@@ -38,15 +38,15 @@ void gvfKinect::setup(){
   // Setup all the gvf handlers (set what data they extract)
   
   // MARK: Setup Handlers
-  gvf_handlers.push_back(new gvfKinectHandler("Head", HEAD, 3));
-  gvf_handlers.push_back(new gvfKinectHandler("Right_Elbow", RIGHT_ELBOW, 1));
-  gvf_handlers.push_back(new gvfKinectHandler("Left_Elbow", LEFT_ELBOW, 1));
-  gvf_handlers.push_back(new gvfKinectHandler("Right_Knee", RIGHT_KNEE, 1));
-  gvf_handlers.push_back(new gvfKinectHandler("Left_Knee", LEFT_KNEE, 1));
-  gvf_handlers.push_back(new gvfKinectHandler("Right_Shoulder", RIGHT_SHOULDER, 1));
-  gvf_handlers.push_back(new gvfKinectHandler("Left_Shoulder", LEFT_SHOULDER, 1));
-//  gvf_handlers.push_back(new gvfKinectHandler("Right_Hand", RIGHT_HAND, 3));
-//  gvf_handlers.push_back(new gvfKinectHandler("Left_Hand", LEFT_HAND, 3));
+//  gvf_handlers.push_back(new gvfKinectHandler("Head", HEAD, 3));
+//  gvf_handlers.push_back(new gvfKinectHandler("Right_Elbow", RIGHT_ELBOW, 1));
+//  gvf_handlers.push_back(new gvfKinectHandler("Left_Elbow", LEFT_ELBOW, 1));
+//  gvf_handlers.push_back(new gvfKinectHandler("Right_Knee", RIGHT_KNEE, 1));
+//  gvf_handlers.push_back(new gvfKinectHandler("Left_Knee", LEFT_KNEE, 1));
+//  gvf_handlers.push_back(new gvfKinectHandler("Right_Shoulder", RIGHT_SHOULDER, 1));
+//  gvf_handlers.push_back(new gvfKinectHandler("Left_Shoulder", LEFT_SHOULDER, 1));
+  gvf_handlers.push_back(new gvfKinectHandler("Right_Hand", RIGHT_HAND, 3));
+  gvf_handlers.push_back(new gvfKinectHandler("Left_Hand", LEFT_HAND, 3));
   
   
 //  gvf_handlers.push_back(new gvfKinectHandler(1, "Center of Mass", CENTER_OF_MASS, 3));
@@ -271,6 +271,20 @@ void gvfKinect::stop() {
   if (is_playing) {
     if (state == ofxGVF::STATE_LEARNING) {
       cout << "New template of length " << skeleton_templates[current_template].get_length() << endl;
+      
+      
+      for (vector<gvfKinectHandler *>::iterator handler_it = gvf_handlers.begin();
+           handler_it != gvf_handlers.end();
+           ++handler_it) {
+        
+        cout << "Templates: " << (*handler_it)->getTemplateCount() << endl;
+        
+        //    int gvf_index = std::distance(gvf_handlers.begin(), handler_it);
+        //
+        //    cout << "Most probable is " << (*handler_it)->getIndexMostProbable() << " of "
+        //    << (*handler_it)->getTemplateCount() << " templates" << endl;
+      }
+
       
       is_playing = false;
     }
