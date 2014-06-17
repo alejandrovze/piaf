@@ -52,6 +52,7 @@ void gvfPianoInputs::setup(){
 void gvfPianoInputs::update(){
   
   if (kinect_is_live) {
+    kinect_input.update();
     current_point = kinect_input.get_data();
     
     

@@ -70,6 +70,7 @@
 		C61F57AF18EC553700DAF3CC /* tinyxmlerror.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C61F57A918EC553700DAF3CC /* tinyxmlerror.cpp */; };
 		C61F57B018EC553700DAF3CC /* tinyxmlparser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C61F57AA18EC553700DAF3CC /* tinyxmlparser.cpp */; };
 		C61F57B118EC553700DAF3CC /* ofxXmlSettings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C61F57AC18EC553700DAF3CC /* ofxXmlSettings.cpp */; };
+		C628218B19509BBD00B12695 /* ofxGVF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C628218719509BBD00B12695 /* ofxGVF.cpp */; };
 		C643555B18E5DA74008AE100 /* ofxBaseGui.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C643554A18E5DA73008AE100 /* ofxBaseGui.cpp */; };
 		C643555C18E5DA74008AE100 /* ofxButton.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C643554C18E5DA73008AE100 /* ofxButton.cpp */; };
 		C643555D18E5DA74008AE100 /* ofxGuiGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C643554F18E5DA73008AE100 /* ofxGuiGroup.cpp */; };
@@ -112,7 +113,6 @@
 		C6EDE9B11945FFF30097CBC4 /* gvfPianoInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6EDE9AA1945FFF20097CBC4 /* gvfPianoInterface.cpp */; };
 		C6EDE9B21945FFF30097CBC4 /* gvfPianoInputs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6EDE9AC1945FFF30097CBC4 /* gvfPianoInputs.cpp */; };
 		C6EDE9B31945FFF30097CBC4 /* gvfPianoHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6EDE9AE1945FFF30097CBC4 /* gvfPianoHandler.cpp */; };
-		C6EDE9B9194600CA0097CBC4 /* ofxGVF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6EDE9B5194600CA0097CBC4 /* ofxGVF.cpp */; };
 		C6EDEA3B194601C90097CBC4 /* RtMidi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6EDEA08194601C90097CBC4 /* RtMidi.cpp */; };
 		C6EDEA3C194601C90097CBC4 /* ofxRtMidiIn.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6EDEA15194601C90097CBC4 /* ofxRtMidiIn.cpp */; };
 		C6EDEA3D194601C90097CBC4 /* ofxRtMidiOut.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6EDEA17194601C90097CBC4 /* ofxRtMidiOut.cpp */; };
@@ -163,7 +163,7 @@
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
-			dstSubfolderSpec = 6;
+			dstSubfolderSpec = 7;
 			files = (
 				C6E9010A18EE388A00C0F2C1 /* libOpenNI2.dylib in CopyFiles */,
 				C6E9010B18EE388A00C0F2C1 /* libOpenNI2.jni.dylib in CopyFiles */,
@@ -180,7 +180,7 @@
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = OpenNI2/Drivers;
-			dstSubfolderSpec = 6;
+			dstSubfolderSpec = 7;
 			files = (
 				C6E9014A18EE558100C0F2C1 /* libFreenectDriver.0.4.1.dylib in CopyFiles */,
 				C6E9011518EE38A700C0F2C1 /* libOniFile.dylib in CopyFiles */,
@@ -195,7 +195,7 @@
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = NiTE2;
-			dstSubfolderSpec = 6;
+			dstSubfolderSpec = 7;
 			files = (
 				C6E9011B18EE38BA00C0F2C1 /* FeatureExtraction.ini in CopyFiles */,
 				C6E9011C18EE38BA00C0F2C1 /* h.dat in CopyFiles */,
@@ -208,7 +208,7 @@
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = NiTE2/Data;
-			dstSubfolderSpec = 6;
+			dstSubfolderSpec = 7;
 			files = (
 				C6E9012018EE38C700C0F2C1 /* lbsdata.idx in CopyFiles */,
 				C6E9012118EE38C700C0F2C1 /* lbsdata.lbd in CopyFiles */,
@@ -359,6 +359,11 @@
 		C61F57AA18EC553700DAF3CC /* tinyxmlparser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tinyxmlparser.cpp; sourceTree = "<group>"; };
 		C61F57AC18EC553700DAF3CC /* ofxXmlSettings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxXmlSettings.cpp; sourceTree = "<group>"; };
 		C61F57AD18EC553700DAF3CC /* ofxXmlSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxXmlSettings.h; sourceTree = "<group>"; };
+		C628218619509BBD00B12695 /* __ofxGVFGesture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = __ofxGVFGesture.h; path = ofxGVF_new/__ofxGVFGesture.h; sourceTree = "<group>"; };
+		C628218719509BBD00B12695 /* ofxGVF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxGVF.cpp; path = ofxGVF_new/ofxGVF.cpp; sourceTree = "<group>"; };
+		C628218819509BBD00B12695 /* ofxGVF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxGVF.h; path = ofxGVF_new/ofxGVF.h; sourceTree = "<group>"; };
+		C628218919509BBD00B12695 /* ofxGVFGesture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxGVFGesture.h; path = ofxGVF_new/ofxGVFGesture.h; sourceTree = "<group>"; };
+		C628218A19509BBD00B12695 /* ofxGVFTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxGVFTypes.h; path = ofxGVF_new/ofxGVFTypes.h; sourceTree = "<group>"; };
 		C643554A18E5DA73008AE100 /* ofxBaseGui.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxBaseGui.cpp; sourceTree = "<group>"; };
 		C643554B18E5DA73008AE100 /* ofxBaseGui.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxBaseGui.h; sourceTree = "<group>"; };
 		C643554C18E5DA73008AE100 /* ofxButton.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxButton.cpp; sourceTree = "<group>"; };
@@ -438,11 +443,6 @@
 		C6EDE9AD1945FFF30097CBC4 /* gvfPianoInputs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gvfPianoInputs.h; sourceTree = "<group>"; };
 		C6EDE9AE1945FFF30097CBC4 /* gvfPianoHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = gvfPianoHandler.cpp; sourceTree = "<group>"; };
 		C6EDE9AF1945FFF30097CBC4 /* gvfPianoHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gvfPianoHandler.h; sourceTree = "<group>"; };
-		C6EDE9B4194600CA0097CBC4 /* __ofxGVFGesture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = __ofxGVFGesture.h; sourceTree = "<group>"; };
-		C6EDE9B5194600CA0097CBC4 /* ofxGVF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxGVF.cpp; sourceTree = "<group>"; };
-		C6EDE9B6194600CA0097CBC4 /* ofxGVF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxGVF.h; sourceTree = "<group>"; };
-		C6EDE9B7194600CA0097CBC4 /* ofxGVFGesture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxGVFGesture.h; sourceTree = "<group>"; };
-		C6EDE9B8194600CA0097CBC4 /* ofxGVFTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxGVFTypes.h; sourceTree = "<group>"; };
 		C6EDEA06194601C90097CBC4 /* readme */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = readme; sourceTree = "<group>"; };
 		C6EDEA07194601C90097CBC4 /* RtError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RtError.h; sourceTree = "<group>"; };
 		C6EDEA08194601C90097CBC4 /* RtMidi.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RtMidi.cpp; sourceTree = "<group>"; };
@@ -601,6 +601,7 @@
 		BBAB23C913894ECA00AA2426 /* system frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				C6EDEA55194614F50097CBC4 /* CoreMIDI.framework */,
 				E7F985F515E0DE99003869B5 /* Accelerate.framework */,
 				E4C2424410CC5A17004149E2 /* AppKit.framework */,
 				E4C2424510CC5A17004149E2 /* Cocoa.framework */,
@@ -1093,6 +1094,8 @@
 		E45BE5980E8CC70C009D7055 /* frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				C6E9012418EE38E100C0F2C1 /* openNI Includes */,
+				C6E900E218EE361E00C0F2C1 /* openNI frameworks */,
 				BBAB23CA13894EDB00AA2426 /* 3rd party frameworks */,
 				BBAB23C913894ECA00AA2426 /* system frameworks */,
 			);
@@ -1102,9 +1105,6 @@
 		E4B69B4A0A3A1720003C02F2 = {
 			isa = PBXGroup;
 			children = (
-				C6EDEA55194614F50097CBC4 /* CoreMIDI.framework */,
-				C6E9012418EE38E100C0F2C1 /* openNI Includes */,
-				C6E900E218EE361E00C0F2C1 /* openNI frameworks */,
 				E4B6FCAD0C3E899E008CF71C /* openFrameworks-Info.plist */,
 				E4EB6923138AFD0F00A09F29 /* Project.xcconfig */,
 				C6EDEA52194611680097CBC4 /* ofxUIMovingGraphX.h */,
@@ -1150,11 +1150,11 @@
 		EAD3A89201DF1E17D3E7F058 /* src */ = {
 			isa = PBXGroup;
 			children = (
-				C6EDE9B4194600CA0097CBC4 /* __ofxGVFGesture.h */,
-				C6EDE9B5194600CA0097CBC4 /* ofxGVF.cpp */,
-				C6EDE9B6194600CA0097CBC4 /* ofxGVF.h */,
-				C6EDE9B7194600CA0097CBC4 /* ofxGVFGesture.h */,
-				C6EDE9B8194600CA0097CBC4 /* ofxGVFTypes.h */,
+				C628218619509BBD00B12695 /* __ofxGVFGesture.h */,
+				C628218719509BBD00B12695 /* ofxGVF.cpp */,
+				C628218819509BBD00B12695 /* ofxGVF.h */,
+				C628218919509BBD00B12695 /* ofxGVFGesture.h */,
+				C628218A19509BBD00B12695 /* ofxGVFTypes.h */,
 			);
 			name = src;
 			sourceTree = "<group>";
@@ -1345,7 +1345,6 @@
 				C6EDE9B11945FFF30097CBC4 /* gvfPianoInterface.cpp in Sources */,
 				C6EDE9B21945FFF30097CBC4 /* gvfPianoInputs.cpp in Sources */,
 				C6EDE9B31945FFF30097CBC4 /* gvfPianoHandler.cpp in Sources */,
-				C6EDE9B9194600CA0097CBC4 /* ofxGVF.cpp in Sources */,
 				C6EDEA3B194601C90097CBC4 /* RtMidi.cpp in Sources */,
 				C6EDEA3C194601C90097CBC4 /* ofxRtMidiIn.cpp in Sources */,
 				C6EDEA3D194601C90097CBC4 /* ofxRtMidiOut.cpp in Sources */,
@@ -1354,6 +1353,7 @@
 				C6EDEA45194601C90097CBC4 /* ofxMidiIn.cpp in Sources */,
 				C6EDEA46194601C90097CBC4 /* ofxMidiMessage.cpp in Sources */,
 				C6EDEA47194601C90097CBC4 /* ofxMidiOut.cpp in Sources */,
+				C628218B19509BBD00B12695 /* ofxGVF.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

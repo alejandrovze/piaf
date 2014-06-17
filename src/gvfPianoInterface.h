@@ -138,7 +138,7 @@ private:
   
     // --- KINECT GUI ---
   
-  KinectInput* kinect_input;
+    KinectInput* kinect_input;
   
     void InitialiseKinectGui(KinectInput* _kinect_input);
     void UpdateKinectGui();
