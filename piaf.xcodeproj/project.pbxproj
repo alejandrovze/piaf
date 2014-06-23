@@ -70,7 +70,7 @@
 		C61F57AF18EC553700DAF3CC /* tinyxmlerror.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C61F57A918EC553700DAF3CC /* tinyxmlerror.cpp */; };
 		C61F57B018EC553700DAF3CC /* tinyxmlparser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C61F57AA18EC553700DAF3CC /* tinyxmlparser.cpp */; };
 		C61F57B118EC553700DAF3CC /* ofxXmlSettings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C61F57AC18EC553700DAF3CC /* ofxXmlSettings.cpp */; };
-		C628218B19509BBD00B12695 /* ofxGVF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C628218719509BBD00B12695 /* ofxGVF.cpp */; };
+		C62821921950C38900B12695 /* piafInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C62821901950C38800B12695 /* piafInterface.cpp */; };
 		C643555B18E5DA74008AE100 /* ofxBaseGui.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C643554A18E5DA73008AE100 /* ofxBaseGui.cpp */; };
 		C643555C18E5DA74008AE100 /* ofxButton.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C643554C18E5DA73008AE100 /* ofxButton.cpp */; };
 		C643555D18E5DA74008AE100 /* ofxGuiGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C643554F18E5DA73008AE100 /* ofxGuiGroup.cpp */; };
@@ -81,6 +81,7 @@
 		C643556218E5DA74008AE100 /* ofxToggle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C643555918E5DA74008AE100 /* ofxToggle.cpp */; };
 		C67106EB18E8D421001D3E51 /* SkeletonGesture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C67106E918E8D421001D3E51 /* SkeletonGesture.cpp */; };
 		C6B015D1190C7B5800A5BF82 /* ofxCsv.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6B015CD190C7B5800A5BF82 /* ofxCsv.cpp */; };
+		C6B813F119583B58005B8935 /* ofxGVF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6B813E819583B58005B8935 /* ofxGVF.cpp */; };
 		C6D394C618F7AAC30043DD1C /* OSCInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6D394C418F7AAC20043DD1C /* OSCInterface.cpp */; };
 		C6E900F318EE37B300C0F2C1 /* libNiTE2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C6E900E518EE37B300C0F2C1 /* libNiTE2.dylib */; };
 		C6E9010218EE37D300C0F2C1 /* libOpenNI2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C6E900F618EE37D200C0F2C1 /* libOpenNI2.dylib */; };
@@ -359,11 +360,8 @@
 		C61F57AA18EC553700DAF3CC /* tinyxmlparser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tinyxmlparser.cpp; sourceTree = "<group>"; };
 		C61F57AC18EC553700DAF3CC /* ofxXmlSettings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxXmlSettings.cpp; sourceTree = "<group>"; };
 		C61F57AD18EC553700DAF3CC /* ofxXmlSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxXmlSettings.h; sourceTree = "<group>"; };
-		C628218619509BBD00B12695 /* __ofxGVFGesture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = __ofxGVFGesture.h; path = ofxGVF_new/__ofxGVFGesture.h; sourceTree = "<group>"; };
-		C628218719509BBD00B12695 /* ofxGVF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxGVF.cpp; path = ofxGVF_new/ofxGVF.cpp; sourceTree = "<group>"; };
-		C628218819509BBD00B12695 /* ofxGVF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxGVF.h; path = ofxGVF_new/ofxGVF.h; sourceTree = "<group>"; };
-		C628218919509BBD00B12695 /* ofxGVFGesture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxGVFGesture.h; path = ofxGVF_new/ofxGVFGesture.h; sourceTree = "<group>"; };
-		C628218A19509BBD00B12695 /* ofxGVFTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxGVFTypes.h; path = ofxGVF_new/ofxGVFTypes.h; sourceTree = "<group>"; };
+		C62821901950C38800B12695 /* piafInterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = piafInterface.cpp; sourceTree = "<group>"; };
+		C62821911950C38900B12695 /* piafInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = piafInterface.h; sourceTree = "<group>"; };
 		C643554A18E5DA73008AE100 /* ofxBaseGui.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxBaseGui.cpp; sourceTree = "<group>"; };
 		C643554B18E5DA73008AE100 /* ofxBaseGui.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxBaseGui.h; sourceTree = "<group>"; };
 		C643554C18E5DA73008AE100 /* ofxButton.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxButton.cpp; sourceTree = "<group>"; };
@@ -386,6 +384,10 @@
 		C6937888E126BADC8777423B /* OscTypes.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = OscTypes.h; path = ../../../addons/ofxOsc/libs/oscpack/src/osc/OscTypes.h; sourceTree = SOURCE_ROOT; };
 		C6B015CD190C7B5800A5BF82 /* ofxCsv.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxCsv.cpp; sourceTree = "<group>"; };
 		C6B015CE190C7B5800A5BF82 /* ofxCsv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxCsv.h; sourceTree = "<group>"; };
+		C6B813E819583B58005B8935 /* ofxGVF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxGVF.cpp; sourceTree = "<group>"; };
+		C6B813E919583B58005B8935 /* ofxGVF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxGVF.h; sourceTree = "<group>"; };
+		C6B813EA19583B58005B8935 /* ofxGVFGesture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxGVFGesture.h; sourceTree = "<group>"; };
+		C6B813EB19583B58005B8935 /* ofxGVFTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxGVFTypes.h; sourceTree = "<group>"; };
 		C6D394C418F7AAC20043DD1C /* OSCInterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OSCInterface.cpp; sourceTree = "<group>"; };
 		C6D394C518F7AAC30043DD1C /* OSCInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OSCInterface.h; sourceTree = "<group>"; };
 		C6E900E418EE37B300C0F2C1 /* com.primesense.nite.jar */ = {isa = PBXFileReference; lastKnownFileType = archive.jar; path = com.primesense.nite.jar; sourceTree = "<group>"; };
@@ -523,14 +525,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		19EE47091DEB38B0FAB3D09C /* ofxGVF */ = {
-			isa = PBXGroup;
-			children = (
-				EAD3A89201DF1E17D3E7F058 /* src */,
-			);
-			name = ofxGVF;
-			sourceTree = "<group>";
-		};
 		30CB364908817057B430D528 /* osc */ = {
 			isa = PBXGroup;
 			children = (
@@ -587,12 +581,12 @@
 		BB4B014C10F69532006C3DED /* addons */ = {
 			isa = PBXGroup;
 			children = (
+				C6B813C519583B57005B8935 /* ofxGVF */,
 				C6EDE9BA194601C60097CBC4 /* ofxMidi */,
 				C6B015B9190C7B5700A5BF82 /* ofxCsv */,
 				C61F57A518EC553700DAF3CC /* ofxXmlSettings */,
 				C61F54F018EC52D100DAF3CC /* ofxUI */,
 				C643554818E5DA73008AE100 /* ofxGui */,
-				19EE47091DEB38B0FAB3D09C /* ofxGVF */,
 				E6053AB7FEC63D5F83825B88 /* ofxOsc */,
 			);
 			name = addons;
@@ -820,15 +814,17 @@
 			path = src;
 			sourceTree = "<group>";
 		};
-		C6A49F4E18E31BD600C28D49 /* kinect */ = {
+		C6A49F4E18E31BD600C28D49 /* inputs */ = {
 			isa = PBXGroup;
 			children = (
-				C67106E918E8D421001D3E51 /* SkeletonGesture.cpp */,
-				C67106EA18E8D421001D3E51 /* SkeletonGesture.h */,
+				C6EDE9AC1945FFF30097CBC4 /* gvfPianoInputs.cpp */,
+				C6EDE9AD1945FFF30097CBC4 /* gvfPianoInputs.h */,
 				C6E9014C18EE573E00C0F2C1 /* KinectInput.cpp */,
 				C6E9014D18EE573E00C0F2C1 /* KinectInput.h */,
+				C67106E918E8D421001D3E51 /* SkeletonGesture.cpp */,
+				C67106EA18E8D421001D3E51 /* SkeletonGesture.h */,
 			);
-			name = kinect;
+			name = inputs;
 			sourceTree = "<group>";
 		};
 		C6B015B9190C7B5700A5BF82 /* ofxCsv */ = {
@@ -845,6 +841,26 @@
 			children = (
 				C6B015CD190C7B5800A5BF82 /* ofxCsv.cpp */,
 				C6B015CE190C7B5800A5BF82 /* ofxCsv.h */,
+			);
+			path = src;
+			sourceTree = "<group>";
+		};
+		C6B813C519583B57005B8935 /* ofxGVF */ = {
+			isa = PBXGroup;
+			children = (
+				C6B813E719583B58005B8935 /* src */,
+			);
+			name = ofxGVF;
+			path = ../../../addons/ofxGVF;
+			sourceTree = "<group>";
+		};
+		C6B813E719583B58005B8935 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				C6B813E819583B58005B8935 /* ofxGVF.cpp */,
+				C6B813E919583B58005B8935 /* ofxGVF.h */,
+				C6B813EA19583B58005B8935 /* ofxGVFGesture.h */,
+				C6B813EB19583B58005B8935 /* ofxGVFTypes.h */,
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -1006,10 +1022,6 @@
 				C6EDE9A91945FFF20097CBC4 /* gvfPianoApp.h */,
 				C6EDE9AA1945FFF20097CBC4 /* gvfPianoInterface.cpp */,
 				C6EDE9AB1945FFF30097CBC4 /* gvfPianoInterface.h */,
-				C6EDE9AC1945FFF30097CBC4 /* gvfPianoInputs.cpp */,
-				C6EDE9AD1945FFF30097CBC4 /* gvfPianoInputs.h */,
-				C6EDE9AE1945FFF30097CBC4 /* gvfPianoHandler.cpp */,
-				C6EDE9AF1945FFF30097CBC4 /* gvfPianoHandler.h */,
 			);
 			name = piafSource;
 			sourceTree = "<group>";
@@ -1094,8 +1106,6 @@
 		E45BE5980E8CC70C009D7055 /* frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				C6E9012418EE38E100C0F2C1 /* openNI Includes */,
-				C6E900E218EE361E00C0F2C1 /* openNI frameworks */,
 				BBAB23CA13894EDB00AA2426 /* 3rd party frameworks */,
 				BBAB23C913894ECA00AA2426 /* system frameworks */,
 			);
@@ -1109,6 +1119,8 @@
 				E4EB6923138AFD0F00A09F29 /* Project.xcconfig */,
 				C6EDEA52194611680097CBC4 /* ofxUIMovingGraphX.h */,
 				E4B69E1C0A3A1BDC003C02F2 /* src */,
+				C6E9012418EE38E100C0F2C1 /* openNI Includes */,
+				C6E900E218EE361E00C0F2C1 /* openNI frameworks */,
 				E4EEC9E9138DF44700A80321 /* openFrameworks */,
 				BB4B014C10F69532006C3DED /* addons */,
 				E45BE5980E8CC70C009D7055 /* frameworks */,
@@ -1122,8 +1134,12 @@
 				E4B69E1D0A3A1BDC003C02F2 /* main.cpp */,
 				C6EDE9A51945FFC50097CBC4 /* ofApp.cpp */,
 				C6EDE9A61945FFC50097CBC4 /* ofApp.h */,
+				C62821901950C38800B12695 /* piafInterface.cpp */,
+				C62821911950C38900B12695 /* piafInterface.h */,
+				C6EDE9AE1945FFF30097CBC4 /* gvfPianoHandler.cpp */,
+				C6EDE9AF1945FFF30097CBC4 /* gvfPianoHandler.h */,
 				C6EDE9A41945FF870097CBC4 /* piafSource */,
-				C6A49F4E18E31BD600C28D49 /* kinect */,
+				C6A49F4E18E31BD600C28D49 /* inputs */,
 				C6D394C718F7AAC70043DD1C /* OSC */,
 			);
 			path = src;
@@ -1145,18 +1161,6 @@
 				38871A5825686AE018EC2BF0 /* libs */,
 			);
 			name = ofxOsc;
-			sourceTree = "<group>";
-		};
-		EAD3A89201DF1E17D3E7F058 /* src */ = {
-			isa = PBXGroup;
-			children = (
-				C628218619509BBD00B12695 /* __ofxGVFGesture.h */,
-				C628218719509BBD00B12695 /* ofxGVF.cpp */,
-				C628218819509BBD00B12695 /* ofxGVF.h */,
-				C628218919509BBD00B12695 /* ofxGVFGesture.h */,
-				C628218A19509BBD00B12695 /* ofxGVFTypes.h */,
-			);
-			name = src;
 			sourceTree = "<group>";
 		};
 		FF8CDF57858E9B94E3237115 /* ip */ = {
@@ -1353,7 +1357,8 @@
 				C6EDEA45194601C90097CBC4 /* ofxMidiIn.cpp in Sources */,
 				C6EDEA46194601C90097CBC4 /* ofxMidiMessage.cpp in Sources */,
 				C6EDEA47194601C90097CBC4 /* ofxMidiOut.cpp in Sources */,
-				C628218B19509BBD00B12695 /* ofxGVF.cpp in Sources */,
+				C62821921950C38900B12695 /* piafInterface.cpp in Sources */,
+				C6B813F119583B58005B8935 /* ofxGVF.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

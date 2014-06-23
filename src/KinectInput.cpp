@@ -9,6 +9,9 @@
 #include "KinectInput.h"
 
 
+#define MAX_DEPTH 10000
+
+
 KinectInput* KinectInput::ms_self = NULL;
 
 
@@ -297,4 +300,106 @@ bool KinectInput::get_is_running() {
   return is_running;
 }
 
-          
+
+
+
+
+
+
+// Get Image
+
+ofImage* KinectInput::GetImage() {
+    
+    return &depth_image;
+}
+
+void KinectInput::UpdateImage() {
+    
+    if (get_is_running()) {
+        
+        UpdateDepth(get_depth_frame());
+    }
+}
+
+// TODO: Displaying Depth Frame
+//--------------------------------------------------------------
+void KinectInput::UpdateDepth(openni::VideoFrameRef depth_frame) {
+    
+    if (depth_frame.isValid()) {
+        
+        int res_x = depth_frame.getVideoMode().getResolutionX();
+        int res_y = depth_frame.getVideoMode().getResolutionY();
+        int numPixels = res_x * res_y;
+        
+        float* depth_histogram = CalculateHistogram(MAX_DEPTH, depth_frame);
+        
+        // Allocate image
+        if (!depth_image.isAllocated()) {
+            cout << "image allocated once.\n";
+            
+            depth_image.allocate(res_x, res_y, OF_IMAGE_GRAYSCALE);
+            
+            grayPixels = new unsigned char[numPixels];
+            memset(grayPixels, 0, numPixels * sizeof(unsigned char));
+        }
+        
+        
+        const openni::DepthPixel* depthPixels = (const openni::DepthPixel*) depth_frame.getData();
+        
+        for (int i = 0; i < numPixels; i++, depthPixels++) {
+            grayPixels[i] = depth_histogram[*depthPixels];
+        }
+        
+        depth_image.setFromPixels(grayPixels, res_x, res_y, OF_IMAGE_GRAYSCALE);
+        
+        int rowSize = depth_frame.getStrideInBytes() / sizeof(openni::DepthPixel);
+        
+    }
+    else {
+        
+        cout << "invalid frame.\n";
+    }
+    
+}
+
+//--------------------------------------------------------------
+float* KinectInput::CalculateHistogram(int histogramSize, const openni::VideoFrameRef& depthFrame)
+{
+	const openni::DepthPixel* pDepth = (const openni::DepthPixel*)depthFrame.getData();
+	int width = depthFrame.getWidth();
+	int height = depthFrame.getHeight();
+    
+    static float pHistogram[MAX_DEPTH];
+    
+	// Calculate the accumulative histogram (the yellow display...)
+	memset(pHistogram, 0, histogramSize*sizeof(float));
+	int restOfRow = depthFrame.getStrideInBytes() / sizeof(openni::DepthPixel) - width;
+    
+	unsigned int nNumberOfPoints = 0;
+	for (int y = 0; y < height; ++y)
+	{
+		for (int x = 0; x < width; ++x, ++pDepth)
+		{
+			if (*pDepth != 0)
+			{
+				pHistogram[*pDepth]++;
+				nNumberOfPoints++;
+			}
+		}
+		pDepth += restOfRow;
+	}
+	for (int nIndex = 1; nIndex < histogramSize; nIndex++)
+	{
+		pHistogram[nIndex] += pHistogram[nIndex-1];
+	}
+	if (nNumberOfPoints)
+	{
+		for (int nIndex = 1; nIndex < histogramSize; nIndex++)
+		{
+			pHistogram[nIndex] = (256 * (1.0f - (pHistogram[nIndex] / nNumberOfPoints)));
+		}
+	}
+    
+    return pHistogram;
+    
+}

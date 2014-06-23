@@ -88,6 +88,7 @@ private:
     
     ofxButton save;
     ofxButton load;
+    ofxToggle draw_kinect;
     
     void saveGestures();
     void loadGestures();
@@ -137,12 +138,15 @@ private:
   
   
     // --- KINECT GUI ---
+    
+    ofxUISuperCanvas *kinect_gui;
   
     KinectInput* kinect_input;
   
     void InitialiseKinectGui(KinectInput* _kinect_input);
     void UpdateKinectGui();
     
+//    ofxUIImage kinect_image;
     ofImage depth_image;
     unsigned char *grayPixels;
   

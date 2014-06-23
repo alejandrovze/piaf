@@ -26,8 +26,10 @@ void gvfPianoInterface::setup(gvfPianoHandler* _handler, gvfPianoInputs* _inputs
     initialiseSettingsGui();
     initialiseStatusGui();
     initialiseInputsGui();
-  InitialiseKinectGui(_kinect_input);
-    
+    InitialiseKinectGui(_kinect_input);
+  
+    draw_kinect = false;
+  
     //initialiseGestureGui( &(handler->getCurrentGesture()->getTemplateRaw()) ); //TODO doesn't work
     
     initialiseTemplatesGui();
@@ -40,7 +42,9 @@ void gvfPianoInterface::draw(){
     settingsGui.draw();
     inputsGui.draw();
     statusGui.draw();
-  UpdateKinectGui();
+  
+  if (draw_kinect)
+    UpdateKinectGui();
     
 }
 
@@ -112,6 +116,7 @@ void gvfPianoInterface::initialiseSettingsGui(){
     
     settingsGui.add(save.setup("save gestures"));
     settingsGui.add(load.setup("load gestures"));
+    settingsGui.add(draw_kinect.setup("Display Kinect"));
     
     settingsGui.setShape(ofRectangle(30, 110, 250, 100));
     settingsGui.setPosition(0, 110);
@@ -509,8 +514,9 @@ void gvfPianoInterface::UpdateKinectGui() {
   if (kinect_input->get_is_running()) {
     
     UpdateDepth(kinect_input->get_depth_frame());
-    
-    depth_image.draw(0, 0, kinect_width, kinect_height);
+      
+    ofSetColor(0, 255, 0);
+    depth_image.draw(800, 600, kinect_width, kinect_height);
   
     UpdateSkeleton(kinect_input->get_depth_data());
     
@@ -652,4 +658,3 @@ void gvfPianoInterface::UpdateSkeleton(SkeletonDataPoint new_point) {
   // TODO: Draw bounding box
   
 }
-

@@ -48,6 +48,8 @@ void gvfPianoHandler::setup(int _inputDimension)
 {
     // INPUT DIMENSION == parameter
     
+    cout << "setup with input dimension " << _inputDimension << endl;
+    
     inputDimension = _inputDimension;
     stateDimension = 2 + inputDimension;             //!!! TODO state dimension is hard coded here
     
@@ -58,7 +60,7 @@ void gvfPianoHandler::setup(int _inputDimension)
     
     // Parameters
     gP.numberParticles = 2000;
-    gP.tolerance = 0.2f;
+    gP.tolerance = 0.2;
     gP.resamplingThreshold = 500;
     gP.distribution = 0.0f;
     gP.phaseVariance = 0.00001;
@@ -68,6 +70,8 @@ void gvfPianoHandler::setup(int _inputDimension)
     
     mygvf = new ofxGVF(gC, gP);
     currentGesture = new ofxGVFGesture();
+    
+    isPlaying = false;
 }
 
 
@@ -131,6 +135,8 @@ void gvfPianoHandler::gvf_data(int argc, float *argv)
         mygvf->infer(currentGesture->getLastObservation());
         
         // output recognition
+        
+        // Only if a gesture has been recognized.
         gO = mygvf->getOutcomes();
         
         
@@ -160,16 +166,6 @@ void gvfPianoHandler::gvf_data(int argc, float *argv)
         
     }
 }
-
-
-void gvfPianoHandler::gvf_restart()
-{
-    currentGesture->clear();
-    
-    if(mygvf->getState() == ofxGVF::STATE_FOLLOWING)
-        mygvf->spreadParticles();
-}
-
 
 
 // !!!: Maybe messy & instead should come straight from GVF
@@ -222,12 +218,91 @@ ofxGVFGesture* gvfPianoHandler::getCurrentGesture(){
     return currentGesture;
 }
 
+bool gvfPianoHandler::getIsPlaying() {
+    return isPlaying;
+}
+
+
 //
 //// TODO: Implement
 //void gvfPianoHandler::removeTemplateGesture(int templateNumber) {
 //    
 //}
 
+
+
+
+
+
+void gvfPianoHandler::startGesture() {
+    
+    currentGesture->clear();
+    
+    if(mygvf->getState() == ofxGVF::STATE_FOLLOWING)
+        mygvf->spreadParticles();
+    
+}
+
+void gvfPianoHandler::endGesture() {
+    
+    if (mygvf->getState() == ofxGVF::STATE_LEARNING) {
+        
+        mygvf->addGestureTemplate(*currentGesture);
+        
+//        cout << "Current N Templates: " << getGVF()->getNumberOfGestureTemplates() << endl;
+    }
+    
+}
+
+//--------------------------------------------------------------
+void gvfPianoHandler::setState(ofxGVF::ofxGVFState state) {
+    
+    int currentState = mygvf->getState();
+    
+    switch (state)
+    {
+        case ofxGVF::STATE_LEARNING:
+            if (currentState != ofxGVF::STATE_LEARNING && !isPlaying) {
+                mygvf->setState(ofxGVF::STATE_LEARNING);
+            }
+            break;
+        case ofxGVF::STATE_FOLLOWING:
+            if (currentState != ofxGVF::STATE_FOLLOWING && !isPlaying) {
+                
+                mygvf->learn();
+                
+                if (mygvf->getNumberOfGestureTemplates() != 0)
+                    mygvf->setState(ofxGVF::STATE_FOLLOWING);
+                
+            }
+            break;
+        case ofxGVF::STATE_CLEAR:
+            if (!isPlaying) { // Don't clear if playing.
+                mygvf->clear();
+                
+            }
+            break;
+    }
+}
+
+bool gvfPianoHandler::toggleIsPlaying() {
+    
+    if (mygvf->getState() != ofxGVF::STATE_CLEAR) { // Don't toggle when cleared
+        
+        isPlaying = !isPlaying;
+        
+        if (!isPlaying)
+            endGesture();
+        
+        if (isPlaying)
+            startGesture();
+    }
+    
+    return isPlaying;
+}
+
+
+// MARK: LOAD/SAVE
 
 void gvfPianoHandler::saveGestures(string fn)
 {

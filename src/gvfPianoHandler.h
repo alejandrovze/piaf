@@ -68,15 +68,14 @@ public:
     // treats the 3 dimentional point p and calls gvf_data(int argc, float *argv);
     void gvf_data(ofPoint p);
     
-    void gvf_restart();
-    
     // returns a string containing information about the current recognition
     // (probabilities, phase, speed and scale for each gesture)
     string gvf_get_status();
     
     
     // Is it playing (receiving input)?
-    bool isPlaying();
+    bool getIsPlaying();
+    bool toggleIsPlaying();
     
     //!!!: Some issues with recognition info, check out
     // vector containing one recognitionInfo struct for each template
@@ -96,6 +95,8 @@ public:
     
     
     ofxGVF* getGVF();
+    
+    void setState(ofxGVF::ofxGVFState state);
 
     
 private:
@@ -107,12 +108,13 @@ private:
     ofxGVFParameters    gP;
     ofxGVFOutcomes      gO;
     
-    bool playing;
+    bool isPlaying;
+    void startGesture();
+    void endGesture();
     
     int inputDimension;
     int stateDimension;
-    
-    ofxGVF::ofxGVFState state;
+//    ofxGVF::ofxGVFState state;
     
     
 };

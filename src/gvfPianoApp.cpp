@@ -76,7 +76,7 @@ void gvfPianoApp::gestureInput(std::vector<float> inputData){
 //--------------------------------------------------------------
 void gvfPianoApp::gestureStart() {
     
-    gvfh->gvf_restart();
+//    gvfh->gvf_restart();
     
     gesture_data.clear();
     
