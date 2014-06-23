@@ -110,7 +110,6 @@
 		C6E9014B18EE55F600C0F2C1 /* libFreenectDriver.0.4.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C6E9014818EE556300C0F2C1 /* libFreenectDriver.0.4.1.dylib */; };
 		C6E9014E18EE573E00C0F2C1 /* KinectInput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6E9014C18EE573E00C0F2C1 /* KinectInput.cpp */; };
 		C6EDE9A71945FFC50097CBC4 /* ofApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6EDE9A51945FFC50097CBC4 /* ofApp.cpp */; };
-		C6EDE9B01945FFF30097CBC4 /* gvfPianoApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6EDE9A81945FFF20097CBC4 /* gvfPianoApp.cpp */; };
 		C6EDE9B11945FFF30097CBC4 /* gvfPianoInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6EDE9AA1945FFF20097CBC4 /* gvfPianoInterface.cpp */; };
 		C6EDE9B21945FFF30097CBC4 /* gvfPianoInputs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6EDE9AC1945FFF30097CBC4 /* gvfPianoInputs.cpp */; };
 		C6EDE9B31945FFF30097CBC4 /* gvfPianoHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6EDE9AE1945FFF30097CBC4 /* gvfPianoHandler.cpp */; };
@@ -437,8 +436,6 @@
 		C6E9014D18EE573E00C0F2C1 /* KinectInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KinectInput.h; sourceTree = "<group>"; };
 		C6EDE9A51945FFC50097CBC4 /* ofApp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofApp.cpp; sourceTree = "<group>"; };
 		C6EDE9A61945FFC50097CBC4 /* ofApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofApp.h; sourceTree = "<group>"; };
-		C6EDE9A81945FFF20097CBC4 /* gvfPianoApp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = gvfPianoApp.cpp; sourceTree = "<group>"; };
-		C6EDE9A91945FFF20097CBC4 /* gvfPianoApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gvfPianoApp.h; sourceTree = "<group>"; };
 		C6EDE9AA1945FFF20097CBC4 /* gvfPianoInterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = gvfPianoInterface.cpp; sourceTree = "<group>"; };
 		C6EDE9AB1945FFF30097CBC4 /* gvfPianoInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gvfPianoInterface.h; sourceTree = "<group>"; };
 		C6EDE9AC1945FFF30097CBC4 /* gvfPianoInputs.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = gvfPianoInputs.cpp; sourceTree = "<group>"; };
@@ -1018,8 +1015,6 @@
 		C6EDE9A41945FF870097CBC4 /* piafSource */ = {
 			isa = PBXGroup;
 			children = (
-				C6EDE9A81945FFF20097CBC4 /* gvfPianoApp.cpp */,
-				C6EDE9A91945FFF20097CBC4 /* gvfPianoApp.h */,
 				C6EDE9AA1945FFF20097CBC4 /* gvfPianoInterface.cpp */,
 				C6EDE9AB1945FFF30097CBC4 /* gvfPianoInterface.h */,
 			);
@@ -1345,7 +1340,6 @@
 				C6D394C618F7AAC30043DD1C /* OSCInterface.cpp in Sources */,
 				C6B015D1190C7B5800A5BF82 /* ofxCsv.cpp in Sources */,
 				C6EDE9A71945FFC50097CBC4 /* ofApp.cpp in Sources */,
-				C6EDE9B01945FFF30097CBC4 /* gvfPianoApp.cpp in Sources */,
 				C6EDE9B11945FFF30097CBC4 /* gvfPianoInterface.cpp in Sources */,
 				C6EDE9B21945FFF30097CBC4 /* gvfPianoInputs.cpp in Sources */,
 				C6EDE9B31945FFF30097CBC4 /* gvfPianoHandler.cpp in Sources */,
