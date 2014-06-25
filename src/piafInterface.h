@@ -15,7 +15,6 @@
 
 #include "gvfPianoInputs.h"
 #include "gvfPianoHandler.h"
-#include "gvfPianoApp.h"
 
 class piafInterface {
     
@@ -31,7 +30,7 @@ private:
     gvfPianoHandler* gvf_handler;
     gvfPianoInputs* inputs;
     
-    // ???: Add Instructions string
+    int column_width;
     
     // INPUTS
 	ofxUISuperCanvas* inputs_gui;
@@ -46,9 +45,8 @@ private:
     vector<vector<float> > buffers;
     //    void UpdateSkeleton(SkeletonDataPoint new_point);
     //    void DisplaySkeleton(SkeletonDataPoint new_point, ofPoint location);
-
     
-    // GVF
+    // GVF Status
     ofxUISuperCanvas* gvf_gui;
     void SetGvfGUI();
     void UpdateGvfGUI();
@@ -56,15 +54,26 @@ private:
     ofxUITextArea* gvf_status;
     ofxUITextArea* gvf_n_templates;
     ofxUITextArea* gvf_most_probable;
+    ofxUITextArea* gvf_most_probable_probability;
     ofxUITextArea* gvf_most_probable_phase;
+    ofxUITextArea* gvf_most_probable_speed;
+    ofxUITextArea* gvf_most_probable_scale;
+    ofxUITextArea* gvf_most_probable_rotation;
     ofxUIToggle* is_playing;
     
-    void SaveGestures();
-    void LoadGestures();
+    // GVF Settings
+    ofxUISuperCanvas* settings_gui;
+    void SetSettingsGUI();
+    void UpdateSettingsGUI();
+    void SettingsGUIEvent(ofxUIEventArgs &e);
+    ofxUINumberDialer* tolerance;
     
     // TEMPLATE
     // TODO: How to visualize templates?
     
+    
+    void SaveGestures();
+    void LoadGestures();
     
 };
 
@@ -72,29 +81,6 @@ private:
 #endif /* defined(__piaf__piafInterface__) */
     
 
-// TODO: GVF Parameters
-
-//    ofParameterGroup settings;
-//    ofParameter<int> numParticles;
-//    ofParameter<int> resampleThreshold;
-//    ofParameter<float> smoothingCoefficient;
-//    
-//    ofParameterGroup varianceCoefficients;
-//    ofParameter<float> sigPosition;
-//    ofParameter<float> sigRotation;
-//    ofParameter<float> sigScale;
-//    ofParameter<float> sigSpeed;
-//    
-//    void numParticlesChanged(int & numParticles);
-//    void resampleThresholdChanged(int & resampleThreshold);
-//    void smoothingCoefficientChanged(float & smoothingCoefficient);
-//    void varianceCoefficentsChanged(float & coefficent);
-//    
-//    ofParameterGroup mostProbableStatus;
-//    ofParameter<int> mostProbableIndex;
-//    ofParameter<float> mostProbablePhase;
-//    ofParameter<float> mostProbableSpeed;
-//    ofParameter<float> mostProbableScale;
 
 
 //    // --- GESTURE GUI ---

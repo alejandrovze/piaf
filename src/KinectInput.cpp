@@ -8,322 +8,313 @@
 
 #include "KinectInput.h"
 
-
-#define MAX_DEPTH 10000
-
-
-KinectInput* KinectInput::ms_self = NULL;
+KinectInput* KinectInput::ms_self = NULL; //???: Is this needed?
 
 
-KinectInput::KinectInput():
-is_running(false)
+//--------------------------------------------------------------
+KinectInput::KinectInput()
 {
-	ms_self = this;
-  
+	ms_self = this; //???: Is this needed?
+    
+    is_running = false;
+    
 	user_tracker = new nite::UserTracker;
-  
-  for (int i = 0; i < MAX_USERS; ++i) {
-    user_states[i] = nite::SKELETON_NONE;
-    users_lost[i] = false;
-    users_visible[i] = false;
-  }
-  
+    
+    for (int i = 0; i < MAX_USERS; ++i) {
+        user_states[i] = nite::SKELETON_NONE;
+        users_lost[i] = false;
+        users_visible[i] = false;
+    }
+    
 }
 
+//--------------------------------------------------------------
 KinectInput::~KinectInput()
 {
-  close();
-  
-	ms_self = NULL;
-}
-
-void KinectInput::close()
-{
-	delete user_tracker;
+    delete user_tracker;
 	nite::NiTE::shutdown();
 	openni::OpenNI::shutdown();
+    
+	ms_self = NULL; //???: Is this needed?
 }
 
+//--------------------------------------------------------------
 openni::Status KinectInput::setup()
 {
-  
-  // Initialize openNI
+    
+    // Initialize openNI
 	openni::Status rc = openni::OpenNI::initialize();
 	if (rc != openni::STATUS_OK)
 	{
 		printf("Failed to initialize OpenNI\n%s\n", openni::OpenNI::getExtendedError());
 		return rc;
 	}
-  
-  // Open Device (Kinect)
+    
+    // Open Device (Kinect)
 	const char* deviceUri = openni::ANY_DEVICE;
-  
+    
 	rc = device.open(deviceUri);
-  
+    
 	if (rc != openni::STATUS_OK)
 	{
 		printf("Failed to open device\n%s\n", openni::OpenNI::getExtendedError());
 		return rc;
 	}
-  
-  // Initialize NiTE
+    
+    // Initialize NiTE
 	nite::NiTE::initialize();
-  
+    
 	if (user_tracker->create(&device) != nite::STATUS_OK)
 	{
 		return openni::STATUS_ERROR;
 	}
-  
-  // If all else has succeeded.
-  
-  is_running = true;
-  
-  cout << "Opened successfully\n";
-  
-  return openni::STATUS_OK;
-  
+    
+    // If all else has succeeded.
+    
+    is_running = true;
+    
+    cout << "Device was opened successfully.\n";
+    
+    return openni::STATUS_OK;
+    
 }
 
+//--------------------------------------------------------------
 void KinectInput::update() {
-  
-  nite::Status rc = user_tracker->readFrame(&userTrackerFrame);
-  
+    
+    nite::Status rc = user_tracker->readFrame(&userTrackerFrame);
+    
 	if (rc != nite::STATUS_OK)
 	{
-		printf("GetNextData failed\n");
+		printf("Failed to read frame\n");
 		return;
 	}
-  const nite::Array<nite::UserData>& users = userTrackerFrame.getUsers();
-  
-  int user_id = 0; // Late generalize?
-  
-  if (user_id >= users.getSize()) {
-    // Error
-    return;
-  }
-  
-  const nite::UserData& user = users[user_id];
-  
-  // Print information about user state.
-  {
+    
+    const nite::Array<nite::UserData>& users = userTrackerFrame.getUsers();
+    
+    for (int user_id = 0; user_id < users.getSize() && user_id < MAX_USERS; ++user_id) {
+        
+        const nite::UserData& user = users[user_id];
+        
+        // Print information about user state.
+        {
+            if (user.isNew())
+            {
+                fprintf(stderr, "User %d: New\n", user_id);
+            }
+            else if (users_visible[user_id] != user.isVisible()) {
+                if ((users_visible[user_id] = user.isVisible())) {
+                    fprintf(stderr, "User %d: Visible user\n", user_id);
+                }
+            }
+            else if (users_lost[user_id] != user.isLost()) {
+                if ((users_lost[user_id] = user.isLost())) {
+                    fprintf(stderr, "User %d: Lost user\n", user_id);
+                }
+            }
+            
+            if (user_states[user_id] != user.getSkeleton().getState()) {
+                switch(user_states[user_id] = user.getSkeleton().getState()) // Set in array
+                {
+                    case nite::SKELETON_NONE:
+                        fprintf(stderr, "User %d: Stopped tracking.\n", user_id);
+                        break;
+                    case nite::SKELETON_CALIBRATING:
+                        fprintf(stderr, "User %d: Calibrating.\n", user_id);
+                        break;
+                    case nite::SKELETON_TRACKED:
+                        fprintf(stderr, "User %d: Tracking.\n", user_id);
+                        break;
+                    case nite::SKELETON_CALIBRATION_ERROR_NOT_IN_POSE:
+                    case nite::SKELETON_CALIBRATION_ERROR_HANDS:
+                    case nite::SKELETON_CALIBRATION_ERROR_LEGS:
+                    case nite::SKELETON_CALIBRATION_ERROR_HEAD:
+                    case nite::SKELETON_CALIBRATION_ERROR_TORSO:
+                        fprintf(stderr, "User %d: Calibration failed.\n", user_id);
+                        break;
+                }
+            }
+        }
+    }
+}
+
+//--------------------------------------------------------------
+nite::SkeletonState KinectInput::get_state(int user_id) {
+    
+    return user_states[user_id];
+    
+}
+
+//--------------------------------------------------------------
+bool KinectInput::get_is_running() {
+    return is_running;
+}
+
+//--------------------------------------------------------------
+// MARK: Data Access
+//--------------------------------------------------------------
+
+//--------------------------------------------------------------
+const nite::UserData& KinectInput::get_user(int user_id) {
+    
+	const nite::Array<nite::UserData>& users = userTrackerFrame.getUsers();
+    
+    if (user_id >= users.getSize() || user_id >= MAX_USERS) {
+        // Error
+        return;
+    }
+    
+    return users[user_id];
+    
+}
+
+//--------------------------------------------------------------
+SkeletonDataPoint KinectInput::get_data(int user_id) {
+    
+    SkeletonDataPoint data_point;
+    
+    const nite::UserData& user = get_user(user_id);
+    
+    nite::UserTracker* pUserTracker;
+    
     if (user.isNew())
     {
-      fprintf(stderr, "User %d: New\n", user_id);
+        user_tracker->startSkeletonTracking(user.getId());
     }
-    else if (users_visible[user_id] != user.isVisible()) {
-      if ((users_visible[user_id] = user.isVisible())) {
-        fprintf(stderr, "User %d: Visible user\n", user_id);
-      }
-    }
-    else if (users_lost[user_id] != user.isLost()) {
-      if ((users_lost[user_id] = user.isLost())) {
-        fprintf(stderr, "User %d: Lost user\n", user_id);
-      }
-    }
-    
-    if (user_states[user_id] != user.getSkeleton().getState()) {
-      switch(user_states[user_id] = user.getSkeleton().getState()) // Set in array
-      {
-        case nite::SKELETON_NONE:
-          fprintf(stderr, "User %d: Stopped tracking.\n", user_id);
-          break;
-        case nite::SKELETON_CALIBRATING:
-          fprintf(stderr, "User %d: Calibrating.\n", user_id);
-          break;
-        case nite::SKELETON_TRACKED:
-          fprintf(stderr, "User %d: Tracking.\n", user_id);
-          break;
-        case nite::SKELETON_CALIBRATION_ERROR_NOT_IN_POSE:
-        case nite::SKELETON_CALIBRATION_ERROR_HANDS:
-        case nite::SKELETON_CALIBRATION_ERROR_LEGS:
-        case nite::SKELETON_CALIBRATION_ERROR_HEAD:
-        case nite::SKELETON_CALIBRATION_ERROR_TORSO:
-          fprintf(stderr, "User %d: Calibration failed.\n", user_id);
-          break;
-      }
-    }
-  }
-}
-
-SkeletonDataPoint KinectInput::get_data(int user_id) {
-  
-  SkeletonDataPoint data_point;
-  
-  const nite::UserData& user = get_user(user_id);
-  
-  nite::UserTracker* pUserTracker;
-    
-  if (user.isNew())
-  {
-    user_tracker->startSkeletonTracking(user.getId());
-  }
-  else if (!user.isLost())
-  {
-    
-    if (user.getSkeleton().getState() == nite::SKELETON_TRACKED)
+    else if (!user.isLost())
     {
-      
-      // Center of Mass
-      
-      ofPoint com = ofPoint(user.getCenterOfMass().x, user.getCenterOfMass().y, user.getCenterOfMass().z);
-      
-      data_point.center_of_mass = com;
-      
-      // Joints
-      
-      for (nite::JointType joint = nite::JOINT_HEAD; joint < nite::JOINT_RIGHT_FOOT; joint++) {
         
-        const nite::Point3f joint_pos = user.getSkeleton().getJoint(joint).getPosition();
-        
-        // Joint position relative to center of mass.
-        data_point.joints.at(joint) = (ofPoint(joint_pos.x, joint_pos.y, joint_pos.z) - com);
-        
-        data_point.confidences.at(joint) = user.getSkeleton().getJoint(joint).getPositionConfidence();
-        
-        // Joint orientations.
-        
-        // Convert from NiteQuaternion to ofQuaternion
-        NiteQuaternion orientation = user.getSkeleton().getJoint(joint).getOrientation();
-        data_point.joint_orientations.at(joint) = ofQuaternion(orientation.x, orientation.y, orientation.z, orientation.w);
-        data_point.orientation_confidences.at(joint) = user.getSkeleton().getJoint(joint).getOrientationConfidence();
-        
-      }
-      
-      // TODO: bounding box
-      
-      data_point.bounding_box_min = ofPoint(user.getBoundingBox().min.x, user.getBoundingBox().min.y, user.getBoundingBox().min.z);
-      
-      data_point.bounding_box_max = ofPoint(user.getBoundingBox().max.x, user.getBoundingBox().max.y, user.getBoundingBox().max.z);
+        if (user.getSkeleton().getState() == nite::SKELETON_TRACKED)
+        {
+            
+            // Center of Mass
+            
+            ofPoint com = ofPoint(user.getCenterOfMass().x, user.getCenterOfMass().y, user.getCenterOfMass().z);
+            
+            data_point.center_of_mass = com;
+            
+            // Joints
+            
+            for (nite::JointType joint = nite::JOINT_HEAD; joint < nite::JOINT_RIGHT_FOOT; joint++) {
+                
+                const nite::Point3f joint_pos = user.getSkeleton().getJoint(joint).getPosition();
+                
+                // Joint position relative to center of mass.
+                data_point.joints.at(joint) = (ofPoint(joint_pos.x, joint_pos.y, joint_pos.z) - com);
+                
+                data_point.confidences.at(joint) = user.getSkeleton().getJoint(joint).getPositionConfidence();
+                
+                // Joint orientations.
+                
+                // Convert from NiteQuaternion to ofQuaternion
+                NiteQuaternion orientation = user.getSkeleton().getJoint(joint).getOrientation();
+                data_point.joint_orientations.at(joint) = ofQuaternion(orientation.x, orientation.y, orientation.z, orientation.w);
+                data_point.orientation_confidences.at(joint) = user.getSkeleton().getJoint(joint).getOrientationConfidence();
+                
+            }
+            
+            data_point.bounding_box_min = ofPoint(user.getBoundingBox().min.x, user.getBoundingBox().min.y, user.getBoundingBox().min.z);
+            
+            data_point.bounding_box_max = ofPoint(user.getBoundingBox().max.x, user.getBoundingBox().max.y, user.getBoundingBox().max.z);
+        }
     }
-  }
-
-  return data_point;
-  
+    
+    return data_point;
+    
 }
 
+// ------------------------------------------------------
 SkeletonDataPoint KinectInput::get_depth_data(int user_id) {
-  
-  SkeletonDataPoint depth_data_point;
-  
-  const nite::UserData& user = get_user(user_id);
-  
-  nite::UserTracker* pUserTracker;
-  
-  if (user.isNew())
-  {
-    user_tracker->startSkeletonTracking(user.getId());
-  }
-  else if (!user.isLost())
-  {
     
-    if (user.getSkeleton().getState() == nite::SKELETON_TRACKED)
+    SkeletonDataPoint depth_data_point;
+    
+    const nite::UserData& user = get_user(user_id);
+    
+    nite::UserTracker* pUserTracker;
+    
+    if (user.isNew())
     {
-      // Joints
-      
-      for (nite::JointType joint = nite::JOINT_HEAD; joint <= nite::JOINT_RIGHT_FOOT; joint++) {
-        
-        const nite::Point3f joint_pos = user.getSkeleton().getJoint(joint).getPosition();
-        
-        const float joint_conf = user.getSkeleton().getJoint(joint).getPositionConfidence();
-        
-        depth_data_point.joints.at(joint) = convert_world_to_depth(ofPoint(joint_pos.x, joint_pos.y, joint_pos.z));
-        depth_data_point.confidences.at(joint) = joint_conf;
-        
-        // Joint orientations.
-        
-        // Convert from NiteQuaternion to ofQuaternion
-        NiteQuaternion orientation = user.getSkeleton().getJoint(joint).getOrientation();
-        depth_data_point.joint_orientations.at(joint) = ofQuaternion(orientation.x, orientation.y, orientation.z, orientation.w);
-        depth_data_point.orientation_confidences.at(joint) = user.getSkeleton().getJoint(joint).getOrientationConfidence();
-        
-      }
-      
-      // Center of Mass
-      
-      depth_data_point.center_of_mass = convert_world_to_depth(ofPoint(user.getCenterOfMass().x, user.getCenterOfMass().y, user.getCenterOfMass().z));
-      
-      depth_data_point.bounding_box_min = convert_world_to_depth(ofPoint(user.getBoundingBox().min.x, user.getBoundingBox().min.y, user.getBoundingBox().min.z));
-      
-      depth_data_point.bounding_box_max = convert_world_to_depth(ofPoint(user.getBoundingBox().max.x, user.getBoundingBox().max.y, user.getBoundingBox().max.z));
+        user_tracker->startSkeletonTracking(user.getId());
     }
-  }
-  
-  return depth_data_point;
+    else if (!user.isLost())
+    {
+        
+        if (user.getSkeleton().getState() == nite::SKELETON_TRACKED)
+        {
+            // Joints
+            
+            for (nite::JointType joint = nite::JOINT_HEAD; joint <= nite::JOINT_RIGHT_FOOT; joint++) {
+                
+                const nite::Point3f joint_pos = user.getSkeleton().getJoint(joint).getPosition();
+                
+                const float joint_conf = user.getSkeleton().getJoint(joint).getPositionConfidence();
+                
+                depth_data_point.joints.at(joint) = convert_world_to_depth(ofPoint(joint_pos.x, joint_pos.y, joint_pos.z));
+                depth_data_point.confidences.at(joint) = joint_conf;
+                
+                // Joint orientations.
+                
+                // Convert from NiteQuaternion to ofQuaternion
+                NiteQuaternion orientation = user.getSkeleton().getJoint(joint).getOrientation();
+                depth_data_point.joint_orientations.at(joint) = ofQuaternion(orientation.x, orientation.y, orientation.z, orientation.w);
+                depth_data_point.orientation_confidences.at(joint) = user.getSkeleton().getJoint(joint).getOrientationConfidence();
+                
+            }
+            
+            // Center of Mass
+            
+            depth_data_point.center_of_mass = convert_world_to_depth(ofPoint(user.getCenterOfMass().x, user.getCenterOfMass().y, user.getCenterOfMass().z));
+            
+            depth_data_point.bounding_box_min = convert_world_to_depth(ofPoint(user.getBoundingBox().min.x, user.getBoundingBox().min.y, user.getBoundingBox().min.z));
+            
+            depth_data_point.bounding_box_max = convert_world_to_depth(ofPoint(user.getBoundingBox().max.x, user.getBoundingBox().max.y, user.getBoundingBox().max.z));
+        }
+    }
+    
+    return depth_data_point;
 }
 
 
-const nite::UserData& KinectInput::get_user(int user_id) {
-  
-  
-	const nite::Array<nite::UserData>& users = userTrackerFrame.getUsers();
-  
-  if (user_id >= users.getSize()) {
-    // Error
-    return;
-  }
-  
-  const nite::UserData& user = users[user_id];
-  
-  return user;
-
-}
-
-nite::SkeletonState KinectInput::get_state(int user_id) {
-  
-  return user_states[user_id];
-  
-}
-
-
-
-
-
-openni::VideoFrameRef KinectInput::get_depth_frame() {
-
-  return userTrackerFrame.getDepthFrame();
-  
-}
-
-
+//--------------------------------------------------------------
 ofPoint KinectInput::convert_world_to_depth(ofPoint coordinates) {
-  
-  float x;
-  float y;
-  
-  user_tracker->convertJointCoordinatesToDepth(coordinates.x, coordinates.y, coordinates.z, &x, &y);
-  
-  return ofPoint(x,y);
-  
+    
+    float x;
+    float y;
+    
+    user_tracker->convertJointCoordinatesToDepth(coordinates.x,
+                                                 coordinates.y,
+                                                 coordinates.z,
+                                                 &x, &y);
+    
+    return ofPoint(x,y);
+    
 }
 
-bool KinectInput::get_is_running() {
-  return is_running;
-}
 
 
+//--------------------------------------------------------------
+// MARK: Displaying Depth Frame
+//--------------------------------------------------------------
 
-
-
-
-
-// Get Image
-
+//--------------------------------------------------------------
 ofImage* KinectInput::GetImage() {
     
     return &depth_image;
 }
 
+//--------------------------------------------------------------
 void KinectInput::UpdateImage() {
     
     if (get_is_running()) {
         
-        UpdateDepth(get_depth_frame());
+        UpdateDepth(userTrackerFrame.getDepthFrame());
+
     }
 }
 
-// TODO: Displaying Depth Frame
 //--------------------------------------------------------------
-void KinectInput::UpdateDepth(openni::VideoFrameRef depth_frame) {
+void KinectInput::UpdateDepth(openni::VideoFrameRef depth_frame)
+{
     
     if (depth_frame.isValid()) {
         
@@ -333,14 +324,15 @@ void KinectInput::UpdateDepth(openni::VideoFrameRef depth_frame) {
         
         float* depth_histogram = CalculateHistogram(MAX_DEPTH, depth_frame);
         
-        // Allocate image
+        // Allocate image (happens once)
         if (!depth_image.isAllocated()) {
-            cout << "image allocated once.\n";
             
             depth_image.allocate(res_x, res_y, OF_IMAGE_GRAYSCALE);
             
             grayPixels = new unsigned char[numPixels];
             memset(grayPixels, 0, numPixels * sizeof(unsigned char));
+            
+            cout << "Kinect Image has been allocated.\n";
         }
         
         
@@ -356,14 +348,14 @@ void KinectInput::UpdateDepth(openni::VideoFrameRef depth_frame) {
         
     }
     else {
-        
-        cout << "invalid frame.\n";
+        cout << "Kinect Image frame is invalid.\n";
     }
     
 }
 
 //--------------------------------------------------------------
-float* KinectInput::CalculateHistogram(int histogramSize, const openni::VideoFrameRef& depthFrame)
+float* KinectInput::CalculateHistogram(int histogramSize,
+                                       const openni::VideoFrameRef& depthFrame)
 {
 	const openni::DepthPixel* pDepth = (const openni::DepthPixel*)depthFrame.getData();
 	int width = depthFrame.getWidth();
@@ -371,11 +363,12 @@ float* KinectInput::CalculateHistogram(int histogramSize, const openni::VideoFra
     
     static float pHistogram[MAX_DEPTH];
     
-	// Calculate the accumulative histogram (the yellow display...)
+	// Calculate the accumulative histogram
 	memset(pHistogram, 0, histogramSize*sizeof(float));
 	int restOfRow = depthFrame.getStrideInBytes() / sizeof(openni::DepthPixel) - width;
     
 	unsigned int nNumberOfPoints = 0;
+    
 	for (int y = 0; y < height; ++y)
 	{
 		for (int x = 0; x < width; ++x, ++pDepth)
@@ -388,10 +381,12 @@ float* KinectInput::CalculateHistogram(int histogramSize, const openni::VideoFra
 		}
 		pDepth += restOfRow;
 	}
+    
 	for (int nIndex = 1; nIndex < histogramSize; nIndex++)
 	{
 		pHistogram[nIndex] += pHistogram[nIndex-1];
 	}
+    
 	if (nNumberOfPoints)
 	{
 		for (int nIndex = 1; nIndex < histogramSize; nIndex++)
@@ -401,5 +396,4 @@ float* KinectInput::CalculateHistogram(int histogramSize, const openni::VideoFra
 	}
     
     return pHistogram;
-    
 }

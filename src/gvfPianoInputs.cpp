@@ -11,15 +11,11 @@
 //--------------------------------------------------------------
 void gvfPianoInputs::setup(){
     
-    
     kinect_input.setup();
     
     if (kinect_input.get_is_running())
         kinect_is_live = true; // Only set to live if correctly set up the kinect.
-    
-    leftHand = vector<double>(3,0.0);
-    rightHand = vector<double>(3,0.0);
-    
+
     // TODO: Write method for bounds setting.
     vector<float> kBounds;
     kBounds.push_back(-500.);
@@ -29,7 +25,7 @@ void gvfPianoInputs::setup(){
     // MARK: Accelerometer
     //    accAddresses.push_back("/wax/120");
     //    accAddresses.push_back("/wax/121");
-    accAddresses.push_back("/wax/14");
+    accAddresses.push_back("/wax/11");
     
     int port = 8200;
     accReceiver.setup(port);
@@ -44,7 +40,9 @@ void gvfPianoInputs::setup(){
     accelerometerBounds = vector<vector<float> >(3, aBounds);
     
     // Default is track right hand, one accelerometer.
+    // lacc racc lefth righth
     setInputs(true, false, false, false);
+//    setInputs(false, false, true, false);
     
 }
 
@@ -56,13 +54,10 @@ void gvfPianoInputs::update(){
         current_point = kinect_input.get_data();
         
         
-        leftHand[0] = current_point.joints[nite::JOINT_LEFT_HAND].x;
-        leftHand[1] = current_point.joints[nite::JOINT_LEFT_HAND].y;
-        leftHand[2] = current_point.joints[nite::JOINT_LEFT_HAND].z;
+        leftHand = current_point.joints[nite::JOINT_LEFT_HAND];
+        rightHand = current_point.joints[nite::JOINT_RIGHT_HAND];
+        head = current_point.joints[nite::JOINT_HEAD];
         
-        rightHand[0] = current_point.joints[nite::JOINT_RIGHT_HAND].x;
-        rightHand[1] = current_point.joints[nite::JOINT_RIGHT_HAND].y;
-        rightHand[2] = current_point.joints[nite::JOINT_RIGHT_HAND].z;
     }
     
     
@@ -87,7 +82,7 @@ void gvfPianoInputs::update(){
     
     // Get data from 3D accelerometer.
     while (accReceiver.hasWaitingMessages()) {
-        accData.at(0) = getAccData(accReceiver, "/wax/14", 0);
+        accData.at(0) = getAccData(accReceiver, "/wax/11", 0);
         //        accData.at(0) = getAccData(accReceiver, "/wax/120", 0);
         //        accData.at(1) = getAccData(accReceiver, "/wax/121", 1);
     }
@@ -112,13 +107,13 @@ void gvfPianoInputs::storeInput() {
     }
     if (leftHandOn) {
         for (int i = 0; i < 3; ++i) {
-            inputData.at(i + inputIterator) = leftHand.at(i);
+            inputData.at(i + inputIterator) = leftHand[i];
         }
         inputIterator += 3;
     }
     if (rightHandOn) {
         for (int i = 0; i < 3; ++i) {
-            inputData.at(i + inputIterator) = rightHand.at(i);
+            inputData.at(i + inputIterator) = rightHand[i];
         }
         inputIterator += 3;
     }
@@ -141,14 +136,14 @@ std::vector<float> gvfPianoInputs::getInputData() {
     
     // !!!: Temporary forced inputDimensions to 2 because of ofxGVFGesture issue
     
-    std::vector<float> data(2);
-    
-    data[0] = ofRandom(0.0, 1.0);
-    data[1] = ofRandom(0.0, 1.0);
-    
-    return data;
-    
-//    return inputData;
+//    std::vector<float> data(2);
+//    
+//    data[0] = ofRandom(0.0, 1.0);
+//    data[1] = ofRandom(0.0, 1.0);
+//    
+//    return data;
+//    
+    return inputData;
 }
 
 //--------------------------------------------------------------
@@ -158,8 +153,8 @@ std::vector<gvfInputInfo> gvfPianoInputs::getInputsInfo() {
 
 int gvfPianoInputs::getInputSize() {
     // !!!: Temporary forced inputDimensions to 2 because of ofxGVFGesture issue
-    return 2;
-//    return inputDataSize;
+//    return 2;
+    return inputDataSize;
 }
 
 //--------------------------------------------------------------
@@ -189,6 +184,7 @@ void gvfPianoInputs::setInputs(bool _accOneOn, bool _accTwoOn,
     
     // TODO: Replace by iterating through inputsInfo vector
     inputDataSize = 3 * (leftHandOn + rightHandOn + accOneOn + accTwoOn);
+    cout << "input size " << inputDataSize << endl;
     inputData = std::vector<float>(inputDataSize, 0.0);
     initial_point = std::vector<float>(inputDataSize, 0.0);
     

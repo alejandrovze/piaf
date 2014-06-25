@@ -6,8 +6,13 @@
 //
 //
 
-#include "piafInterface.h"
+// TODO: Figure out ofxGVF variances problem.
+// TODO: Add Kinect Display
+// TODO: Add Accelerometer Display
+// TODO: Add current gesture data viz
+// TODO: Add templates data viz
 
+#include "piafInterface.h"
 
 //--------------------------------------------------------------
 void piafInterface::setup(gvfPianoHandler* _handler, gvfPianoInputs* _inputs) {
@@ -23,8 +28,11 @@ void piafInterface::setup(gvfPianoHandler* _handler, gvfPianoInputs* _inputs) {
     
     ofSetCircleResolution(120);
     
+    column_width = 212;
+    
     SetInputsGUI();
     SetGvfGUI();
+    SetSettingsGUI();
     
 }
 
@@ -34,7 +42,7 @@ void piafInterface::draw(){
     ofBackground(255, 255, 255, 255);
     
     if (kinect_display)
-        kinect_image->draw(0, 0, 600, 400); // Ideally, within a GUI canvas
+        kinect_image->draw(0, 0, 1200, 800); // Ideally, within a GUI canvas
     
     ofSetRectMode(OF_RECTMODE_CENTER);
     
@@ -45,6 +53,7 @@ void piafInterface::update(){
     
     UpdateInputsGUI();
     UpdateGvfGUI();
+    UpdateSettingsGUI();
 
 }
 
@@ -70,7 +79,7 @@ void piafInterface::SetInputsGUI() {
     
     inputs_gui->addSpacer();
     inputs_gui->addLabel("ACCELEROMETER 1");
-    inputs_gui->addLabelToggle("ACCELEROMETER ON/OFF", true);
+    inputs_gui->addLabelToggle("ACC1 ON/OFF", true);
     inputs_gui->addSpacer();
     inputs_gui->addLabel("ACC1 WAX ID");
     inputs_gui->addNumberDialer("ACC1", 0, 20, 12, 1);
@@ -79,7 +88,7 @@ void piafInterface::SetInputsGUI() {
     
     inputs_gui->addSpacer();
     inputs_gui->addLabel("ACCELEROMETER 2");
-    inputs_gui->addLabelToggle("ACCELEROMETER ON/OFF", true);
+    inputs_gui->addLabelToggle("ACC2ON/OFF", true);
     inputs_gui->addSpacer();
     inputs_gui->addLabel("ACC2 WAX ID");
     inputs_gui->addNumberDialer("ACC2", 0, 20, 14, 1);
@@ -87,7 +96,6 @@ void piafInterface::SetInputsGUI() {
     inputs_gui->addLabel("INPUT GESTURE", OFX_UI_FONT_MEDIUM);
     for (int i = 0; i < input_gesture.size(); ++i) {
         input_gesture[i] = inputs_gui->addMovingGraph("MOVING", buffers[i], 256, 0.0, 1.0);
-        
     }
     
     inputs_gui->autoSizeToFitWidgets();
@@ -142,6 +150,9 @@ void piafInterface::InputsGUIEvent(ofxUIEventArgs &e) {
         {
             kinect_display = toggle->getValue();
         }
+//        else if (name == "ACC1 ON/OFF") {
+//            inputs->setInputs
+//        }
     }
 }
 
@@ -151,14 +162,15 @@ void piafInterface::InputsGUIEvent(ofxUIEventArgs &e) {
 //--------------------------------------------------------------
 void piafInterface::SetGvfGUI() {
     
-    gvf_gui = new ofxUISuperCanvas("GVF");
+    gvf_gui = new ofxUISuperCanvas("GVF Status");
     
     gvf_gui->addSpacer();
-    gvf_gui->addLabel("STATUS");
+    gvf_gui->addFPS();
+    
+    gvf_gui->addSpacer();
     gvf_status = gvf_gui->addTextArea("textarea", "XXX", OFX_UI_FONT_SMALL);
     
     gvf_gui->addSpacer();
-    gvf_gui->addLabel("PLAYING");
     is_playing = gvf_gui->addLabelToggle("PLAYING ON/OFF", false);
     
     gvf_gui->addSpacer();
@@ -167,21 +179,22 @@ void piafInterface::SetGvfGUI() {
     gvf_gui->addButton("LOAD", false)->setLabelVisible(true);
     
     gvf_gui->addSpacer();
-    gvf_gui->addLabel("NTemplates");
-    gvf_n_templates = gvf_gui->addTextArea("textarea", "0", OFX_UI_FONT_SMALL);
+    gvf_n_templates = gvf_gui->addTextArea("textarea", "NTEMPLATES 0", OFX_UI_FONT_SMALL);
     
     gvf_gui->addSpacer();
     gvf_gui->addLabel("Most Probable Template");
     gvf_most_probable = gvf_gui->addTextArea("textarea", "Index 0", OFX_UI_FONT_SMALL);
+    gvf_most_probable_probability = gvf_gui->addTextArea("textarea", "Probability 0", OFX_UI_FONT_SMALL);
     gvf_most_probable_phase = gvf_gui->addTextArea("textarea", "Phase 0", OFX_UI_FONT_SMALL);
-                                            
-    // TODO: Add recognition information (phase, speed, scale)
+    gvf_most_probable_speed = gvf_gui->addTextArea("textarea", "Speed 0", OFX_UI_FONT_SMALL);
+    gvf_most_probable_scale = gvf_gui->addTextArea("textarea", "Scale 0", OFX_UI_FONT_SMALL);
+    gvf_most_probable_rotation = gvf_gui->addTextArea("textarea", "Rotation 0", OFX_UI_FONT_SMALL);
     
-    gvf_gui->setPosition(212*1,0);
+    gvf_gui->setPosition(column_width * 1, 0);
     gvf_gui->autoSizeToFitWidgets();
     
-    gvf_gui->addLabel("CURRENT GESTURE LENGTH", OFX_UI_FONT_SMALL);
-    gesture_length = gvf_gui->addTextArea("textarea", "0", OFX_UI_FONT_SMALL);
+//    gvf_gui->addLabel("CURRENT GESTURE LENGTH", OFX_UI_FONT_SMALL);
+//    gesture_length = gvf_gui->addTextArea("textarea", "0", OFX_UI_FONT_SMALL);
     
 	ofAddListener(gvf_gui->newGUIEvent, this, &piafInterface::GvfGUIEvent);
 }
@@ -210,43 +223,144 @@ void piafInterface::UpdateGvfGUI() {
 
     switch(gvf_handler->getGVF()->getState()) {
         case ofxGVF::STATE_WAIT:
-            gvf_status->setTextString("Waiting");
+            gvf_status->setTextString("STATE: Waiting");
             break;
         case ofxGVF::STATE_LEARNING:
-            gvf_status->setTextString("Learning");
+            gvf_status->setTextString("STATE: Learning");
             break;
         case ofxGVF::STATE_FOLLOWING:
-            gvf_status->setTextString("Following");
+            gvf_status->setTextString("STATE: Following");
             break;
         case ofxGVF::STATE_CLEAR:
-            gvf_status->setTextString("Clear");
+            gvf_status->setTextString("STATE: Clear");
             break;
     }
     
-    gvf_n_templates->setTextString(ofToString(gvf_handler->getGVF()->getNumberOfGestureTemplates()));
+    is_playing->setValue(gvf_handler->getIsPlaying());
+    
+    gvf_n_templates->setTextString("NTEMPLATES " + ofToString(gvf_handler->getGVF()->getNumberOfGestureTemplates()));
     
     gvf_most_probable->setTextString("Index " +
                                      ofToString(gvf_handler->getGVF()->getMostProbableGestureIndex()));
     
-    vector<float> status = gvf_handler->getGVF()->getMostProbableGestureStatus();
-    float phase;
-    if(!status.empty()) {
-        phase = status[0];
+    recognitionInfo status = gvf_handler->getRecogInfoOfMostProbable();
+    gvf_most_probable_probability->setTextString("Probability " + ofToString(status.probability));
+    gvf_most_probable_phase->setTextString("Phase " + ofToString(status.phase));
+    gvf_most_probable_speed->setTextString("Speed " + ofToString(status.speed));
+    
+    string scale_string = "";
+    for (int i = 0; i < status.scale.size(); ++i) {
+        scale_string += ofToString(status.scale[i], 2);
+        scale_string += " ";
     }
-    else {
-        phase = 0.0;
+    gvf_most_probable_scale->setTextString("Scale " + scale_string);
+    
+    string rotation_string = "";
+    for (int i = 0; i < status.rotation.size(); ++i) {
+        rotation_string += ofToString(status.rotation[i], 2);
+        rotation_string += " ";
+    }
+    gvf_most_probable_rotation->setTextString("Rotation " + rotation_string);
+    
+    // !!!: Temp: Feedback for recognition
+//    if (gvf_handler->getIsPlaying() && (gvf_handler->getGVF()->getState() == ofxGVF::STATE_FOLLOWING)) {
+//    
+//        cout << "INDEX " << ofToString(gvf_handler->getGVF()->getMostProbableGestureIndex());
+//        cout << " P " << ofToString(status.probability);
+//        cout << " Ph " << ofToString(status.phase);
+//        cout << " Sp " << ofToString(status.speed);
+//        for (int i = 0; i < status.scale.size(); ++i)
+//            cout << " S" << i << " " << ofToString(status.scale[i]);
+//        cout << endl;
+//    
+//    }
+    
+//    // Update Length of Gesture
+//    if ((gvf_handler->getGVF()->getState() != ofxGVF::STATE_CLEAR) && gvf_handler->getIsPlaying()) {
+//        gesture_length->setTextString(ofToString(gvf_handler->getCurrentGesture()->getTemplateLength()));
+//    }
+    
+}
+
+
+//--------------------------------------------------------------
+//MARK: GVF Settings
+//--------------------------------------------------------------
+void piafInterface::SetSettingsGUI() {
+    
+    settings_gui = new ofxUISuperCanvas("GVF Settings");
+    
+    // Parameters
+    settings_gui->addNumberDialer("N Particles", 10, 10000, gvf_handler->getGVF()->getNumberOfParticles(), 0);
+    settings_gui->addNumberDialer("Resampling Threshold", 100, 10000, gvf_handler->getGVF()->getResamplingThreshold(), 0);
+    tolerance = settings_gui->addNumberDialer("Tolerance",  0.01, 2.0, gvf_handler->getGVF()->getTolerance(), 3);
+    settings_gui->addNumberDialer("Distribution", 0.0, 2.0, gvf_handler->getGVF()->getDistribution(), 2);
+    
+    // !!!: Variance Coefficients (currently crash)
+    settings_gui->addNumberDialer("Phase Variance", 0.000001, 0.1, gvf_handler->getGVF()->getPhaseVariance(), 5);
+    settings_gui->addNumberDialer("Speed Variance", 0.000001, 0.1, gvf_handler->getGVF()->getSpeedVariance(), 5);
+    settings_gui->addNumberDialer("Scale Variance", 0.000001, 0.1, gvf_handler->getGVF()->getScaleVariance()[0], 5);
+    settings_gui->addNumberDialer("Rotation Variance", 0.000001, 0.1, gvf_handler->getGVF()->getRotationVariance()[0], 5);
+
+    settings_gui->setPosition(column_width * 2,0);
+    settings_gui->autoSizeToFitWidgets();
+    
+	ofAddListener(settings_gui->newGUIEvent, this, &piafInterface::SettingsGUIEvent);
+}
+
+//--------------------------------------------------------------
+void piafInterface::SettingsGUIEvent(ofxUIEventArgs &e) {
+    
+    string name = e.getName();
+	int kind = e.getKind();
+    
+    if(kind == OFX_UI_WIDGET_NUMBERDIALER)
+    {
+        ofxUINumberDialer *n = (ofxUINumberDialer *) e.widget;
+        float value = n->getValue();
+        
+        if (name == "N Particles") {
+            gvf_handler->getGVF()->setNumberOfParticles((int) value);
+        }
+        else if (name == "Resampling Threshold") {
+            gvf_handler->getGVF()->setResamplingThreshold((int) value);
+        }
+        else if (name == "Tolerance") {
+            gvf_handler->getGVF()->setTolerance(value);
+        }
+        else if (name == "Distribution") {
+            gvf_handler->getGVF()->setDistribution(value);
+        }
+        else if (name == "Phase Variance") {
+            gvf_handler->getGVF()->setPhaseVariance(value);
+        }
+        else if (name == "Speed Variance") {
+            gvf_handler->getGVF()->setSpeedVariance(value);
+        }
+        else if (name == "Scale Variance") {
+            gvf_handler->getGVF()->setScaleVariance(value);
+        }
+        else if (name == "Rotation Variance") {
+            gvf_handler->getGVF()->setRotationVariance(value);
+        }
     }
     
-    gvf_most_probable_phase->setTextString("Phase " + ofToString(phase));
+}
+
+//--------------------------------------------------------------
+void piafInterface::UpdateSettingsGUI() {
     
-    is_playing->setValue(gvf_handler->getIsPlaying());
+    // Update Tolerance
+    tolerance->setValue(gvf_handler->getGVF()->getTolerance());
     
-    // Update Length of Gesture
-    if ((gvf_handler->getGVF()->getState() != ofxGVF::STATE_CLEAR) && gvf_handler->getIsPlaying()) {
-        gesture_length->setTextString(ofToString(gvf_handler->getCurrentGesture()->getTemplateLength()));
-    }
-    
-    
+    // !!!: Temp: Feedback for changing settings
+//    cout << "VARIANCES";
+//    cout << " phase " << gvf_handler->getGVF()->getPhaseVariance();
+//    cout << " speed " << gvf_handler->getGVF()->getSpeedVariance();
+//    cout << " scale " << gvf_handler->getGVF()->getScaleVariance()[0];
+//    cout << " rotation " << gvf_handler->getGVF()->getRotationVariance()[0];
+//    cout << endl;
+
 }
 
 
@@ -255,48 +369,44 @@ void piafInterface::UpdateGvfGUI() {
 // --------------------------------
 //--------------------------------------------------------------
 void piafInterface::SaveGestures() {
-    
-    //TODO: Implement Saving
-//
-//    string filename;
-//
-//    ofFileDialogResult dialogResult = ofSystemSaveDialog("my_gestures", "Save gestures");
-//    if(!dialogResult.bSuccess)
-//        return;
-//
-//    stringstream ss;
-//    ss << dialogResult.filePath;
-//    filename = ss.str();
-//    cout << filename;
-//
-//    handler->saveGestures(filename);
-//    cout << "Gestures saved.\n";
+
+    string filename;
+
+    ofFileDialogResult dialogResult = ofSystemSaveDialog("my_gestures", "Save gestures");
+    if(!dialogResult.bSuccess)
+        return;
+
+    stringstream ss;
+    ss << dialogResult.filePath;
+    filename = ss.str();
+    cout << filename;
+
+    gvf_handler->getGVF()->saveTemplates(filename);
+    cout << "Gestures saved.\n";
 }
 
 //--------------------------------------------------------------
 void piafInterface::LoadGestures() {
-    // TODO: Implement Loading
-//    string filename;
-//
-//    ofFileDialogResult dialogResult = ofSystemLoadDialog("Select the file containing gesture data");
-//    if(!dialogResult.bSuccess)
-//        return;
-//
-//    stringstream ss;
-//    ss << dialogResult.filePath;
-//    filename = ss.str();
-//    cout << filename;
-//
-//    handler->loadGestures(filename);
-//    cout << "Gestures loaded.\n";
+    
+    string filename;
+
+    ofFileDialogResult dialogResult = ofSystemLoadDialog("Select the file containing gesture data");
+    if(!dialogResult.bSuccess)
+        return;
+
+    stringstream ss;
+    ss << dialogResult.filePath;
+    filename = ss.str();
+    cout << filename;
+
+    gvf_handler->getGVF()->loadTemplates(filename);
+    cout << "Gestures loaded.\n";
+    
 }
 
 
 
 
-
-
-
 //--------------------------------------------------------------
 //--------------------------------------------------------------
 //--------------------------------------------------------------
@@ -310,123 +420,28 @@ void piafInterface::LoadGestures() {
 //--------------------------------------------------------------
 //--------------------------------------------------------------
 
-//
-//  gvfPianoInterface.cpp
-//  oFxGVFxPiano
-//
-//  Created by Alejandro Van Zandt-Escobar on 19/11/2013.
-//
-//
 
 
 
 //
 ////--------------------------------------------------------------
 //void gvfPianoInterface::update(){
-//    
-//    updateInputsGui(inputs->getInputData());
-//    
-//    bool isfollowing = (handler->getGVF()->getState()==ofxGVF::STATE_FOLLOWING) ? true : false;
-//    
-//    
-//    updateStatusGui(handler->getGVF()->getState(),
-//                    isfollowing,
-//                    handler->getGVF()->getMostProbableGestureIndex(),
-//                    handler->getRecogInfoOfMostProbable());
-//    
-//    
+//
+//
 //    // TODO below
 //    /*
 //     if (templates.size() != piano_follower_p->getTemplatesLearned())
 //     updateTemplatesGui(piano_follower_p->getTemplatesLearned());
-//     
+//
 //     // Update templates after gesture has been learned only.
 //     if (piano_follower_p->getState() == ofxGVF::STATE_FOLLOWING) {
 //     updateTemplates(piano_follower_p->getTemplatesLearned());
 //     }
 //     */
-//    
+//
 //    templates_gui->draw();
 //}
 //
-
-
-////--------------------------------------------------------------
-////MARK: Settings GUI
-////--------------------------------------------------------------
-
-//    settingsGui.setup("ofxGVF Settings");
-//    
-//    settings.setName("Settings");
-//    settings.add(numParticles.set("Number of particles", 2000, 10, 10000));
-//    settings.add(resampleThreshold.set("Resampling threshold", 1000, 100, 10000));
-//    settings.add(smoothingCoefficient.set("Smoothing coefficient", 0.2, 0.01, 2.0));
-//    
-//    varianceCoefficients.setName("Variance Coefficients");
-//    
-//    varianceCoefficients.add(sigPosition.set("Position", 0.0001, 0.000001, 0.1));
-//    varianceCoefficients.add(sigSpeed.set("Speed", 0.01, 0.000001, 0.1));
-//    varianceCoefficients.add(sigScale.set("Scale", 0.0001, 0.000001, 0.1));
-//    varianceCoefficients.add(sigRotation.set("Rotation", 0.0001, 0.000001, 0.1));
-//    
-//    settings.add(varianceCoefficients);
-//    
-//    settingsGui.add(settings);
-//    
-//    settingsGui.add(save.setup("save gestures"));
-//    settingsGui.add(load.setup("load gestures"));
-//    settingsGui.add(draw_kinect.setup("Display Kinect"));
-//    
-//    settingsGui.setShape(ofRectangle(30, 110, 250, 100));
-//    settingsGui.setPosition(0, 110);
-//    settingsGui.setWidthElements(250);
-//    
-//    numParticles.addListener(this, &gvfPianoInterface::numParticlesChanged);
-//    resampleThreshold.addListener(this, &gvfPianoInterface::resampleThresholdChanged);
-//    smoothingCoefficient.addListener(this, &gvfPianoInterface::smoothingCoefficientChanged);
-//    
-//    sigPosition.addListener(this, &gvfPianoInterface::varianceCoefficentsChanged);
-//    sigSpeed.addListener(this, &gvfPianoInterface::varianceCoefficentsChanged);
-//    sigScale.addListener(this, &gvfPianoInterface::varianceCoefficentsChanged);
-//    sigRotation.addListener(this, &gvfPianoInterface::varianceCoefficentsChanged);
-//    
-
-//    
-//    
-//}
-//
-////--------------------------------------------------------------
-//void gvfPianoInterface::numParticlesChanged(int & numParticles) {
-//    //    piano_follower_p->setNumberOfParticles(numParticles);
-//}
-//
-////--------------------------------------------------------------
-//void gvfPianoInterface::resampleThresholdChanged(int & resampleThreshold) {
-//    
-//    //    piano_follower_p->setResamplingThreshold(resampleThreshold);
-//}
-//
-////--------------------------------------------------------------
-//void gvfPianoInterface::smoothingCoefficientChanged(float & smoothingCoefficient) {
-//    
-//    //    piano_follower_p->setSmoothingCoefficient(smoothingCoefficient);
-//}
-//
-////--------------------------------------------------------------
-//void gvfPianoInterface::varianceCoefficentsChanged(float & coefficent) {
-//    /*
-//     ofxGVF::ofxGVFVarianceCoefficents sigs;
-//     sigs.phaseVariance = sigPosition.get();
-//     sigs.speedVariance = sigSpeed.get();
-//     sigs.scaleVariance = sigScale.get();
-//     sigs.rotationVariance = sigRotation.get();
-//     
-//     piano_follower_p->setAdaptSpeed(sigs);*/
-//}
-//
-
-
-
 
 
 ////--------------------------------------------------------------
@@ -569,11 +584,6 @@ void piafInterface::LoadGestures() {
 ////--------------------------------------------------------------
 ////--------------------------------------------------------------
 //
-//
-
-
-
-
 //
 //// Live skeleton display
 ////--------------------------------------------------------------

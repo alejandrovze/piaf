@@ -79,10 +79,9 @@
 		C643556018E5DA74008AE100 /* ofxSlider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C643555518E5DA73008AE100 /* ofxSlider.cpp */; };
 		C643556118E5DA74008AE100 /* ofxSliderGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C643555718E5DA73008AE100 /* ofxSliderGroup.cpp */; };
 		C643556218E5DA74008AE100 /* ofxToggle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C643555918E5DA74008AE100 /* ofxToggle.cpp */; };
-		C67106EB18E8D421001D3E51 /* SkeletonGesture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C67106E918E8D421001D3E51 /* SkeletonGesture.cpp */; };
+		C6A290DD1959CBAB006B3770 /* piafOSCSender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6A290DB1959CBAB006B3770 /* piafOSCSender.cpp */; };
 		C6B015D1190C7B5800A5BF82 /* ofxCsv.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6B015CD190C7B5800A5BF82 /* ofxCsv.cpp */; };
 		C6B813F119583B58005B8935 /* ofxGVF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6B813E819583B58005B8935 /* ofxGVF.cpp */; };
-		C6D394C618F7AAC30043DD1C /* OSCInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6D394C418F7AAC20043DD1C /* OSCInterface.cpp */; };
 		C6E900F318EE37B300C0F2C1 /* libNiTE2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C6E900E518EE37B300C0F2C1 /* libNiTE2.dylib */; };
 		C6E9010218EE37D300C0F2C1 /* libOpenNI2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C6E900F618EE37D200C0F2C1 /* libOpenNI2.dylib */; };
 		C6E9010A18EE388A00C0F2C1 /* libOpenNI2.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = C6E900F618EE37D200C0F2C1 /* libOpenNI2.dylib */; };
@@ -110,7 +109,6 @@
 		C6E9014B18EE55F600C0F2C1 /* libFreenectDriver.0.4.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C6E9014818EE556300C0F2C1 /* libFreenectDriver.0.4.1.dylib */; };
 		C6E9014E18EE573E00C0F2C1 /* KinectInput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6E9014C18EE573E00C0F2C1 /* KinectInput.cpp */; };
 		C6EDE9A71945FFC50097CBC4 /* ofApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6EDE9A51945FFC50097CBC4 /* ofApp.cpp */; };
-		C6EDE9B11945FFF30097CBC4 /* gvfPianoInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6EDE9AA1945FFF20097CBC4 /* gvfPianoInterface.cpp */; };
 		C6EDE9B21945FFF30097CBC4 /* gvfPianoInputs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6EDE9AC1945FFF30097CBC4 /* gvfPianoInputs.cpp */; };
 		C6EDE9B31945FFF30097CBC4 /* gvfPianoHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6EDE9AE1945FFF30097CBC4 /* gvfPianoHandler.cpp */; };
 		C6EDEA3B194601C90097CBC4 /* RtMidi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6EDEA08194601C90097CBC4 /* RtMidi.cpp */; };
@@ -378,17 +376,15 @@
 		C643555818E5DA74008AE100 /* ofxSliderGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxSliderGroup.h; sourceTree = "<group>"; };
 		C643555918E5DA74008AE100 /* ofxToggle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxToggle.cpp; sourceTree = "<group>"; };
 		C643555A18E5DA74008AE100 /* ofxToggle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxToggle.h; sourceTree = "<group>"; };
-		C67106E918E8D421001D3E51 /* SkeletonGesture.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SkeletonGesture.cpp; sourceTree = "<group>"; };
-		C67106EA18E8D421001D3E51 /* SkeletonGesture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SkeletonGesture.h; sourceTree = "<group>"; };
 		C6937888E126BADC8777423B /* OscTypes.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = OscTypes.h; path = ../../../addons/ofxOsc/libs/oscpack/src/osc/OscTypes.h; sourceTree = SOURCE_ROOT; };
+		C6A290DB1959CBAB006B3770 /* piafOSCSender.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = piafOSCSender.cpp; sourceTree = "<group>"; };
+		C6A290DC1959CBAB006B3770 /* piafOSCSender.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = piafOSCSender.h; sourceTree = "<group>"; };
 		C6B015CD190C7B5800A5BF82 /* ofxCsv.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxCsv.cpp; sourceTree = "<group>"; };
 		C6B015CE190C7B5800A5BF82 /* ofxCsv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxCsv.h; sourceTree = "<group>"; };
 		C6B813E819583B58005B8935 /* ofxGVF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxGVF.cpp; sourceTree = "<group>"; };
 		C6B813E919583B58005B8935 /* ofxGVF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxGVF.h; sourceTree = "<group>"; };
 		C6B813EA19583B58005B8935 /* ofxGVFGesture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxGVFGesture.h; sourceTree = "<group>"; };
 		C6B813EB19583B58005B8935 /* ofxGVFTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxGVFTypes.h; sourceTree = "<group>"; };
-		C6D394C418F7AAC20043DD1C /* OSCInterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OSCInterface.cpp; sourceTree = "<group>"; };
-		C6D394C518F7AAC30043DD1C /* OSCInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OSCInterface.h; sourceTree = "<group>"; };
 		C6E900E418EE37B300C0F2C1 /* com.primesense.nite.jar */ = {isa = PBXFileReference; lastKnownFileType = archive.jar; path = com.primesense.nite.jar; sourceTree = "<group>"; };
 		C6E900E518EE37B300C0F2C1 /* libNiTE2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libNiTE2.dylib; sourceTree = "<group>"; };
 		C6E900E618EE37B300C0F2C1 /* libNiTE2.jni.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libNiTE2.jni.dylib; sourceTree = "<group>"; };
@@ -436,8 +432,6 @@
 		C6E9014D18EE573E00C0F2C1 /* KinectInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KinectInput.h; sourceTree = "<group>"; };
 		C6EDE9A51945FFC50097CBC4 /* ofApp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofApp.cpp; sourceTree = "<group>"; };
 		C6EDE9A61945FFC50097CBC4 /* ofApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofApp.h; sourceTree = "<group>"; };
-		C6EDE9AA1945FFF20097CBC4 /* gvfPianoInterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = gvfPianoInterface.cpp; sourceTree = "<group>"; };
-		C6EDE9AB1945FFF30097CBC4 /* gvfPianoInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gvfPianoInterface.h; sourceTree = "<group>"; };
 		C6EDE9AC1945FFF30097CBC4 /* gvfPianoInputs.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = gvfPianoInputs.cpp; sourceTree = "<group>"; };
 		C6EDE9AD1945FFF30097CBC4 /* gvfPianoInputs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gvfPianoInputs.h; sourceTree = "<group>"; };
 		C6EDE9AE1945FFF30097CBC4 /* gvfPianoHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = gvfPianoHandler.cpp; sourceTree = "<group>"; };
@@ -462,7 +456,6 @@
 		C6EDEA2D194601C90097CBC4 /* ofxMidiOut.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxMidiOut.cpp; sourceTree = "<group>"; };
 		C6EDEA2E194601C90097CBC4 /* ofxMidiOut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxMidiOut.h; sourceTree = "<group>"; };
 		C6EDEA2F194601C90097CBC4 /* ofxMidiTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxMidiTypes.h; sourceTree = "<group>"; };
-		C6EDEA52194611680097CBC4 /* ofxUIMovingGraphX.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxUIMovingGraphX.h; sourceTree = "<group>"; };
 		C6EDEA55194614F50097CBC4 /* CoreMIDI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMIDI.framework; path = System/Library/Frameworks/CoreMIDI.framework; sourceTree = SDKROOT; };
 		D9BFFBBF4CC43DEE890B3C3E /* OscTypes.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = OscTypes.cpp; path = ../../../addons/ofxOsc/libs/oscpack/src/osc/OscTypes.cpp; sourceTree = SOURCE_ROOT; };
 		DF49D76C45D5DB505A234880 /* ofxOscMessage.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = ofxOscMessage.cpp; path = ../../../addons/ofxOsc/src/ofxOscMessage.cpp; sourceTree = SOURCE_ROOT; };
@@ -818,8 +811,6 @@
 				C6EDE9AD1945FFF30097CBC4 /* gvfPianoInputs.h */,
 				C6E9014C18EE573E00C0F2C1 /* KinectInput.cpp */,
 				C6E9014D18EE573E00C0F2C1 /* KinectInput.h */,
-				C67106E918E8D421001D3E51 /* SkeletonGesture.cpp */,
-				C67106EA18E8D421001D3E51 /* SkeletonGesture.h */,
 			);
 			name = inputs;
 			sourceTree = "<group>";
@@ -865,8 +856,8 @@
 		C6D394C718F7AAC70043DD1C /* OSC */ = {
 			isa = PBXGroup;
 			children = (
-				C6D394C418F7AAC20043DD1C /* OSCInterface.cpp */,
-				C6D394C518F7AAC30043DD1C /* OSCInterface.h */,
+				C6A290DB1959CBAB006B3770 /* piafOSCSender.cpp */,
+				C6A290DC1959CBAB006B3770 /* piafOSCSender.h */,
 			);
 			name = OSC;
 			sourceTree = "<group>";
@@ -1012,15 +1003,6 @@
 			path = "../../../../../openNI_2/OpenNI-MacOSX-x64-2.2/Include/MacOSX";
 			sourceTree = "<group>";
 		};
-		C6EDE9A41945FF870097CBC4 /* piafSource */ = {
-			isa = PBXGroup;
-			children = (
-				C6EDE9AA1945FFF20097CBC4 /* gvfPianoInterface.cpp */,
-				C6EDE9AB1945FFF30097CBC4 /* gvfPianoInterface.h */,
-			);
-			name = piafSource;
-			sourceTree = "<group>";
-		};
 		C6EDE9BA194601C60097CBC4 /* ofxMidi */ = {
 			isa = PBXGroup;
 			children = (
@@ -1112,7 +1094,6 @@
 			children = (
 				E4B6FCAD0C3E899E008CF71C /* openFrameworks-Info.plist */,
 				E4EB6923138AFD0F00A09F29 /* Project.xcconfig */,
-				C6EDEA52194611680097CBC4 /* ofxUIMovingGraphX.h */,
 				E4B69E1C0A3A1BDC003C02F2 /* src */,
 				C6E9012418EE38E100C0F2C1 /* openNI Includes */,
 				C6E900E218EE361E00C0F2C1 /* openNI frameworks */,
@@ -1133,7 +1114,6 @@
 				C62821911950C38900B12695 /* piafInterface.h */,
 				C6EDE9AE1945FFF30097CBC4 /* gvfPianoHandler.cpp */,
 				C6EDE9AF1945FFF30097CBC4 /* gvfPianoHandler.h */,
-				C6EDE9A41945FF870097CBC4 /* piafSource */,
 				C6A49F4E18E31BD600C28D49 /* inputs */,
 				C6D394C718F7AAC70043DD1C /* OSC */,
 			);
@@ -1287,7 +1267,6 @@
 				C643556018E5DA74008AE100 /* ofxSlider.cpp in Sources */,
 				C643556118E5DA74008AE100 /* ofxSliderGroup.cpp in Sources */,
 				C643556218E5DA74008AE100 /* ofxToggle.cpp in Sources */,
-				C67106EB18E8D421001D3E51 /* SkeletonGesture.cpp in Sources */,
 				C61F574618EC52D900DAF3CC /* ofxUI2DGraph.cpp in Sources */,
 				C61F574718EC52D900DAF3CC /* ofxUI2DPad.cpp in Sources */,
 				C61F574818EC52D900DAF3CC /* ofxUIBaseDraws.cpp in Sources */,
@@ -1337,10 +1316,8 @@
 				C61F57B018EC553700DAF3CC /* tinyxmlparser.cpp in Sources */,
 				C61F57B118EC553700DAF3CC /* ofxXmlSettings.cpp in Sources */,
 				C6E9014E18EE573E00C0F2C1 /* KinectInput.cpp in Sources */,
-				C6D394C618F7AAC30043DD1C /* OSCInterface.cpp in Sources */,
 				C6B015D1190C7B5800A5BF82 /* ofxCsv.cpp in Sources */,
 				C6EDE9A71945FFC50097CBC4 /* ofApp.cpp in Sources */,
-				C6EDE9B11945FFF30097CBC4 /* gvfPianoInterface.cpp in Sources */,
 				C6EDE9B21945FFF30097CBC4 /* gvfPianoInputs.cpp in Sources */,
 				C6EDE9B31945FFF30097CBC4 /* gvfPianoHandler.cpp in Sources */,
 				C6EDEA3B194601C90097CBC4 /* RtMidi.cpp in Sources */,
@@ -1353,6 +1330,7 @@
 				C6EDEA47194601C90097CBC4 /* ofxMidiOut.cpp in Sources */,
 				C62821921950C38900B12695 /* piafInterface.cpp in Sources */,
 				C6B813F119583B58005B8935 /* ofxGVF.cpp in Sources */,
+				C6A290DD1959CBAB006B3770 /* piafOSCSender.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

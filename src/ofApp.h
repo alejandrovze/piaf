@@ -7,11 +7,10 @@
 
 #include "ofMain.h"
 
-#include "ofxUI.h"
-#include "ofxGui.h"
 #include "ofxMidi.h"
 
 #include "piafInterface.h"
+#include "piafOSCSender.h"
 
 class ofApp : public ofBaseApp, public ofxMidiListener {
 	
@@ -27,9 +26,6 @@ public:
     void windowResized(int w, int h);
     
     void guiEvent(ofxUIEventArgs &e);
-    void templatesGuiEvent(ofxUIEventArgs &e);
-    
-    
     
     // MARK: Midi Input
     ofxMidiIn midiIn;
@@ -43,8 +39,10 @@ private:
     gvfPianoHandler     handler;
     gvfPianoInputs      inputs;
     
-    bool isFollowing;
+    piafOSCSender sender;
     
+    
+    // MARK: GUI
     int scrW, scrH;
     
     void initColors();

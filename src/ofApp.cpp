@@ -14,17 +14,13 @@ void ofApp::setup(){
     ofPoint wSize = ofGetWindowSize();
     scrW = wSize.x;
     scrH = wSize.y;
-    //printf("w: %d h: %d\n", scrW, scrH);
     
-    
-    //application.setup();
-    
-    isFollowing = false;
-    
-    // SETUP ELEMETNS
+    // SETUP ELEMENTS
     inputs.setup();                         // inputs devices
     handler.setup(inputs.getInputSize());   // gvf
     interface.setup(&handler, &inputs);  // interface
+    
+    sender.setup();
     
     initColors();
     
@@ -67,17 +63,17 @@ void ofApp::update(){
     
     inputs.update();
     
-    //inputData = inputs.getInputData();
-    
     // Feed data from inputs to gvf
-    if (isFollowing) {
+    if (handler.getIsPlaying()) {
         handler.gvf_data(inputs.getInputData());
-        
-        //handler->gvf_data(inputData);
-        //gesture_data.push_back(inputData);
     }
     
     interface.update();
+    
+    recognitionInfo mostProb = handler.getRecogInfoOfMostProbable();
+    sender.SendGVFOutcome(handler.getGVF()->getMostProbableGestureIndex(),
+                          mostProb.probability, mostProb.phase, mostProb.speed,
+                          mostProb.scale, mostProb.rotation);
     
 }
 
@@ -90,16 +86,13 @@ void ofApp::draw(){
     
     interface.draw();
     
-    stringstream reportStream;
     ofDisableAlphaBlending();
-    
-    // show the current frame rate
-    ofDrawBitmapString("FPS " + ofToString(ofGetFrameRate(), 0), ofGetWidth() - 200, 25);
 }
 
 //--------------------------------------------------------------
 void ofApp::exit() {
-    // ???: Close Kinect?
+    
+    // TODO: Shutdown for Inputs (Close Kinect, etc.)
     
     interface.exit();
 }
@@ -141,25 +134,20 @@ void ofApp::keyPressed(int key){
     
     // Set GVF to Learning State
 	if (key == 'l' || key == 'L'){
-        //application.setState(ofxGVF::STATE_LEARNING);
-        handler.setState(ofxGVF::STATE_LEARNING); // fishy
+        handler.setState(ofxGVF::STATE_LEARNING);
 	}
     // Set GVF to Following State 
     else if (key == 'f' || key == 'F') {
-        //application.setState(ofxGVF::STATE_FOLLOWING);
-        handler.setState(ofxGVF::STATE_FOLLOWING); // fishy
+        handler.setState(ofxGVF::STATE_FOLLOWING);
     }
     // Clear GVF
     else if(key == 'c' || key == 'C')
     {
-        //application.setState(ofxGVF::STATE_CLEAR);
-        handler.setState(ofxGVF::STATE_CLEAR); // fishy
+        handler.setState(ofxGVF::STATE_CLEAR);
     }
     // Toggle Is Following
     else if (key == ' ') {
-        //application.setFollowing(!application.getFollowing())
-        isFollowing = handler.toggleIsPlaying();
-        
+        handler.toggleIsPlaying();
     }
 }
 
@@ -209,14 +197,8 @@ ofColor ofApp::generateRandomColor()
 
 void ofApp::guiEvent(ofxUIEventArgs &e)
 {
-	string name = e.widget->getName();
-	int kind    = e.widget->getKind();
-    
-	cout << "got event from: " << name << endl;
-	
-}
-
-//!!!: Event handling not implemented with restructuring.
-void ofApp::templatesGuiEvent(ofxUIEventArgs &e) {
-    //    gvfh.templateGuiEvent(e);
+//	string name = e.widget->getName();
+//	int kind    = e.widget->getKind();
+//    
+//	cout << "got event from: " << name << endl;
 }

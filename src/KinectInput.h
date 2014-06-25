@@ -1,6 +1,5 @@
 //
 //  KinectInput.h
-//  mvf
 //
 //  Created by Alejandro Van Zandt-Escobar on 03/04/2014.
 //
@@ -13,9 +12,82 @@
 
 #include "NiTE.h"
 
-#include "SkeletonGesture.h"
+#include "ofMain.h"
 
 #define MAX_USERS 1
+#define MAX_DEPTH 10000
+
+// ------------------------------------------------------
+// ------------------------------------------------------
+// Skeleton Gesture Structure
+// ------------------------------------------------------
+// ------------------------------------------------------
+
+
+typedef struct SkeletonDataPoint {
+    
+    // Constructors
+    SkeletonDataPoint():
+    joints(NITE_JOINT_COUNT),
+    confidences(NITE_JOINT_COUNT),
+    joint_orientations(NITE_JOINT_COUNT),
+    orientation_confidences(NITE_JOINT_COUNT),
+    center_of_mass(ofPoint(0, 0, 0)),
+    bounding_box_min(ofPoint(0, 0, 0)),
+    bounding_box_max(ofPoint(0, 0, 0))
+    {
+    }
+    
+    SkeletonDataPoint(vector<ofPoint> _joints,
+                      vector<float> _confidences,
+                      vector<ofQuaternion> _joint_orientations,
+                      vector<float> _orientation_confidences,
+                      ofPoint _center_of_mass,
+                      ofPoint _bounding_box_min,
+                      ofPoint _bounding_box_max):
+    joints(NITE_JOINT_COUNT),
+    confidences(NITE_JOINT_COUNT),
+    joint_orientations(NITE_JOINT_COUNT),
+    orientation_confidences(NITE_JOINT_COUNT),
+    center_of_mass(_center_of_mass),
+    bounding_box_min(_bounding_box_min),
+    bounding_box_max(_bounding_box_max)
+    {
+        for (int i = 0; i < NITE_JOINT_COUNT; ++i) {
+            joints[i] = _joints[i];
+            confidences[i] = _confidences[i];
+            joint_orientations[i] = _joint_orientations[i];
+            orientation_confidences[i] = _orientation_confidences[i];
+        }
+    }
+    
+    ~SkeletonDataPoint()
+    {
+        joints.clear();
+        confidences.clear();
+        joint_orientations.clear();
+        orientation_confidences.clear();
+    }
+    
+    // Skeleton data
+    vector<ofPoint> joints;
+    vector<float> confidences;
+    vector<ofQuaternion> joint_orientations;
+    vector<float> orientation_confidences;
+    ofPoint center_of_mass;
+    ofPoint bounding_box_min;
+    ofPoint bounding_box_max;
+    
+    float timing;
+    
+} SkeletonDataPoint;
+
+// ------------------------------------------------------
+// ------------------------------------------------------
+// MARK: Kinect Input Class
+// ------------------------------------------------------
+// ------------------------------------------------------
+
 
 class KinectInput
 {
@@ -26,28 +98,26 @@ public:
 	virtual ~KinectInput();
     
 	virtual openni::Status setup();
-    void close();
     void update();
     
     SkeletonDataPoint get_data(int user_id = 0);
     const nite::UserData& get_user(int user_id = 0);
-    openni::VideoFrameRef get_depth_frame();
+    SkeletonDataPoint get_depth_data(int user_id = 0); // For display
+    
+    ofImage* GetImage();
+    void UpdateImage();
     
     nite::SkeletonState get_state(int user_id = 0);
     
     ofPoint convert_world_to_depth(ofPoint coordinates);
     
-    SkeletonDataPoint get_depth_data(int user_id = 0); // For display
-    
     bool get_is_running();
-    
-    
-    ofImage* GetImage();
-    void UpdateImage();
     
 private:
     
     static KinectInput* ms_self;
+    
+    bool is_running;
     
     openni::Device device;
     nite::UserTracker* user_tracker;
@@ -57,11 +127,7 @@ private:
     bool users_lost[MAX_USERS];
     bool users_visible[MAX_USERS];
     
-    bool is_running;
-    
-    // Get Image
-    
-    //    ofxUIImage kinect_image;
+    // Depth Image
     ofImage depth_image;
     unsigned char *grayPixels;
     
@@ -69,6 +135,5 @@ private:
     float* CalculateHistogram(int histogramSize, const openni::VideoFrameRef& depthFrame);
     
 };
-
 
 #endif /* defined(__mvf__KinectInput__) */
