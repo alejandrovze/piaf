@@ -199,8 +199,7 @@ SkeletonDataPoint KinectInput::get_data(int user_id) {
                 
                 const nite::Point3f joint_pos = user.getSkeleton().getJoint(joint).getPosition();
                 
-                // Joint position relative to center of mass.
-                data_point.joints.at(joint) = (ofPoint(joint_pos.x, joint_pos.y, joint_pos.z) - com);
+                data_point.joints.at(joint) = (ofPoint(joint_pos.x, joint_pos.y, joint_pos.z));
                 
                 data_point.confidences.at(joint) = user.getSkeleton().getJoint(joint).getPositionConfidence();
                 
@@ -223,6 +222,7 @@ SkeletonDataPoint KinectInput::get_data(int user_id) {
     
 }
 
+// TEMP: just look at joint coordinates
 // ------------------------------------------------------
 SkeletonDataPoint KinectInput::get_depth_data(int user_id) {
     
@@ -250,6 +250,8 @@ SkeletonDataPoint KinectInput::get_depth_data(int user_id) {
                 const float joint_conf = user.getSkeleton().getJoint(joint).getPositionConfidence();
                 
                 depth_data_point.joints.at(joint) = convert_world_to_depth(ofPoint(joint_pos.x, joint_pos.y, joint_pos.z));
+                
+                
                 depth_data_point.confidences.at(joint) = joint_conf;
                 
                 // Joint orientations.

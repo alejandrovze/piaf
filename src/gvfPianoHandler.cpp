@@ -35,18 +35,7 @@ void gvfPianoHandler::setup(int inputDimension)
     gC.translate = true;
     gC.segmentation = true;
     
-    // Parameters
-    ofxGVFParameters    gP;
-    gP.numberParticles = 2000;
-    gP.tolerance = 0.2;
-    gP.resamplingThreshold = 500;
-    gP.distribution = 0.0f;
-    gP.phaseVariance = 0.00001;
-    gP.speedVariance = 0.00001;
-    gP.scaleVariance = vector<float>(1, 0.00001);
-    gP.rotationVariance = vector<float>(1, 0.00001);
-    
-    mygvf = new ofxGVF(gC, gP);
+    mygvf = new ofxGVF(gC);
 }
 
 //--------------------------------------------------------------
@@ -85,19 +74,25 @@ void gvfPianoHandler::gvf_data(int argc, float *argv)
         for (int k=0; k < argc; k++)
             observation_vector[k] = argv[k];
         
-        
-        // !!!
+        // FIXME: Range Adjustment
         currentGesture->setAutoAdjustRanges(false);
         currentGesture->setMin(0., 0., 0.);
         currentGesture->setMax(1000., 1000., 1000.);
         
         currentGesture->addObservation(observation_vector);
+        
     }
     else if(mygvf->getState() == ofxGVF::STATE_FOLLOWING)
     {
         vector<float> observation_vector(argc);
-        for (int k=0; k < argc; k++)
+        for (int k=0; k < argc; k++) {
             observation_vector[k] = argv[k];
+        }
+        
+        // FIXME: Range Adjustment
+        currentGesture->setAutoAdjustRanges(false);
+        currentGesture->setMin(0., 0., 0.);
+        currentGesture->setMax(1000., 1000., 1000.);
         
         currentGesture->addObservation(observation_vector);
         
@@ -106,8 +101,13 @@ void gvfPianoHandler::gvf_data(int argc, float *argv)
         
         UpdateRecogInfo();
         
+        WriteCsvData(&csv_recorder);
+        
     }
 }
+
+
+
 
 //--------------------------------------------------------------
 //--------------------------------------------------------------
@@ -205,16 +205,31 @@ void gvfPianoHandler::startGesture() {
     
     currentGesture->clear();
     
-    if(mygvf->getState() == ofxGVF::STATE_FOLLOWING)
+    if(mygvf->getState() == ofxGVF::STATE_FOLLOWING) {
+        csv_recorder.clear();
+        csv_recorder.createFile(ofToDataPath("new_file.csv"));
+        csv_recorder.fileSeparator = ' ';
+        
+        
         mygvf->spreadParticles();
+    }
     
 }
 
 //--------------------------------------------------------------
 void gvfPianoHandler::endGesture() {
     
-    if (mygvf->getState() == ofxGVF::STATE_LEARNING)
-        mygvf->addGestureTemplate(*currentGesture);
+    switch (mygvf->getState())
+    {
+        case ofxGVF::STATE_LEARNING:
+            mygvf->addGestureTemplate(*currentGesture);
+            break;
+        case ofxGVF::STATE_FOLLOWING:
+            csv_recorder.saveFile(ofToDataPath("new_file.csv"));
+        default:
+            break;
+    }
+    
     
 }
 
@@ -270,3 +285,27 @@ bool gvfPianoHandler::toggleIsPlaying() {
     return isPlaying;
 }
 
+
+//--------------------------------------------------------------
+//--------------------------------------------------------------
+// MARK: Data Output
+//--------------------------------------------------------------
+//--------------------------------------------------------------
+void gvfPianoHandler::WriteCsvData(wng::ofxCsv* _csv_recorder) {
+    
+    int row = _csv_recorder->numRows;
+    
+    int input_dim = currentGesture->getNumberDimensions();
+    
+    _csv_recorder->setInt(row, 0, row);
+    
+    // Write input data.
+    for (int i = 0; i < currentGesture->getNumberDimensions(); ++i)
+        _csv_recorder->setFloat(row, i + 1, currentGesture->getLastObservation()[i]);
+    
+    // Write Most Probable Index
+    _csv_recorder->setInt(row, input_dim + 1, mygvf->getMostProbableGestureIndex());
+    
+    // Write Recognition Information
+    
+}

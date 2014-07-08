@@ -37,16 +37,19 @@ private:
     void SetInputsGUI();
     void UpdateInputsGUI();
     void InputsGUIEvent(ofxUIEventArgs &e);
-    ofImage* kinect_image;
-    ofxUITextArea* kinect_status;
-    bool kinect_display;
+    
     ofxUITextArea* gesture_length;
     vector<ofxUIMovingGraph*> input_gesture;
     vector<vector<float> > buffers;
-    //    void UpdateSkeleton(SkeletonDataPoint new_point);
-    //    void DisplaySkeleton(SkeletonDataPoint new_point, ofPoint location);
     
-    // GVF Status
+    void DrawKinectInterface(int x, int y, int width, int height);
+    ofImage* kinect_image;
+    ofxUITextArea* kinect_status;
+    bool kinect_display;
+    void DrawSkeleton(SkeletonDataPoint new_point, int x, int y, int width, int height);
+    void DrawTemplates(int x, int y, int width, int height);
+    
+    // MARK: GVF STATUS
     ofxUISuperCanvas* gvf_gui;
     void SetGvfGUI();
     void UpdateGvfGUI();
@@ -61,41 +64,32 @@ private:
     ofxUITextArea* gvf_most_probable_rotation;
     ofxUIToggle* is_playing;
     
-    // GVF Settings
+    // MARK: GVF SETTINGS
     ofxUISuperCanvas* settings_gui;
     void SetSettingsGUI();
     void UpdateSettingsGUI();
     void SettingsGUIEvent(ofxUIEventArgs &e);
     ofxUINumberDialer* tolerance;
     
-    // TEMPLATE
-    // TODO: How to visualize templates?
-    
+    // TEMPLATES CANVAS
+    ofxUISuperCanvas* templates_gui;
+    void SetTemplatesGUI();
+    void UpdateTemplatesGUI();
+    void TemplatesGUIEvent(ofxUIEventArgs &e);
+    void AddTemplate(int template_id, ofxGVFGesture &gesture);
+    int n_templates;
+    vector<ofxUIMinimalSlider* > phase_sliders;
     
     void SaveGestures();
     void LoadGestures();
+    
+    // COLORS
+    void initColors();
+    ofColor generateRandomColor();
+    std::vector<ofColor> colors;
     
 };
 
 
 #endif /* defined(__piaf__piafInterface__) */
-    
-
-
-
-//    // --- GESTURE GUI ---
-//    
-//    ofxUICanvas* gesture_gui;
-//    ofxUIMovingGraphX* current_gesture_graph;
-//    void initialiseGestureGui(vector<vector<float> >* gesture_buffer);
-//    void updateGestureGui();
-//    
-//    // --- TEMPLATES GUI ---
-//    
-//    ofxUICanvas* templates_gui;
-//    void initialiseTemplatesGui();
-//    void updateTemplatesGui(int nTemplates);
-//    vector<templateVisualiser> templates;
-//    void updateTemplates(int nTemplates);
-//    
 

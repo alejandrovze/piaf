@@ -6,8 +6,6 @@
 //
 //
 
-// TODO: Figure out ofxGVF variances problem.
-// TODO: Add Kinect Display
 // TODO: Add Accelerometer Display
 // TODO: Add current gesture data viz
 // TODO: Add templates data viz
@@ -26,6 +24,8 @@ void piafInterface::setup(gvfPianoHandler* _handler, gvfPianoInputs* _inputs) {
     input_gesture = vector<ofxUIMovingGraph*>(inputs->getInputSize());
     buffers = vector<vector<float> >(inputs->getInputSize(), vector<float>(256, 0));
     
+    initColors();
+    
     ofSetCircleResolution(120);
     
     column_width = 212;
@@ -33,6 +33,7 @@ void piafInterface::setup(gvfPianoHandler* _handler, gvfPianoInputs* _inputs) {
     SetInputsGUI();
     SetGvfGUI();
     SetSettingsGUI();
+    SetTemplatesGUI();
     
 }
 
@@ -42,9 +43,9 @@ void piafInterface::draw(){
     ofBackground(255, 255, 255, 255);
     
     if (kinect_display)
-        kinect_image->draw(0, 0, 1200, 800); // Ideally, within a GUI canvas
-    
-    ofSetRectMode(OF_RECTMODE_CENTER);
+        DrawKinectInterface(0, 0, ofGetWindowWidth(), ofGetWindowHeight());
+
+    ofSetRectMode(OF_RECTMODE_CORNER);
     
 }
 
@@ -54,6 +55,7 @@ void piafInterface::update(){
     UpdateInputsGUI();
     UpdateGvfGUI();
     UpdateSettingsGUI();
+    UpdateTemplatesGUI();
 
 }
 
@@ -62,7 +64,7 @@ void piafInterface::exit() {
 }
 
 //--------------------------------------------------------------
-//MARK: Inputs
+//MARK: SECTION: Inputs
 //--------------------------------------------------------------
 void piafInterface::SetInputsGUI() {
     
@@ -71,32 +73,38 @@ void piafInterface::SetInputsGUI() {
     inputs_gui->addSpacer();
     inputs_gui->addLabel("KINECT");
     kinect_status = inputs_gui->addTextArea("textarea", "NULL KINECT", OFX_UI_FONT_SMALL);
-    inputs_gui->addLabelToggle("KINECT_DISPLAY", true);
+    inputs_gui->addLabelToggle("KINECT_DISPLAY", false);
 
-    // TODO: Get moving image to work for Kinect visualization
+    inputs_gui->addSpacer();
+//    inputs_gui->addImage("kinect", kinect_image,
+//                         kinect_image->getWidth() / 2.0,
+//                         kinect_image->getHeight() / 2.0);
+
+    
+    // !!!: Currently deactivated Accelerometer interface.
 //    inputs_gui->addSpacer();
-//	inputs_gui->addImage("KINECT DISPLAY", kinect_image);
-    
-    inputs_gui->addSpacer();
-    inputs_gui->addLabel("ACCELEROMETER 1");
-    inputs_gui->addLabelToggle("ACC1 ON/OFF", true);
-    inputs_gui->addSpacer();
-    inputs_gui->addLabel("ACC1 WAX ID");
-    inputs_gui->addNumberDialer("ACC1", 0, 20, 12, 1);
-    
-    // TODO: Add Moving Graph for each ACC Dimension
-    
-    inputs_gui->addSpacer();
-    inputs_gui->addLabel("ACCELEROMETER 2");
-    inputs_gui->addLabelToggle("ACC2ON/OFF", true);
-    inputs_gui->addSpacer();
-    inputs_gui->addLabel("ACC2 WAX ID");
-    inputs_gui->addNumberDialer("ACC2", 0, 20, 14, 1);
+//    inputs_gui->addLabel("ACCELEROMETER 1");
+//    inputs_gui->addLabelToggle("ACC1 ON/OFF", true);
+//    inputs_gui->addSpacer();
+//    inputs_gui->addLabel("ACC1 WAX ID");
+//    inputs_gui->addNumberDialer("ACC1", 0, 20, 12, 1);
+//    
+//    // TODO: Add Moving Graph for each ACC Dimension
+//    
+//    inputs_gui->addSpacer();
+//    inputs_gui->addLabel("ACCELEROMETER 2");
+//    inputs_gui->addLabelToggle("ACC2ON/OFF", true);
+//    inputs_gui->addSpacer();
+//    inputs_gui->addLabel("ACC2 WAX ID");
+//    inputs_gui->addNumberDialer("ACC2", 0, 20, 14, 1);
     
     inputs_gui->addLabel("INPUT GESTURE", OFX_UI_FONT_MEDIUM);
     for (int i = 0; i < input_gesture.size(); ++i) {
         input_gesture[i] = inputs_gui->addMovingGraph("MOVING", buffers[i], 256, 0.0, 1.0);
     }
+    
+
+    
     
     inputs_gui->autoSizeToFitWidgets();
 	ofAddListener(inputs_gui->newGUIEvent, this, &piafInterface::InputsGUIEvent);
@@ -150,15 +158,12 @@ void piafInterface::InputsGUIEvent(ofxUIEventArgs &e) {
         {
             kinect_display = toggle->getValue();
         }
-//        else if (name == "ACC1 ON/OFF") {
-//            inputs->setInputs
-//        }
     }
 }
 
 
 //--------------------------------------------------------------
-//---------------GVF---------------------------------------
+//MARK: SECTION: GVF Status
 //--------------------------------------------------------------
 void piafInterface::SetGvfGUI() {
     
@@ -262,19 +267,6 @@ void piafInterface::UpdateGvfGUI() {
     }
     gvf_most_probable_rotation->setTextString("Rotation " + rotation_string);
     
-    // !!!: Temp: Feedback for recognition
-//    if (gvf_handler->getIsPlaying() && (gvf_handler->getGVF()->getState() == ofxGVF::STATE_FOLLOWING)) {
-//    
-//        cout << "INDEX " << ofToString(gvf_handler->getGVF()->getMostProbableGestureIndex());
-//        cout << " P " << ofToString(status.probability);
-//        cout << " Ph " << ofToString(status.phase);
-//        cout << " Sp " << ofToString(status.speed);
-//        for (int i = 0; i < status.scale.size(); ++i)
-//            cout << " S" << i << " " << ofToString(status.scale[i]);
-//        cout << endl;
-//    
-//    }
-    
 //    // Update Length of Gesture
 //    if ((gvf_handler->getGVF()->getState() != ofxGVF::STATE_CLEAR) && gvf_handler->getIsPlaying()) {
 //        gesture_length->setTextString(ofToString(gvf_handler->getCurrentGesture()->getTemplateLength()));
@@ -284,7 +276,7 @@ void piafInterface::UpdateGvfGUI() {
 
 
 //--------------------------------------------------------------
-//MARK: GVF Settings
+//MARK: SECTION: GVF Settings
 //--------------------------------------------------------------
 void piafInterface::SetSettingsGUI() {
     
@@ -293,11 +285,11 @@ void piafInterface::SetSettingsGUI() {
     // Parameters
     settings_gui->addNumberDialer("N Particles", 10, 10000, gvf_handler->getGVF()->getNumberOfParticles(), 0);
     settings_gui->addNumberDialer("Resampling Threshold", 100, 10000, gvf_handler->getGVF()->getResamplingThreshold(), 0);
-    tolerance = settings_gui->addNumberDialer("Tolerance",  0.01, 2.0, gvf_handler->getGVF()->getTolerance(), 3);
+    tolerance = settings_gui->addNumberDialer("Tolerance",  0.01, 1000.0, gvf_handler->getGVF()->getTolerance(), 3);
     settings_gui->addNumberDialer("Distribution", 0.0, 2.0, gvf_handler->getGVF()->getDistribution(), 2);
     
     // !!!: Variance Coefficients (currently crash)
-    settings_gui->addNumberDialer("Phase Variance", 0.000001, 0.1, gvf_handler->getGVF()->getPhaseVariance(), 5);
+    settings_gui->addNumberDialer("Phase Variance", 0.000001, 0.1, gvf_handler->getGVF()->getPhaseVariance(), 6);
     settings_gui->addNumberDialer("Speed Variance", 0.000001, 0.1, gvf_handler->getGVF()->getSpeedVariance(), 5);
     settings_gui->addNumberDialer("Scale Variance", 0.000001, 0.1, gvf_handler->getGVF()->getScaleVariance()[0], 5);
     settings_gui->addNumberDialer("Rotation Variance", 0.000001, 0.1, gvf_handler->getGVF()->getRotationVariance()[0], 5);
@@ -350,22 +342,92 @@ void piafInterface::SettingsGUIEvent(ofxUIEventArgs &e) {
 //--------------------------------------------------------------
 void piafInterface::UpdateSettingsGUI() {
     
-    // Update Tolerance
+    // Update Tolerance (dyamically set within GVF algorithm)
     tolerance->setValue(gvf_handler->getGVF()->getTolerance());
     
-    // !!!: Temp: Feedback for changing settings
-//    cout << "VARIANCES";
-//    cout << " phase " << gvf_handler->getGVF()->getPhaseVariance();
-//    cout << " speed " << gvf_handler->getGVF()->getSpeedVariance();
-//    cout << " scale " << gvf_handler->getGVF()->getScaleVariance()[0];
-//    cout << " rotation " << gvf_handler->getGVF()->getRotationVariance()[0];
-//    cout << endl;
+}
+
+//--------------------------------------------------------------
+//MARK: SECTION: TEMPLATES
+//--------------------------------------------------------------
+void piafInterface::SetTemplatesGUI() {
+    
+    templates_gui = new ofxUISuperCanvas("Templates");
+    
+    templates_gui->addSpacer();
+    
+    n_templates = 0;
+    
+    for (int id = 0; id < gvf_handler->getGVF()->getNumberOfGestureTemplates(); ++id) {
+        AddTemplate(id, gvf_handler->getGVF()->getGestureTemplate(id));
+    }
+    
+    
+    templates_gui->setPosition(column_width * 3,0);
+    templates_gui->autoSizeToFitWidgets();
+    
+	ofAddListener(templates_gui->newGUIEvent, this, &piafInterface::TemplatesGUIEvent);
+    
+    phase_sliders.clear();
+}
+
+//--------------------------------------------------------------
+void piafInterface::UpdateTemplatesGUI() {
+    
+    int current_templates = gvf_handler->getGVF()->getNumberOfGestureTemplates();
+    
+    if (current_templates != n_templates) {
+        delete templates_gui;
+        SetTemplatesGUI();
+    }
+    
+    // Update Phases
+    for (int i = 0; i < n_templates; ++i) {
+        
+        if (gvf_handler->getGVF()->getState() == ofxGVF::STATE_FOLLOWING && gvf_handler->getIsPlaying()) {
+            if (gvf_handler->getGVF()->getMostProbableGestureIndex() > -1) {
+                phase_sliders[i]->setValue(gvf_handler->getGVF()->getOutcomes().allPhases[i]);
+            
+                float probability = gvf_handler->getGVF()->getOutcomes().allProbabilities[i];
+                phase_sliders[i]->setColorFill(ofColor(255 * probability, 0, 0));
+            }
+            
+            
+        }
+        else
+            phase_sliders[i]->setColorFill(ofColor(255, 255, 255));
+    }
+    
 
 }
 
+//--------------------------------------------------------------
+void piafInterface::AddTemplate(int template_id, ofxGVFGesture &gesture) {
+    
+    string label = "TEMPLATE " + ofToString(template_id);
+    templates_gui->addLabel(label);
+    
+    // Display data contents.
+    
+    phase_sliders.push_back(templates_gui->addMinimalSlider("phase", 0., 1., 0.));
+    
+    templates_gui->addSpacer();
+    
+    ++n_templates;
+    
+    templates_gui->autoSizeToFitWidgets();
+}
+
+//--------------------------------------------------------------
+void piafInterface::TemplatesGUIEvent(ofxUIEventArgs &e) {
+    
+    string name = e.getName();
+	int kind = e.getKind();
+    
+}
 
 // --------------------------------
-// MARK: Load/Save
+//MARK: SECTION: Load/Save
 // --------------------------------
 //--------------------------------------------------------------
 void piafInterface::SaveGestures() {
@@ -400,214 +462,176 @@ void piafInterface::LoadGestures() {
     cout << filename;
 
     gvf_handler->getGVF()->loadTemplates(filename);
-    cout << "Gestures loaded.\n";
+    cout << "Gestures lo3aded.\n";
+    
+}
+
+//--------------------------------------------------------------
+//--------------------------------------------------------------
+// MARK: Kinect
+//--------------------------------------------------------------
+//--------------------------------------------------------------
+
+//--------------------------------------------------------------
+//// Draw kinect templates and skeleton display
+//--------------------------------------------------------------
+void piafInterface::DrawKinectInterface(int x, int y, int width, int height) {
+    
+    if (inputs->get_kinect_input()->get_is_running()) {
+//        kinect_image->mirror(0, 1);
+        kinect_image->draw(x, y, width, height);
+    }
+    
+    if (inputs->get_kinect_input()->get_state() == nite::SKELETON_TRACKED)
+        DrawSkeleton(inputs->get_kinect_input()->get_data(), x, y, width, height);
+    
+    DrawTemplates(x, y, width, height);
+    
+}
+
+//--------------------------------------------------------------
+//// Draw each saved template, with phase if following
+//--------------------------------------------------------------
+void piafInterface::DrawTemplates(int x, int y, int width, int height) {
+    
+    int n_templates = gvf_handler->getGVF()->getNumberOfGestureTemplates();
+    
+    for (int i = 0; i < n_templates; ++i) {
+        
+        vector< vector<float> > template_data = gvf_handler->getGVF()->getGestureTemplate(i).getTemplateRaw();
+        vector<float> initial = gvf_handler->getGVF()->getGestureTemplate(i).getInitialObservationRaw();
+        
+        int length = template_data.size();
+        
+        ofPolyline line;
+        
+        for (int t = 0; t < length; ++t) {
+            
+            int dimension = gvf_handler->getGVF()->getGestureTemplate(i).getNumberDimensions();
+            assert(dimension == 3);
+            
+            ofPoint orig_pos = ofPoint(template_data[t][0] + initial[0], template_data[t][1] + initial[1], template_data[t][2] + initial[2]);
+            ofPoint pos = inputs->get_kinect_input()->convert_world_to_depth(orig_pos);
+            
+            pos.x = x + pos.x * ((float) width / (float)  kinect_image->getWidth());
+            
+            pos.y = y + pos.y * ((float) height / (float) kinect_image->getHeight());
+            
+            if (gvf_handler->getGVF()->getState() == ofxGVF::STATE_FOLLOWING && gvf_handler->getIsPlaying()) {
+                
+                // Set Color according to Probability
+                // FIXME: quick fix for getOutcomes crashing
+                float probability;
+                if (gvf_handler->getGVF()->getMostProbableGestureIndex() > -1) {
+                    probability = gvf_handler->getGVF()->getOutcomes().allProbabilities[i];
+                }
+                else {
+                    probability = 0;
+                }
+                ofColor template_color = ofColor(255, 0, 0) * probability + colors[i] * (1 - probability); // FIXME: unsafe
+                
+                ofSetColor(template_color);
+                
+                // Set Fill according to Phase
+                float phase = 0;
+                
+                phase = gvf_handler->getGVF()->getOutcomes().allPhases[i];
+                
+                if (phase >= ((float) t / (float) length)) {
+                    ofFill();
+                }
+                else {
+                    ofNoFill();
+                }
+                
+            }
+            else {
+                ofSetColor(ofColor(0, 255, 0));
+                ofNoFill();
+            }
+            // Fill according to phase reading.
+            
+            line.addVertex(pos);
+            ofCircle(pos, 5);
+            
+        }
+        
+        line.draw();
+        
+        
+        ofSetColor(255, 255, 255);
+        ofNoFill();
+        
+        
+        
+    }
+    
+    
+}
+
+//--------------------------------------------------------------
+//// Live skeleton display
+//--------------------------------------------------------------
+void piafInterface::DrawSkeleton(SkeletonDataPoint new_point, int x, int y, int width, int height) {
+    
+    int x_pos;
+    int y_pos;
+    
+    ofFill();
+    
+    
+    ofSetColor(0, 0, 255);
+    
+    
+    for (int i = 0; i <= NITE_JOINT_TORSO; ++i) {
+        
+        ofPoint depth_pt = inputs->get_kinect_input()->convert_world_to_depth(new_point.joints[i]);
+        
+        depth_pt.x = x + (int) ((float) (depth_pt.x) * (float) width / (float) kinect_image->getWidth());
+        depth_pt.y = y + (int) ((float) (depth_pt.y) * (float) height / (float) kinect_image->getHeight());
+        ofCircle(depth_pt, 5);
+        
+    }
+    
+    ofNoFill();
+    
+    ofSetColor(255, 255, 255);
     
 }
 
 
 
+// COLORS
+//--------------------------------------------------------------
+void piafInterface::initColors()
+{
+    colors.clear();
+    colors.push_back(ofColor::white);
+    colors.push_back(ofColor::gray);
+    colors.push_back(ofColor::blue);
+    colors.push_back(ofColor::cyan);
+    colors.push_back(ofColor::olive);
+    colors.push_back(ofColor::gold);
+    colors.push_back(ofColor::magenta);
+    colors.push_back(ofColor::violet);
+}
 
 //--------------------------------------------------------------
-//--------------------------------------------------------------
-//--------------------------------------------------------------
-//--------------------------------------------------------------
-//--------------------------------------------------------------
-//--------------------------------------------------------------
-//--------------------------------------------------------------
-//--------------------------------------------------------------
-//--------------------------------------------------------------
-//--------------------------------------------------------------
-//--------------------------------------------------------------
-//--------------------------------------------------------------
+ofColor piafInterface::generateRandomColor()
+{
+    ofColor c;
+    
+    if(colors.size() == 0)
+        initColors();
+    
+    int colorsRemaining = colors.size();
+    
+    int index = ofRandom(0, colorsRemaining - 1);
+    
+    c = colors[index];
+    colors.erase(colors.begin() + index);
+    return c;
+}
 
 
 
-
-//
-////--------------------------------------------------------------
-//void gvfPianoInterface::update(){
-//
-//
-//    // TODO below
-//    /*
-//     if (templates.size() != piano_follower_p->getTemplatesLearned())
-//     updateTemplatesGui(piano_follower_p->getTemplatesLearned());
-//
-//     // Update templates after gesture has been learned only.
-//     if (piano_follower_p->getState() == ofxGVF::STATE_FOLLOWING) {
-//     updateTemplates(piano_follower_p->getTemplatesLearned());
-//     }
-//     */
-//
-//    templates_gui->draw();
-//}
-//
-
-
-////--------------------------------------------------------------
-////MARK: Gestures GUI
-////--------------------------------------------------------------
-//void gvfPianoInterface::initialiseGestureGui(vector<vector<float> >* gesture_buffer) {
-//    
-//    int graphWidth = 800;
-//    int graphHeight = 120;
-//    int maxPhraseLength = 410000;
-//    
-//    string graph_name = "Current Gesture Graph";
-//    
-//    gesture_gui = new ofxUICanvas(250, 0, graphWidth, graphHeight);
-//    
-//    gesture_gui->setColorBack(ofColor::grey);
-//    gesture_gui->setDrawBack(true);
-//    gesture_gui->setPadding(0);
-//    
-//    //FIXME: Sizing of the graph?
-//    current_gesture_graph = new ofxUIMovingGraphX(graphWidth - 50, graphHeight - 50, gesture_buffer,
-//                                                  maxPhraseLength, -1., 1., graph_name);
-//    
-//    
-//    current_gesture_graph->setDrawBack(true);
-//    current_gesture_graph->setColorBack(ofColor::green);
-//    
-//    gesture_gui->addWidgetDown(current_gesture_graph);
-//    
-//}
-//
-//void gvfPianoInterface::updateGestureGui() {
-//    //current_gesture_graph->draw();
-//}
-//
-
-
-////--------------------------------------------------------------
-////MARK: Templates GUI
-////--------------------------------------------------------------
-//void gvfPianoInterface::initialiseTemplatesGui() {
-//    
-//    int graphWidth = 800;
-//    int graphHeight = 800;
-//    
-//    templates_gui = new ofxUICanvas(250, 120, graphWidth, graphHeight);
-//    
-//    templates_gui->setColorBack(ofColor::paleTurquoise);
-//    templates_gui->setDrawBack(true);
-//    
-//    // add a listener (for audio mostly)
-//    // ofAddListener(templatesCanvas->newGUIEvent,this,&ofApp::templatesGuiEvent);
-//    
-//    
-//}
-
-
-////--------------------------------------------------------------
-//void gvfPianoInterface::updateTemplatesGui(int nTemplates) {
-//    
-//    
-//    // ???: Dyamic sizing or scrolling?
-//    
-//    int graphWidth = 800;
-//    int graphHeight = 100;
-//    int maxPhraseLength = 41000;
-//    
-//    templates.resize(nTemplates);
-//    templates_gui->removeWidgets();
-//    
-//    for (int i = 0; i < nTemplates; ++i) {
-//        
-//        // TODO change access, create methods in the hanlder
-//        
-//        // ???: We copy the vector, perhaps can do without copying.
-//        templates.at(i).data.resize(handler->getGVF()->getGestureTemplate(i).getTemplateLength(),
-//                                    vector<float>(handler->getGVF()->getGestureTemplate(i).getNumberDimensions()));
-//        templates.at(i).data = handler->getGVF()->getGestureTemplate(i).getTemplateRaw();
-//        // Add Graph of data (static data)
-//        templates.at(i).graph = new ofxUIMovingGraphX(graphWidth - 10, graphHeight,
-//                                                      &templates.at(i).data, maxPhraseLength, -1., 1., "graph");
-//        templates.at(i).graph->setDrawBack(true);
-//        templates.at(i).graph->setColorBack(ofColor::green);
-//        // Add Phase Slider (dynamic)
-//        templates_gui->addWidgetDown(templates.at(i).graph);
-//        
-//        templates.at(i).phase_slider = new ofxUISlider("slider", 0., 1., &templates.at(i).phase, graphWidth - 10, 20);
-//        templates.at(i).phase_slider->setLabelVisible(false);
-//        templates.at(i).phase_slider->setColorFill(ofColor::grey);
-//        templates_gui->addWidgetDown(templates.at(i).phase_slider);
-//    }
-//}
-//
-////--------------------------------------------------------------
-//void gvfPianoInterface::updateTemplates(int nTemplates) {
-//    for (int i = 0; i < nTemplates; ++i) {
-//        // TODO
-//        /*
-//         templates.at(i).phase = piano_follower_p->getTemplateInfo(i).phase;
-//         templates.at(i).is_most_probable = (i == piano_follower_p->getIndexMostProbable());
-//         if (templates.at(i).is_most_probable)
-//         templates.at(i).phase_slider->setColorFill(ofColor::white);
-//         else
-//         templates.at(i).phase_slider->setColorFill(ofColor::grey);
-//         }*/
-//    }
-//}
-//
-////
-////// TODO: After writing proper draw function for gesture, call here.
-////void gvfhandler::drawTemplates(float scale, int indexMostProbable, recognitionInfo infoMostProbable) {
-////    int nTemplates = templates.size();
-////    int px, py, w, h;
-////
-////    for(int i = 0; i < nTemplates; i++)
-////    {
-////        px = 300;
-////        py = i * (h + 20);
-////
-////        ofRectangle templateRect = ofRectangle(px, py, w, h);
-////        gvfGesture g = getTemplateGesture(i);
-////        g.setAppearance(g.getColor(), 1.5, 255, 50, 1);
-////        g.drawBoundaries = false;
-////        if (i == indexMostProbable)
-////            g.draw(templateRect, scale, infoMostProbable.probability);
-////        else
-////            g.draw(templateRect, scale);
-////    }
-////}
-//
-//
-
-
-
-
-
-////--------------------------------------------------------------
-////--------------------------------------------------------------
-//// MARK: Kinect
-////--------------------------------------------------------------
-////--------------------------------------------------------------
-//
-//
-//// Live skeleton display
-////--------------------------------------------------------------
-//void gvfPianoInterface::UpdateSkeleton(SkeletonDataPoint new_point) {
-//    
-//    // Draw CENTER OF MASS
-//    int x_pos = (int) ((float) (new_point.center_of_mass.x) * (float) kinect_width / (float) depth_width);
-//    int y_pos = (int) ((float) (new_point.center_of_mass.y)* (float) kinect_height / (float) depth_height);
-//    
-//    ofNoFill();
-//    ofSetColor(0, 255, 255);
-//    ofCircle(x_pos, y_pos, 5);
-//    ofFill();
-//    
-//    
-//    for (int i = 0; i < N_JOINTS; ++i) {
-//        
-//        ofSetColor(255, 0, 255);
-//        
-//        x_pos = (int) ((float) (new_point.joints[i].x) * (float) kinect_width / (float) depth_width);
-//        y_pos = (int) ((float) (new_point.joints[i].y) * (float) kinect_height / (float) depth_height);
-//        ofCircle(x_pos, y_pos, 5);
-//    }
-//    
-//    // TODO: Draw bounding box
-//    
-//}

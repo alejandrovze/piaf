@@ -23,9 +23,7 @@ public:
     void exit();
     
     void keyPressed(int key);
-    void windowResized(int w, int h);
     
-    void guiEvent(ofxUIEventArgs &e);
     
     // MARK: Midi Input
     ofxMidiIn midiIn;
@@ -41,13 +39,7 @@ private:
     
     piafOSCSender sender;
     
-    
-    // MARK: GUI
-    int scrW, scrH;
-    
-    void initColors();
-    ofColor generateRandomColor();
-    std::vector<ofColor> colors;
+    void LoadInputFile();
     
     //  // MARK: Audio setup
     //	void audioIn (float * input, int bufferSize, int nChannels); /* input method */

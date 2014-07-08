@@ -31,15 +31,21 @@ void piafOSCSender::SendGVFOutcome(int gesture_id, float probability, float phas
     gvf_outcomes.addFloatArg(phase);
     gvf_outcomes.addFloatArg(speed);
     
-    int scaleDim = scale.size();
-    gvf_outcomes.addIntArg(scaleDim);
-    for (int i = 0; i < scaleDim; ++i)
-        gvf_outcomes.addFloatArg(scale[i]);
+    if (scale.size() != 0)
+        gvf_outcomes.addFloatArg(scale[0]);
     
-    int rotationDim = rotation.size();
-    gvf_outcomes.addIntArg(rotationDim);
-    for (int i = 0; i < rotationDim; ++i)
-        gvf_outcomes.addFloatArg(rotation[i]);
+    if (rotation.size() != 0)
+        gvf_outcomes.addFloatArg(rotation[0]);
+    
+//    int scaleDim = scale.size();
+//    gvf_outcomes.addIntArg(scaleDim);
+//    for (int i = 0; i < scaleDim; ++i)
+//        gvf_outcomes.addFloatArg(scale[i]);
+//    
+//    int rotationDim = rotation.size();
+//    gvf_outcomes.addIntArg(rotationDim);
+//    for (int i = 0; i < rotationDim; ++i)
+//        gvf_outcomes.addFloatArg(rotation[i]);
     
     sender.sendMessage(gvf_outcomes);
     

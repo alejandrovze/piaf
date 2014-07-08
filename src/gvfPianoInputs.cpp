@@ -15,17 +15,8 @@ void gvfPianoInputs::setup(){
     
     if (kinect_input.get_is_running())
         kinect_is_live = true; // Only set to live if correctly set up the kinect.
-
-    // TODO: Write method for bounds setting.
-    vector<float> kBounds;
-    kBounds.push_back(-500.);
-    kBounds.push_back(500.);
-    kinectBounds = vector<vector<float> >(3, kBounds);
     
-    // MARK: Accelerometer
-    //    accAddresses.push_back("/wax/120");
-    //    accAddresses.push_back("/wax/121");
-    accAddresses.push_back("/wax/11");
+    accAddresses.push_back("/wax/14");
     
     int port = 8200;
     accReceiver.setup(port);
@@ -42,52 +33,45 @@ void gvfPianoInputs::setup(){
     // Default is track right hand, one accelerometer.
     // lacc racc lefth righth
     setInputs(true, false, false, false);
-//    setInputs(false, false, true, false);
+//    setInputs(false, false, false, true);
+    
+    is_writing = false;
     
 }
 
+// Returns false if no more data to read, true otherwise.
 //--------------------------------------------------------------
-void gvfPianoInputs::update(){
+bool gvfPianoInputs::update(){
     
     if (kinect_is_live) {
         kinect_input.update();
         current_point = kinect_input.get_data();
-        
-        
-        leftHand = current_point.joints[nite::JOINT_LEFT_HAND];
-        rightHand = current_point.joints[nite::JOINT_RIGHT_HAND];
-        head = current_point.joints[nite::JOINT_HEAD];
+         
+        if (kinect_input.get_state() == nite::SKELETON_TRACKED) {
+
+            // !!!: Dirty scaling
+            leftHand = current_point.joints[nite::JOINT_LEFT_HAND];
+            rightHand = current_point.joints[nite::JOINT_RIGHT_HAND];
+            head = current_point.joints[nite::JOINT_HEAD];
+        }
         
     }
-    
-    
-    //    synapseStreamer.parseIncomingMessages();
-    //
-    //    if( synapseStreamer.getNewMessage() ){
-    //
-    //        leftHand = synapseStreamer.getLeftHandJointBody();
-    //        //!!! Quick & dirty scaling
-    //        leftHand.at(0) = leftHand.at(0) / 500.; // range -500 to 500
-    //        leftHand.at(1) = leftHand.at(1) / 1000.;// range 0 to 1000
-    //        leftHand.at(2) = leftHand.at(2) / 500.; // range -500 to 500
-    //        rightHand = synapseStreamer.getRightHandJointBody();
-    //        // !!! Quick & dirty scaling
-    //        rightHand.at(0) = rightHand.at(0) / 500.; // range -500 to 500
-    //        rightHand.at(1) = rightHand.at(1) / 1000.;// range 0 to 1000
-    //        rightHand.at(2) = rightHand.at(2) / 500.; // range -500 to 500
-    //    }
-    
-    
-    
     
     // Get data from 3D accelerometer.
     while (accReceiver.hasWaitingMessages()) {
-        accData.at(0) = getAccData(accReceiver, "/wax/11", 0);
-        //        accData.at(0) = getAccData(accReceiver, "/wax/120", 0);
-        //        accData.at(1) = getAccData(accReceiver, "/wax/121", 1);
+        accData.at(0) = getAccData(accReceiver, "/wax/14", 0);
     }
     
-    storeInput();
+    if (is_reading) {
+        return ReadCsvData();
+    }
+    else {
+        storeInput();
+        if (is_writing) {
+            WriteCsvData(&csv_recorder);
+        }
+        return true;
+    }
 }
 
 void gvfPianoInputs::storeInput() {
@@ -134,26 +118,11 @@ KinectInput* gvfPianoInputs::get_kinect_input() {
 //--------------------------------------------------------------
 std::vector<float> gvfPianoInputs::getInputData() {
     
-    // !!!: Temporary forced inputDimensions to 2 because of ofxGVFGesture issue
-    
-//    std::vector<float> data(2);
-//    
-//    data[0] = ofRandom(0.0, 1.0);
-//    data[1] = ofRandom(0.0, 1.0);
-//    
-//    return data;
-//    
     return inputData;
 }
 
-//--------------------------------------------------------------
-std::vector<gvfInputInfo> gvfPianoInputs::getInputsInfo() {
-    return inputsInfo;
-}
-
 int gvfPianoInputs::getInputSize() {
-    // !!!: Temporary forced inputDimensions to 2 because of ofxGVFGesture issue
-//    return 2;
+    
     return inputDataSize;
 }
 
@@ -164,23 +133,6 @@ void gvfPianoInputs::setInputs(bool _accOneOn, bool _accTwoOn,
     accTwoOn = _accTwoOn;
     leftHandOn = _leftHandOn;
     rightHandOn = _rightHandOn;
-    
-    if (accOneOn) {
-        gvfInputInfo accOne = {"Accelerometer 1", 3, accelerometerBounds};
-        inputsInfo.push_back(accOne);
-    }
-    if (accTwoOn) {
-        gvfInputInfo accTwo = {"Accelerometer 2", 3, accelerometerBounds};
-        inputsInfo.push_back(accTwo);
-    }
-    if (leftHandOn) {
-        gvfInputInfo kinectLeft = {"Kinect Left Hand", 3, kinectBounds};
-        inputsInfo.push_back(kinectLeft);
-    }
-    if (rightHandOn) {
-        gvfInputInfo kinectRight = {"Kinect Right Hand", 3, kinectBounds};
-        inputsInfo.push_back(kinectRight);
-    }
     
     // TODO: Replace by iterating through inputsInfo vector
     inputDataSize = 3 * (leftHandOn + rightHandOn + accOneOn + accTwoOn);
@@ -210,5 +162,83 @@ std::vector<float> gvfPianoInputs::getAccData(ofxOscReceiver& accReceiver, strin
     }
     
     return accVector;
+    
+}
+
+
+
+//--------------------------------------------------------------
+//--------------------------------------------------------------
+// MARK: Data Output
+//--------------------------------------------------------------
+//--------------------------------------------------------------
+
+// MARK: Writing CSV
+void gvfPianoInputs::StartFile() {
+    
+    csv_recorder.clear();
+    csv_recorder.createFile(ofToDataPath("new_file.csv"));
+    csv_recorder.fileSeparator = ' ';
+    
+    is_writing = true;
+}
+
+void gvfPianoInputs::EndFile() {
+    
+    csv_recorder.saveFile(ofToDataPath("gesture_saved.csv"));
+    
+    is_writing = false;
+}
+
+void gvfPianoInputs::WriteCsvData(wng::ofxCsv* _csv_recorder) {
+    
+    // TODO: Add metadata about each gesture.
+    
+    int row = _csv_recorder->numRows;
+    
+    _csv_recorder->setInt(row, 0, row);
+    
+    // Write input data.
+    for (int i = 0; i < inputDataSize; ++i)
+        _csv_recorder->setFloat(row, i + 1, inputData[i]);
+    
+    // Write Recognition Information
+    
+}
+
+//--------------------------------------------------------------
+//--------------------------------------------------------------
+// MARK: Reading CSV
+void gvfPianoInputs::LoadFile(string filename) {
+    
+    csv_reader.loadFile(ofToDataPath(filename), " ");
+    
+    csv_row = 0;
+    is_reading = true;
+    
+}
+
+
+
+// Reads CSV file, returns false when done.
+bool gvfPianoInputs::ReadCsvData() {
+    
+    if (csv_row >= csv_reader.numRows) {
+        is_reading = false;
+    }
+    else {
+        
+        int size = csv_reader.data[csv_row].size();
+        
+        inputData = vector<float>(size - 1);
+        // Read to input Data
+        for (int i = 1; i < size; ++i) {
+            inputData[i - 1] = csv_reader.getFloat(csv_row, i);
+        }
+        
+        ++ csv_row;
+    }
+    return is_reading;
+    
     
 }

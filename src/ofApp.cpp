@@ -11,10 +11,6 @@ void ofApp::setup(){
     
 	ofSetFrameRate(60); // if vertical sync is off, we can go a bit fast... this caps the framerate at 60fps.
     
-    ofPoint wSize = ofGetWindowSize();
-    scrW = wSize.x;
-    scrH = wSize.y;
-    
     // SETUP ELEMENTS
     inputs.setup();                         // inputs devices
     handler.setup(inputs.getInputSize());   // gvf
@@ -22,13 +18,12 @@ void ofApp::setup(){
     
     sender.setup();
     
-    initColors();
-    
     // some standard setup stuff
 	ofEnableAlphaBlending();
 	ofSetupScreen();
 	ofBackground(0, 0, 0);
 	ofSetFrameRate(60);
+    
     
     
     // MARK: Midi Input
@@ -61,7 +56,9 @@ void ofApp::setup(){
 //--------------------------------------------------------------
 void ofApp::update(){
     
-    inputs.update();
+    if(!inputs.update() && handler.getIsPlaying()) {
+        handler.toggleIsPlaying();
+    }
     
     // Feed data from inputs to gvf
     if (handler.getIsPlaying()) {
@@ -97,6 +94,60 @@ void ofApp::exit() {
     interface.exit();
 }
 
+
+//--------------------------------------------------------------
+void ofApp::keyPressed(int key){
+    
+    // Set GVF to Learning State
+	if (key == 'l' || key == 'L'){
+        handler.setState(ofxGVF::STATE_LEARNING);
+	}
+    // Set GVF to Following State 
+    else if (key == 'f' || key == 'F') {
+        handler.setState(ofxGVF::STATE_FOLLOWING);
+    }
+    // Clear GVF
+    else if(key == 'c' || key == 'C')
+    {
+        handler.setState(ofxGVF::STATE_CLEAR);
+    }
+    // Toggle Is Following
+    else if (key == ' ') {
+        handler.toggleIsPlaying();
+        // FIXME: Must be a cleaner / more elegant way for this.
+        if (handler.getIsPlaying()) {
+            inputs.StartFile();
+        }
+        else {
+            inputs.EndFile();
+        }
+    }
+    else if (key == 'i' || 'I') {
+        if (!handler.getIsPlaying()) {
+            LoadInputFile();
+            handler.toggleIsPlaying();
+        }
+    }
+}
+
+void ofApp::LoadInputFile() {
+
+    string filename;
+    
+    ofFileDialogResult dialogResult = ofSystemLoadDialog("Select the file containing gesture to be played.");
+    if(!dialogResult.bSuccess)
+        return;
+    
+    stringstream ss;
+    ss << dialogResult.filePath;
+    filename = ss.str();
+    cout << filename;
+    
+    inputs.LoadFile(filename);
+    cout << "Playback gesture loaded.\n";
+
+}
+
 //--------------------------------------------------------------
 void ofApp::newMidiMessage(ofxMidiMessage& msg) {
     
@@ -127,78 +178,4 @@ void ofApp::newMidiMessage(ofxMidiMessage& msg) {
      }
      }
      */
-}
-
-//--------------------------------------------------------------
-void ofApp::keyPressed(int key){
-    
-    // Set GVF to Learning State
-	if (key == 'l' || key == 'L'){
-        handler.setState(ofxGVF::STATE_LEARNING);
-	}
-    // Set GVF to Following State 
-    else if (key == 'f' || key == 'F') {
-        handler.setState(ofxGVF::STATE_FOLLOWING);
-    }
-    // Clear GVF
-    else if(key == 'c' || key == 'C')
-    {
-        handler.setState(ofxGVF::STATE_CLEAR);
-    }
-    // Toggle Is Following
-    else if (key == ' ') {
-        handler.toggleIsPlaying();
-    }
-}
-
-
-//MARK: GUI
-//--------------------------------------------------------------
-void ofApp::windowResized(int w, int h){
-    ofPoint wSize = ofGetWindowSize();
-    scrW = wSize.x;
-    scrH = wSize.y;
-    printf("w: %d h: %d\n", scrW, scrH);
-}
-
-
-void ofApp::initColors()
-{
-    colors.clear();
-    colors.push_back(ofColor::white);
-    colors.push_back(ofColor::gray);
-    colors.push_back(ofColor::blue);
-    colors.push_back(ofColor::cyan);
-    colors.push_back(ofColor::olive);
-    colors.push_back(ofColor::gold);
-    colors.push_back(ofColor::magenta);
-    colors.push_back(ofColor::violet);
-}
-
-ofColor ofApp::generateRandomColor()
-{
-    ofColor c;
-    
-    if(colors.size() == 0)
-        initColors();
-    
-    int colorsRemaining = colors.size();
-    
-    int index = ofRandom(0, colorsRemaining - 1);
-    
-    c = colors[index];
-    colors.erase(colors.begin() + index);
-    return c;
-}
-
-
-
-//---------------------
-
-void ofApp::guiEvent(ofxUIEventArgs &e)
-{
-//	string name = e.widget->getName();
-//	int kind    = e.widget->getKind();
-//    
-//	cout << "got event from: " << name << endl;
 }

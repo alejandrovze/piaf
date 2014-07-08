@@ -14,7 +14,7 @@
 #include "ofxGVF.h"
 
 #define HOST "localhost"
-#define OUT_PORT 12345
+#define OUT_PORT 7272
 
 //--------------------------------------------------------
 class piafOSCSender {

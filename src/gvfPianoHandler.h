@@ -17,6 +17,7 @@
 
 #include "ofMain.h"
 #include "ofxGVF.h"
+#include "ofxCsv.h"
 
 // struct to hold information on how a learnt template is being recognised.
 typedef struct {
@@ -65,6 +66,12 @@ private:
     bool isPlaying;
     void startGesture();
     void endGesture();
+    
+    // Data dump
+    
+    // CSV Recorder
+    wng::ofxCsv csv_recorder;
+    void WriteCsvData(wng::ofxCsv* csv_recorder);
     
 };
 
