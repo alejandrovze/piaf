@@ -43,7 +43,7 @@
          landmarkType = "5">
       </FileBreakpoint>
       <FileBreakpoint
-         shouldBeEnabled = "Yes"
+         shouldBeEnabled = "No"
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "../../../addons/ofxGVF/src/ofxGVF.cpp"
@@ -112,11 +112,11 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "src/piafInterface.cpp"
-         timestampString = "426446853.555891"
+         timestampString = "426533806.567933"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "502"
-         endingLineNumber = "502"
+         startingLineNumber = "606"
+         endingLineNumber = "606"
          landmarkName = "piafInterface::DrawTemplates(int x, int y, int width, int height)"
          landmarkType = "5">
       </FileBreakpoint>
@@ -125,11 +125,11 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "src/piafInterface.cpp"
-         timestampString = "426446853.555891"
+         timestampString = "426529572.514174"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "484"
-         endingLineNumber = "484"
+         startingLineNumber = "514"
+         endingLineNumber = "514"
          landmarkName = "piafInterface::DrawKinectInterface(int x, int y, int width, int height)"
          landmarkType = "5">
       </FileBreakpoint>
@@ -138,12 +138,12 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "src/piafInterface.cpp"
-         timestampString = "426446853.555891"
+         timestampString = "426533806.567933"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "592"
-         endingLineNumber = "592"
-         landmarkName = "piafInterface::DrawSkeleton(SkeletonDataPoint new_point, int x, int y, int width, int height)"
+         startingLineNumber = "694"
+         endingLineNumber = "694"
+         landmarkName = "piafInterface::DrawSkeleton(vector&lt;ofPoint&gt; skeleton, int x, int y, int width, int height)"
          landmarkType = "5">
       </FileBreakpoint>
       <FileBreakpoint
@@ -151,24 +151,11 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "src/piafInterface.cpp"
-         timestampString = "426446853.555891"
+         timestampString = "426533806.567933"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "516"
-         endingLineNumber = "516"
-         landmarkName = "piafInterface::DrawTemplates(int x, int y, int width, int height)"
-         landmarkType = "5">
-      </FileBreakpoint>
-      <FileBreakpoint
-         shouldBeEnabled = "No"
-         ignoreCount = "0"
-         continueAfterRunningActions = "No"
-         filePath = "src/piafInterface.cpp"
-         timestampString = "426446853.555891"
-         startingColumnNumber = "9223372036854775807"
-         endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "555"
-         endingLineNumber = "555"
+         startingLineNumber = "660"
+         endingLineNumber = "660"
          landmarkName = "piafInterface::DrawTemplates(int x, int y, int width, int height)"
          landmarkType = "5">
       </FileBreakpoint>
@@ -463,11 +450,11 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "src/gvfPianoInputs.cpp"
-         timestampString = "426505469.835304"
+         timestampString = "426527575.923736"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "227"
-         endingLineNumber = "227"
+         startingLineNumber = "271"
+         endingLineNumber = "271"
          landmarkName = "gvfPianoInputs::ReadCsvData()"
          landmarkType = "5">
       </FileBreakpoint>
@@ -476,25 +463,23 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "src/gvfPianoInputs.cpp"
-         timestampString = "426505692.681142"
+         timestampString = "426527575.923736"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "239"
-         endingLineNumber = "239"
-         landmarkName = "gvfPianoInputs::ReadCsvData()"
-         landmarkType = "5">
+         startingLineNumber = "297"
+         endingLineNumber = "297">
       </FileBreakpoint>
       <FileBreakpoint
-         shouldBeEnabled = "Yes"
+         shouldBeEnabled = "No"
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "src/gvfPianoInputs.cpp"
-         timestampString = "426506668.011613"
+         timestampString = "426527575.923736"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "188"
-         endingLineNumber = "188"
-         landmarkName = "gvfPianoInputs::EndFile()"
+         startingLineNumber = "219"
+         endingLineNumber = "219"
+         landmarkName = "gvfPianoInputs::WriteCsvData(wng::ofxCsv* _csv_recorder)"
          landmarkType = "5">
       </FileBreakpoint>
       <FileBreakpoint
@@ -502,12 +487,129 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "src/gvfPianoInputs.cpp"
-         timestampString = "426506742.68778"
+         timestampString = "426527575.923736"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "217"
-         endingLineNumber = "217"
-         landmarkName = "gvfPianoInputs::LoadFile(string filename)"
+         startingLineNumber = "262"
+         endingLineNumber = "262"
+         landmarkName = "gvfPianoInputs::ReadCsvData()"
+         landmarkType = "5">
+      </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "No"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "src/gvfPianoInputs.cpp"
+         timestampString = "426527575.923736"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "243"
+         endingLineNumber = "243"
+         landmarkName = "gvfPianoInputs::WriteCsvData(wng::ofxCsv* _csv_recorder)"
+         landmarkType = "5">
+      </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "No"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "../../../addons/ofxGVF/src/ofxGVF.cpp"
+         timestampString = "426520001.519753"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "101"
+         endingLineNumber = "101"
+         landmarkName = "ofxGVF::setup(ofxGVFConfig _config)"
+         landmarkType = "5">
+      </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "No"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "src/gvfPianoInputs.cpp"
+         timestampString = "426525661.878089"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "84"
+         endingLineNumber = "84"
+         landmarkName = "gvfPianoInputs::storeInput()"
+         landmarkType = "5">
+      </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "No"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "src/KinectInput.cpp"
+         timestampString = "426596043.533676"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "92"
+         endingLineNumber = "92"
+         landmarkName = "KinectInput::update()"
+         landmarkType = "5">
+      </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "No"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "src/KinectInput.cpp"
+         timestampString = "426596043.533676"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "113"
+         endingLineNumber = "113"
+         landmarkName = "KinectInput::update()"
+         landmarkType = "5">
+      </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "No"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "src/piafInterface.cpp"
+         timestampString = "426533806.567933"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "604"
+         endingLineNumber = "604"
+         landmarkName = "piafInterface::DrawTemplates(int x, int y, int width, int height)"
+         landmarkType = "5">
+      </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "No"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "src/piafInterface.cpp"
+         timestampString = "426533806.567933"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "718"
+         endingLineNumber = "718"
+         landmarkName = "piafInterface::ScaleToKinect(ofPoint init_point, int x, int y, int width, int height)"
+         landmarkType = "5">
+      </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "No"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "src/KinectInput.cpp"
+         timestampString = "426597520.081866"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "290"
+         endingLineNumber = "290"
+         landmarkName = "KinectInput::CalculateHistogram(int histogramSize, const openni::VideoFrameRef&amp; depthFrame)"
+         landmarkType = "5">
+      </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "No"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "src/KinectInput.cpp"
+         timestampString = "426597520.081866"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "296"
+         endingLineNumber = "296"
+         landmarkName = "KinectInput::CalculateHistogram(int histogramSize, const openni::VideoFrameRef&amp; depthFrame)"
          landmarkType = "5">
       </FileBreakpoint>
    </FileBreakpoints>

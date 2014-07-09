@@ -12,6 +12,27 @@
 
 #include "piafInterface.h"
 
+static const char * NiteJointStrings[] = {
+	"NITE_JOINT_HEAD",
+	"NITE_JOINT_NECK",
+    
+	"NITE_JOINT_LEFT_SHOULDER",
+	"NITE_JOINT_RIGHT_SHOULDER",
+	"NITE_JOINT_LEFT_ELBOW",
+	"NITE_JOINT_RIGHT_ELBOW",
+	"NITE_JOINT_LEFT_HAND",
+	"NITE_JOINT_RIGHT_HAND",
+    
+	"NITE_JOINT_TORSO",
+    
+	"NITE_JOINT_LEFT_HIP",
+	"NITE_JOINT_RIGHT_HIP",
+	"NITE_JOINT_LEFT_KNEE",
+	"NITE_JOINT_RIGHT_KNEE",
+	"NITE_JOINT_LEFT_FOOT",
+	"NITE_JOINT_RIGHT_FOOT"
+};
+
 //--------------------------------------------------------------
 void piafInterface::setup(gvfPianoHandler* _handler, gvfPianoInputs* _inputs) {
 
@@ -74,36 +95,34 @@ void piafInterface::SetInputsGUI() {
     inputs_gui->addLabel("KINECT");
     kinect_status = inputs_gui->addTextArea("textarea", "NULL KINECT", OFX_UI_FONT_SMALL);
     inputs_gui->addLabelToggle("KINECT_DISPLAY", false);
-
-    inputs_gui->addSpacer();
+    
 //    inputs_gui->addImage("kinect", kinect_image,
 //                         kinect_image->getWidth() / 2.0,
 //                         kinect_image->getHeight() / 2.0);
-
     
-    // !!!: Currently deactivated Accelerometer interface.
-//    inputs_gui->addSpacer();
-//    inputs_gui->addLabel("ACCELEROMETER 1");
-//    inputs_gui->addLabelToggle("ACC1 ON/OFF", true);
-//    inputs_gui->addSpacer();
-//    inputs_gui->addLabel("ACC1 WAX ID");
-//    inputs_gui->addNumberDialer("ACC1", 0, 20, 12, 1);
-//    
-//    // TODO: Add Moving Graph for each ACC Dimension
-//    
-//    inputs_gui->addSpacer();
-//    inputs_gui->addLabel("ACCELEROMETER 2");
-//    inputs_gui->addLabelToggle("ACC2ON/OFF", true);
-//    inputs_gui->addSpacer();
-//    inputs_gui->addLabel("ACC2 WAX ID");
-//    inputs_gui->addNumberDialer("ACC2", 0, 20, 14, 1);
+    // Currently deactivated Accelerometer interface.
+    inputs_gui->addSpacer();
+    inputs_gui->addLabel("ACCELEROMETER 1");
+    inputs_gui->addLabelToggle("ACC1 ON/OFF", inputs->GetAccInputs()[0]);
+    
+    inputs_gui->addSpacer();
     
     inputs_gui->addLabel("INPUT GESTURE", OFX_UI_FONT_MEDIUM);
     for (int i = 0; i < input_gesture.size(); ++i) {
         input_gesture[i] = inputs_gui->addMovingGraph("MOVING", buffers[i], 256, 0.0, 1.0);
     }
     
-
+    inputs_gui->addSpacer();
+    
+    vector<string> skeleton_items;
+    for (int i = 0; i < NITE_JOINT_COUNT; ++i) {
+        skeleton_items.push_back(NiteJointStrings[i]);
+    }
+    skeleton_list = inputs_gui->addDropDownList("JOINT SELECTION", skeleton_items);
+    skeleton_list->setAllowMultiple(true);
+    for (int i = 0; i < NITE_JOINT_COUNT; ++i) {
+        skeleton_list->getToggles()[i]->setValue(inputs->GetKinectJoints()[i]);
+    }
     
     
     inputs_gui->autoSizeToFitWidgets();
@@ -138,8 +157,12 @@ void piafInterface::UpdateInputsGUI() {
     }
     
     vector<float> input_data = inputs->getInputData();
-    for (int i = 0; i < input_gesture.size(); ++i) {
-        input_gesture[i]->addPoint(input_data[i]);
+    
+    //!!!: Quick fix for switching inputs. 
+    if (input_data.size() == input_gesture.size()) {
+        for (int i = 0; i < input_gesture.size(); ++i) {
+            input_gesture[i]->addPoint(input_data[i]);
+        }
     }
     
 }
@@ -148,7 +171,7 @@ void piafInterface::InputsGUIEvent(ofxUIEventArgs &e) {
     
     string name = e.getName();
 	int kind = e.getKind();
-	cout << "got event from: " << name << endl;
+//	cout << "got event from: " << name << endl;
 	
     if (kind == OFX_UI_WIDGET_LABELTOGGLE) {
         
@@ -158,6 +181,14 @@ void piafInterface::InputsGUIEvent(ofxUIEventArgs &e) {
         {
             kinect_display = toggle->getValue();
         }
+    }
+    
+    if (name == "JOINT SELECTION" && (gvf_handler->getGVF()->getState() == ofxGVF::STATE_CLEAR)) {
+        
+        vector<int> selected = skeleton_list->getSelectedIndeces();
+        
+        inputs->SetKinectJoints(selected);
+
     }
 }
 
@@ -462,7 +493,7 @@ void piafInterface::LoadGestures() {
     cout << filename;
 
     gvf_handler->getGVF()->loadTemplates(filename);
-    cout << "Gestures lo3aded.\n";
+    cout << "Gestures loaded.\n";
     
 }
 
@@ -478,14 +509,87 @@ void piafInterface::LoadGestures() {
 void piafInterface::DrawKinectInterface(int x, int y, int width, int height) {
     
     if (inputs->get_kinect_input()->get_is_running()) {
-//        kinect_image->mirror(0, 1);
         kinect_image->draw(x, y, width, height);
     }
     
-    if (inputs->get_kinect_input()->get_state() == nite::SKELETON_TRACKED)
-        DrawSkeleton(inputs->get_kinect_input()->get_data(), x, y, width, height);
+//    if (inputs->get_kinect_input()->get_state() == nite::SKELETON_TRACKED)
+    DrawSkeleton(inputs->GetKinectData(), x, y, width, height);
+    
+    if (gvf_handler->getCurrentGesture()->getNumberOfTemplates() > 0)
+        DrawGesture(x, y, width, height);
     
     DrawTemplates(x, y, width, height);
+    
+}
+
+void piafInterface::DrawGesture(int x, int y, int width, int height) {
+        
+    vector< vector<float> > template_data = gvf_handler->getCurrentGesture()->getTemplateRaw();
+    vector<float> initial = gvf_handler->getCurrentGesture()->getInitialObservationRaw();
+    
+    int length = template_data.size();
+    
+    ofPolyline line;
+    
+    for (int t = 0; t < length; ++t) {
+        
+        int dimension = gvf_handler->getCurrentGesture()->getNumberDimensions();
+        assert(dimension == 3);
+        
+        ofPoint orig_pos = ofPoint(template_data[t][0] + initial[0], template_data[t][1] + initial[1], template_data[t][2] + initial[2]);
+        
+        ofPoint pos = ScaleToKinect(orig_pos, x, y, width, height);
+        
+//        if (gvf_handler->getGVF()->getState() == ofxGVF::STATE_FOLLOWING && gvf_handler->getIsPlaying()) {
+//            
+//            // Set Color according to Probability
+//            // FIXME: quick fix for getOutcomes crashing
+//            float probability;
+//            if (gvf_handler->getGVF()->getMostProbableGestureIndex() > -1) {
+//                probability = gvf_handler->getGVF()->getOutcomes().allProbabilities[i];
+//            }
+//            else {
+//                probability = 0;
+//            }
+//            ofColor template_color = ofColor(255, 0, 0) * probability + colors[i] * (1 - probability); // FIXME: unsafe
+//            
+//            ofSetColor(template_color);
+//            
+//            // Set Fill according to Phase
+//            float phase = 0;
+            
+//            phase = gvf_handler->getGVF()->getOutcomes().allPhases[i];
+//            
+//            if (phase >= ((float) t / (float) length)) {
+//                ofFill();
+//            }
+//            else {
+//                ofNoFill();
+//            }
+//            
+//        }
+//        else {
+//            ofSetColor(colors[i]);
+//            ofNoFill();
+//        }
+//        // Fill according to phase reading.
+        
+        ofSetLineWidth(1);
+        
+        ofSetColor(ofColor(0, 255, 0));
+        ofFill();
+        
+        line.addVertex(pos);
+        ofCircle(pos, 5);
+        
+    }
+    
+    line.draw();
+    
+    
+    ofSetColor(255, 255, 255);
+    ofNoFill();
+
     
 }
 
@@ -511,11 +615,8 @@ void piafInterface::DrawTemplates(int x, int y, int width, int height) {
             assert(dimension == 3);
             
             ofPoint orig_pos = ofPoint(template_data[t][0] + initial[0], template_data[t][1] + initial[1], template_data[t][2] + initial[2]);
-            ofPoint pos = inputs->get_kinect_input()->convert_world_to_depth(orig_pos);
             
-            pos.x = x + pos.x * ((float) width / (float)  kinect_image->getWidth());
-            
-            pos.y = y + pos.y * ((float) height / (float) kinect_image->getHeight());
+            ofPoint pos = ScaleToKinect(orig_pos, x, y, width, height);
             
             if (gvf_handler->getGVF()->getState() == ofxGVF::STATE_FOLLOWING && gvf_handler->getIsPlaying()) {
                 
@@ -532,6 +633,8 @@ void piafInterface::DrawTemplates(int x, int y, int width, int height) {
                 
                 ofSetColor(template_color);
                 
+                ofSetLineWidth(0.5 + 10 * probability);
+                
                 // Set Fill according to Phase
                 float phase = 0;
                 
@@ -546,7 +649,9 @@ void piafInterface::DrawTemplates(int x, int y, int width, int height) {
                 
             }
             else {
-                ofSetColor(ofColor(0, 255, 0));
+                
+                ofSetLineWidth(1);
+                ofSetColor(colors[i]);
                 ofNoFill();
             }
             // Fill according to phase reading.
@@ -555,7 +660,6 @@ void piafInterface::DrawTemplates(int x, int y, int width, int height) {
             ofCircle(pos, 5);
             
         }
-        
         line.draw();
         
         
@@ -572,7 +676,7 @@ void piafInterface::DrawTemplates(int x, int y, int width, int height) {
 //--------------------------------------------------------------
 //// Live skeleton display
 //--------------------------------------------------------------
-void piafInterface::DrawSkeleton(SkeletonDataPoint new_point, int x, int y, int width, int height) {
+void piafInterface::DrawSkeleton(vector<ofPoint> skeleton, int x, int y, int width, int height) {
     
     int x_pos;
     int y_pos;
@@ -585,10 +689,8 @@ void piafInterface::DrawSkeleton(SkeletonDataPoint new_point, int x, int y, int 
     
     for (int i = 0; i <= NITE_JOINT_TORSO; ++i) {
         
-        ofPoint depth_pt = inputs->get_kinect_input()->convert_world_to_depth(new_point.joints[i]);
+        ofPoint depth_pt = ScaleToKinect(skeleton[i], x, y, width, height);
         
-        depth_pt.x = x + (int) ((float) (depth_pt.x) * (float) width / (float) kinect_image->getWidth());
-        depth_pt.y = y + (int) ((float) (depth_pt.y) * (float) height / (float) kinect_image->getHeight());
         ofCircle(depth_pt, 5);
         
     }
@@ -599,6 +701,30 @@ void piafInterface::DrawSkeleton(SkeletonDataPoint new_point, int x, int y, int 
     
 }
 
+ofPoint piafInterface::ScaleToKinect(ofPoint init_point, int x, int y, int width, int height) {
+    
+    ofPoint point;
+    
+    if (inputs->get_kinect_input()->get_is_running()) {
+        
+        // FIXME: Convert World to Depth without Kinect plugged in?
+        point = inputs->get_kinect_input()->convert_world_to_depth(init_point);
+        
+        point.x = x + (int) ((float) (point.x) * (float) width / (float) kinect_image->getWidth());
+        point.y = y + (int) ((float) (point.y) * (float) height / (float) kinect_image->getHeight());
+        
+         
+        
+        return point;
+    }
+    
+    else {
+        // TODO: how to deal with this?
+        return init_point;
+    }
+
+}
+
 
 
 // COLORS
@@ -606,14 +732,13 @@ void piafInterface::DrawSkeleton(SkeletonDataPoint new_point, int x, int y, int 
 void piafInterface::initColors()
 {
     colors.clear();
-    colors.push_back(ofColor::white);
-    colors.push_back(ofColor::gray);
     colors.push_back(ofColor::blue);
     colors.push_back(ofColor::cyan);
-    colors.push_back(ofColor::olive);
-    colors.push_back(ofColor::gold);
-    colors.push_back(ofColor::magenta);
+    colors.push_back(ofColor::aqua);
     colors.push_back(ofColor::violet);
+    colors.push_back(ofColor::aliceBlue);
+    colors.push_back(ofColor::aquamarine);
+    colors.push_back(ofColor::azure);
 }
 
 //--------------------------------------------------------------

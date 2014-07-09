@@ -79,6 +79,7 @@
 		C643556018E5DA74008AE100 /* ofxSlider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C643555518E5DA73008AE100 /* ofxSlider.cpp */; };
 		C643556118E5DA74008AE100 /* ofxSliderGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C643555718E5DA73008AE100 /* ofxSliderGroup.cpp */; };
 		C643556218E5DA74008AE100 /* ofxToggle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C643555918E5DA74008AE100 /* ofxToggle.cpp */; };
+		C6771133196D5CF7003F7404 /* WaxAccInput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6771131196D5CF7003F7404 /* WaxAccInput.cpp */; };
 		C6A290DD1959CBAB006B3770 /* piafOSCSender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6A290DB1959CBAB006B3770 /* piafOSCSender.cpp */; };
 		C6B015D1190C7B5800A5BF82 /* ofxCsv.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6B015CD190C7B5800A5BF82 /* ofxCsv.cpp */; };
 		C6B813F119583B58005B8935 /* ofxGVF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6B813E819583B58005B8935 /* ofxGVF.cpp */; };
@@ -376,6 +377,8 @@
 		C643555818E5DA74008AE100 /* ofxSliderGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxSliderGroup.h; sourceTree = "<group>"; };
 		C643555918E5DA74008AE100 /* ofxToggle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxToggle.cpp; sourceTree = "<group>"; };
 		C643555A18E5DA74008AE100 /* ofxToggle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxToggle.h; sourceTree = "<group>"; };
+		C6771131196D5CF7003F7404 /* WaxAccInput.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WaxAccInput.cpp; sourceTree = "<group>"; };
+		C6771132196D5CF7003F7404 /* WaxAccInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WaxAccInput.h; sourceTree = "<group>"; };
 		C6937888E126BADC8777423B /* OscTypes.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = OscTypes.h; path = ../../../addons/ofxOsc/libs/oscpack/src/osc/OscTypes.h; sourceTree = SOURCE_ROOT; };
 		C6A290DB1959CBAB006B3770 /* piafOSCSender.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = piafOSCSender.cpp; sourceTree = "<group>"; };
 		C6A290DC1959CBAB006B3770 /* piafOSCSender.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = piafOSCSender.h; sourceTree = "<group>"; };
@@ -811,6 +814,8 @@
 				C6EDE9AD1945FFF30097CBC4 /* gvfPianoInputs.h */,
 				C6E9014C18EE573E00C0F2C1 /* KinectInput.cpp */,
 				C6E9014D18EE573E00C0F2C1 /* KinectInput.h */,
+				C6771131196D5CF7003F7404 /* WaxAccInput.cpp */,
+				C6771132196D5CF7003F7404 /* WaxAccInput.h */,
 			);
 			name = inputs;
 			sourceTree = "<group>";
@@ -1331,6 +1336,7 @@
 				C62821921950C38900B12695 /* piafInterface.cpp in Sources */,
 				C6B813F119583B58005B8935 /* ofxGVF.cpp in Sources */,
 				C6A290DD1959CBAB006B3770 /* piafOSCSender.cpp in Sources */,
+				C6771133196D5CF7003F7404 /* WaxAccInput.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

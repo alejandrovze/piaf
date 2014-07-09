@@ -10,13 +10,13 @@
 
 #include <iostream>
 
-#include "NiTE.h"
-
 #include "ofMain.h"
+
+#include "NiTE.h"
 
 #define MAX_USERS 1
 #define MAX_DEPTH 10000
-
+                  
 // ------------------------------------------------------
 // ------------------------------------------------------
 // Skeleton Gesture Structure
@@ -38,29 +38,6 @@ typedef struct SkeletonDataPoint {
     {
     }
     
-    SkeletonDataPoint(vector<ofPoint> _joints,
-                      vector<float> _confidences,
-                      vector<ofQuaternion> _joint_orientations,
-                      vector<float> _orientation_confidences,
-                      ofPoint _center_of_mass,
-                      ofPoint _bounding_box_min,
-                      ofPoint _bounding_box_max):
-    joints(NITE_JOINT_COUNT),
-    confidences(NITE_JOINT_COUNT),
-    joint_orientations(NITE_JOINT_COUNT),
-    orientation_confidences(NITE_JOINT_COUNT),
-    center_of_mass(_center_of_mass),
-    bounding_box_min(_bounding_box_min),
-    bounding_box_max(_bounding_box_max)
-    {
-        for (int i = 0; i < NITE_JOINT_COUNT; ++i) {
-            joints[i] = _joints[i];
-            confidences[i] = _confidences[i];
-            joint_orientations[i] = _joint_orientations[i];
-            orientation_confidences[i] = _orientation_confidences[i];
-        }
-    }
-    
     ~SkeletonDataPoint()
     {
         joints.clear();
@@ -74,11 +51,12 @@ typedef struct SkeletonDataPoint {
     vector<float> confidences;
     vector<ofQuaternion> joint_orientations;
     vector<float> orientation_confidences;
+    
     ofPoint center_of_mass;
     ofPoint bounding_box_min;
     ofPoint bounding_box_max;
     
-    float timing;
+    float time_stamp;
     
 } SkeletonDataPoint;
 
@@ -100,22 +78,19 @@ public:
 	virtual openni::Status setup();
     void update();
     
+    bool get_is_running(); // False is Kinect fails setup. 
+    
     SkeletonDataPoint get_data(int user_id = 0);
-    const nite::UserData& get_user(int user_id = 0);
-    SkeletonDataPoint get_depth_data(int user_id = 0); // For display
+    nite::SkeletonState get_state(int user_id = 0);
     
     ofImage* GetImage();
     void UpdateImage();
     
-    nite::SkeletonState get_state(int user_id = 0);
-    
+    // Utility
     ofPoint convert_world_to_depth(ofPoint coordinates);
     
-    bool get_is_running();
     
 private:
-    
-    static KinectInput* ms_self;
     
     bool is_running;
     
@@ -130,10 +105,12 @@ private:
     // Depth Image
     ofImage depth_image;
     unsigned char *grayPixels;
-    
     void UpdateDepth(openni::VideoFrameRef depth_frame);
     float* CalculateHistogram(int histogramSize, const openni::VideoFrameRef& depthFrame);
     
+    // Utility
+    ofPoint NitePointToOF(NitePoint3f point);
+    ofQuaternion NiteQuatToOF(NiteQuaternion quat);
 };
 
 #endif /* defined(__mvf__KinectInput__) */

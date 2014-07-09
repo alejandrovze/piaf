@@ -14,7 +14,6 @@
 #include "ofMain.h"
 
 #include "ofxCsv.h"
-#include "ofxOsc.h"
 #include "KinectInput.h"
 
 class gvfPianoInputs {
@@ -26,7 +25,11 @@ public:
     vector<float> initialise();
     
     vector<float> getInputData();
-    void setInputs(bool _accOneOn, bool _accTwoOn, bool _leftHandOn, bool _rightHandOn);
+    vector<bool> GetKinectJoints();
+    vector<ofPoint> GetKinectData();
+    void SetKinectJoints(vector<int> joints_on);
+    void SetAccInputs(bool accOn, int acc);
+    vector<bool> GetAccInputs();
     int getInputSize();
     
     KinectInput* get_kinect_input();
@@ -37,22 +40,19 @@ public:
     
 private:
     
-    bool leftHandOn;
-    bool rightHandOn;
+    vector<bool> kinect_joints_on;
+    int n_joints;
+    
     bool accOneOn;
     bool accTwoOn;
     
     vector<float> inputData;
     int inputDataSize;
-    vector<float> initial_point;
     void storeInput();
     
     // Kinect Input
     KinectInput kinect_input;
-    SkeletonDataPoint current_point;
-    ofPoint leftHand;
-    ofPoint rightHand;
-    ofPoint head;
+    vector<ofPoint> current_point;
     bool kinect_is_live;
     
     // Accelerometer Input
@@ -63,12 +63,15 @@ private:
     
     vector<float> getAccData(ofxOscReceiver& accReceiver, string address, int accId);
     
+    //---------------------------------
+    
     // CSV Recorder
     bool is_writing;
     wng::ofxCsv csv_recorder;
     bool is_reading;
     wng::ofxCsv csv_reader;
     int csv_row;
+    int file_num;
     
     void WriteCsvData(wng::ofxCsv* csv_recorder);
     bool ReadCsvData();

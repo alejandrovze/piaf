@@ -16,26 +16,29 @@ void gvfPianoInputs::setup(){
     if (kinect_input.get_is_running())
         kinect_is_live = true; // Only set to live if correctly set up the kinect.
     
-    accAddresses.push_back("/wax/14");
+    current_point = vector<ofVec3f>(NITE_JOINT_COUNT);
+    kinect_joints_on = vector<bool>(NITE_JOINT_COUNT, false);
+    n_joints = 0;
+    kinect_joints_on[NITE_JOINT_LEFT_HAND] = true;
+    ++n_joints;
     
+    // Accelerometer setup.
     int port = 8200;
     accReceiver.setup(port);
+    accAddresses.push_back("/wax/14");
+    accAddresses.push_back("/wax/21");
     
-    // Initialize data input vector
-    accData = std::vector<vector<float> >(2, vector<float>(3,0.0));
+    // Initialize accelerometer input vector
+    accData = std::vector<vector<float> >(1, vector<float>(3,0.0));
+    accOneOn = false;
+    accTwoOn = false;
     
-    // TODO: Write method for bounds settings.
-    vector<float> aBounds;
-    aBounds.push_back(-1.);
-    aBounds.push_back(1.);
-    accelerometerBounds = vector<vector<float> >(3, aBounds);
+    inputDataSize = 3 * (accOneOn + accTwoOn + n_joints);
     
-    // Default is track right hand, one accelerometer.
-    // lacc racc lefth righth
-    setInputs(true, false, false, false);
-//    setInputs(false, false, false, true);
-    
+    // CSV File business
     is_writing = false;
+    is_reading = false;
+    file_num = 0;
     
 }
 
@@ -44,17 +47,10 @@ void gvfPianoInputs::setup(){
 bool gvfPianoInputs::update(){
     
     if (kinect_is_live) {
-        kinect_input.update();
-        current_point = kinect_input.get_data();
-         
-        if (kinect_input.get_state() == nite::SKELETON_TRACKED) {
-
-            // !!!: Dirty scaling
-            leftHand = current_point.joints[nite::JOINT_LEFT_HAND];
-            rightHand = current_point.joints[nite::JOINT_RIGHT_HAND];
-            head = current_point.joints[nite::JOINT_HEAD];
-        }
         
+        kinect_input.update();
+        current_point = kinect_input.get_data().joints;
+        // ???: Should we stop playing if tracking stops?
     }
     
     // Get data from 3D accelerometer.
@@ -63,54 +59,47 @@ bool gvfPianoInputs::update(){
     }
     
     if (is_reading) {
-        return ReadCsvData();
+        if(!ReadCsvData())
+            return false; // Stop playing if we get to the end of the data. 
     }
-    else {
-        storeInput();
-        if (is_writing) {
-            WriteCsvData(&csv_recorder);
-        }
-        return true;
+    
+    storeInput();
+    
+    if (is_writing) {
+        WriteCsvData(&csv_recorder);
     }
+    
+    return true;
 }
 
 void gvfPianoInputs::storeInput() {
+    
+    inputData.clear();
+    
     // Store in input vector.
-    int inputIterator = 0;
+    for(int i = 0; i < NITE_JOINT_COUNT; ++i) {
+        
+        if (kinect_joints_on[i]) {
+            for (int j = 0; j < 3; ++j) {
+                inputData.push_back(current_point[i][j]);
+            }
+        }
+    }
+
     if (accOneOn) {
         for (int i = 0; i < 3; ++i) {
-            inputData.at(i + inputIterator) = (accData.at(0)).at(i);
+            inputData.push_back(accData[0][i]);
         }
-        inputIterator += 3;
     }
     if (accTwoOn) {
         for (int i = 0; i < 3; ++i) {
-            inputData.at(i + inputIterator) = (accData.at(1)).at(i);
+            inputData.push_back(accData[1][i]);
         }
-        inputIterator += 3;
-    }
-    if (leftHandOn) {
-        for (int i = 0; i < 3; ++i) {
-            inputData.at(i + inputIterator) = leftHand[i];
-        }
-        inputIterator += 3;
-    }
-    if (rightHandOn) {
-        for (int i = 0; i < 3; ++i) {
-            inputData.at(i + inputIterator) = rightHand[i];
-        }
-        inputIterator += 3;
     }
 }
 
-// Returns initial point.
+
 //--------------------------------------------------------------
-std::vector<float> gvfPianoInputs::initialise() {
-    initial_point = inputData;
-    storeInput(); // Update with initial point.
-    return initial_point;
-}
-
 KinectInput* gvfPianoInputs::get_kinect_input() {
     return &kinect_input;
 }
@@ -126,20 +115,51 @@ int gvfPianoInputs::getInputSize() {
     return inputDataSize;
 }
 
+
 //--------------------------------------------------------------
-void gvfPianoInputs::setInputs(bool _accOneOn, bool _accTwoOn,
-                               bool _leftHandOn, bool _rightHandOn) {
-    accOneOn = _accOneOn;
-    accTwoOn = _accTwoOn;
-    leftHandOn = _leftHandOn;
-    rightHandOn = _rightHandOn;
+void gvfPianoInputs::SetKinectJoints(vector<int> joints_on) {
     
-    // TODO: Replace by iterating through inputsInfo vector
-    inputDataSize = 3 * (leftHandOn + rightHandOn + accOneOn + accTwoOn);
-    cout << "input size " << inputDataSize << endl;
-    inputData = std::vector<float>(inputDataSize, 0.0);
-    initial_point = std::vector<float>(inputDataSize, 0.0);
+    kinect_joints_on = vector<bool>(NITE_JOINT_COUNT, false);
     
+    for (int i = 0; i < joints_on.size(); ++i)
+        kinect_joints_on[joints_on[i]] = true;
+    
+    n_joints = joints_on.size();
+    
+    inputDataSize = 3 * (accOneOn + accTwoOn + n_joints);
+}
+
+//--------------------------------------------------------------
+vector<bool> gvfPianoInputs::GetKinectJoints() {
+    return kinect_joints_on;
+}
+
+//--------------------------------------------------------------
+std::vector<ofPoint> gvfPianoInputs::GetKinectData() {
+    
+    return current_point;
+}
+
+//--------------------------------------------------------------
+void gvfPianoInputs::SetAccInputs(bool accOn, int acc) {
+    
+    
+    if (acc == 1)
+        accOneOn == accOn;
+    else if (acc == 2)
+        accTwoOn == accOn; 
+    
+    inputDataSize = 3 * (accOneOn + accTwoOn + n_joints);
+}
+
+//--------------------------------------------------------------
+vector<bool> gvfPianoInputs::GetAccInputs() {
+    
+    vector<bool> acc_inputs;
+    acc_inputs.push_back(accOneOn);
+    acc_inputs.push_back(accTwoOn);
+    
+    return acc_inputs;
 }
 
 //MARK: Data Input
@@ -177,7 +197,8 @@ std::vector<float> gvfPianoInputs::getAccData(ofxOscReceiver& accReceiver, strin
 void gvfPianoInputs::StartFile() {
     
     csv_recorder.clear();
-    csv_recorder.createFile(ofToDataPath("new_file.csv"));
+    string filename = "gesture-" + ofToString(file_num) + ".csv";
+    csv_recorder.createFile(ofToDataPath(filename));
     csv_recorder.fileSeparator = ' ';
     
     is_writing = true;
@@ -185,8 +206,11 @@ void gvfPianoInputs::StartFile() {
 
 void gvfPianoInputs::EndFile() {
     
-    csv_recorder.saveFile(ofToDataPath("gesture_saved.csv"));
+    string filename = "gesture-" + ofToString(file_num) + ".csv";
     
+    csv_recorder.saveFile(ofToDataPath(filename));
+    
+    ++ file_num;
     is_writing = false;
 }
 
@@ -198,11 +222,24 @@ void gvfPianoInputs::WriteCsvData(wng::ofxCsv* _csv_recorder) {
     
     _csv_recorder->setInt(row, 0, row);
     
-    // Write input data.
-    for (int i = 0; i < inputDataSize; ++i)
-        _csv_recorder->setFloat(row, i + 1, inputData[i]);
+    int position = 1;
+    // Write Kinect
+    for (int i = 0; i < NITE_JOINT_COUNT; ++i) {
+        _csv_recorder->setFloat(row, i * 3 + position, current_point[i].x);
+        _csv_recorder->setFloat(row, i * 3 + 1 + position, current_point[i].y);
+        _csv_recorder->setFloat(row, i * 3 + 2 + position, current_point[i].z);
+    }
     
-    // Write Recognition Information
+    position += NITE_JOINT_COUNT * 3;
+    
+    // Write Acc Data
+    for (int i = 0; i < accData.size(); ++i) {
+        for (int j = 0; j < 3; ++j) {
+            _csv_recorder->setFloat(row, position + i * 3 + j, accData[i][j]);
+        }
+    }
+    
+    position += accData.size() * 3;
     
 }
 
@@ -211,14 +248,14 @@ void gvfPianoInputs::WriteCsvData(wng::ofxCsv* _csv_recorder) {
 // MARK: Reading CSV
 void gvfPianoInputs::LoadFile(string filename) {
     
+    csv_reader.clear();
     csv_reader.loadFile(ofToDataPath(filename), " ");
     
     csv_row = 0;
     is_reading = true;
+    is_writing = false;
     
 }
-
-
 
 // Reads CSV file, returns false when done.
 bool gvfPianoInputs::ReadCsvData() {
@@ -228,14 +265,28 @@ bool gvfPianoInputs::ReadCsvData() {
     }
     else {
         
+        // FIXME
+        
         int size = csv_reader.data[csv_row].size();
         
-        inputData = vector<float>(size - 1);
-        // Read to input Data
-        for (int i = 1; i < size; ++i) {
-            inputData[i - 1] = csv_reader.getFloat(csv_row, i);
-        }
+        int position = 1;
         
+        // Read Kinect
+        for (int i = 0; i < NITE_JOINT_COUNT; ++i) {
+            for (int j = 0; j < 3; ++j) {
+                current_point[i][j] = csv_reader.getFloat(csv_row, i * 3 + position + j);
+            }
+        }
+    
+        position += 3 * NITE_JOINT_COUNT;
+        
+        // Read Acc
+        for (int i = 0; i < accData.size(); ++i) {
+            for (int j = 0; j < 3; ++j) {
+                accData[i][j] = csv_reader.getFloat(csv_row, i * 3 + position + j);
+            }
+        }
+                
         ++ csv_row;
     }
     return is_reading;

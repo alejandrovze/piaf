@@ -307,5 +307,8 @@ void gvfPianoHandler::WriteCsvData(wng::ofxCsv* _csv_recorder) {
     _csv_recorder->setInt(row, input_dim + 1, mygvf->getMostProbableGestureIndex());
     
     // Write Recognition Information
+    for (int i = 0; i < mygvf->getNumberOfGestureTemplates(); ++i) {
+        // TODO: (needs ofxGVF output first). 
+    }
     
 }

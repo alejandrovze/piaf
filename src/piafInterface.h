@@ -42,12 +42,16 @@ private:
     vector<ofxUIMovingGraph*> input_gesture;
     vector<vector<float> > buffers;
     
+    ofxUIDropDownList* skeleton_list;
+    
     void DrawKinectInterface(int x, int y, int width, int height);
     ofImage* kinect_image;
     ofxUITextArea* kinect_status;
     bool kinect_display;
-    void DrawSkeleton(SkeletonDataPoint new_point, int x, int y, int width, int height);
+    void DrawSkeleton(vector<ofPoint> skeleton, int x, int y, int width, int height);
     void DrawTemplates(int x, int y, int width, int height);
+    void DrawGesture(int x, int y, int width, int height);
+    ofPoint ScaleToKinect(ofPoint init_point, int x, int y, int width, int height);
     
     // MARK: GVF STATUS
     ofxUISuperCanvas* gvf_gui;

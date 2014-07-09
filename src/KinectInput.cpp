@@ -8,13 +8,10 @@
 
 #include "KinectInput.h"
 
-KinectInput* KinectInput::ms_self = NULL; //???: Is this needed?
-
 
 //--------------------------------------------------------------
 KinectInput::KinectInput()
 {
-	ms_self = this; //???: Is this needed?
     
     is_running = false;
     
@@ -34,8 +31,6 @@ KinectInput::~KinectInput()
     delete user_tracker;
 	nite::NiTE::shutdown();
 	openni::OpenNI::shutdown();
-    
-	ms_self = NULL; //???: Is this needed?
 }
 
 //--------------------------------------------------------------
@@ -100,6 +95,8 @@ void KinectInput::update() {
         {
             if (user.isNew())
             {
+                // Start tracking skeleton if new user has been found. 
+                user_tracker->startSkeletonTracking(user.getId());
                 fprintf(stderr, "User %d: New\n", user_id);
             }
             else if (users_visible[user_id] != user.isVisible()) {
@@ -141,6 +138,7 @@ void KinectInput::update() {
 //--------------------------------------------------------------
 nite::SkeletonState KinectInput::get_state(int user_id) {
     
+    assert(user_id < MAX_USERS);
     return user_states[user_id];
     
 }
@@ -154,128 +152,62 @@ bool KinectInput::get_is_running() {
 // MARK: Data Access
 //--------------------------------------------------------------
 
-//--------------------------------------------------------------
-const nite::UserData& KinectInput::get_user(int user_id) {
-    
-	const nite::Array<nite::UserData>& users = userTrackerFrame.getUsers();
-    
-    if (user_id >= users.getSize() || user_id >= MAX_USERS) {
-        // Error
-        return;
-    }
-    
-    return users[user_id];
-    
-}
 
+// Get Tracking Data in OF-friendly format (convert Nite Points to OF points)
 //--------------------------------------------------------------
 SkeletonDataPoint KinectInput::get_data(int user_id) {
     
+    assert(user_id < MAX_USERS);
+    
     SkeletonDataPoint data_point;
     
-    const nite::UserData& user = get_user(user_id);
-    
-    nite::UserTracker* pUserTracker;
-    
-    if (user.isNew())
-    {
-        user_tracker->startSkeletonTracking(user.getId());
-    }
-    else if (!user.isLost())
-    {
+    // Get Data is User exists and is tracked.  
+	const nite::Array<nite::UserData>& users = userTrackerFrame.getUsers();
+    if (user_id < users.getSize()) {
+        
+        const nite::UserData& user = users[user_id];
         
         if (user.getSkeleton().getState() == nite::SKELETON_TRACKED)
         {
             
-            // Center of Mass
-            
-            ofPoint com = ofPoint(user.getCenterOfMass().x, user.getCenterOfMass().y, user.getCenterOfMass().z);
-            
-            data_point.center_of_mass = com;
+            // Center of Mass and Bounding Box
+            data_point.center_of_mass = NitePointToOF(user.getCenterOfMass());
+            data_point.bounding_box_min = NitePointToOF(user.getBoundingBox().min);
+            data_point.bounding_box_max = NitePointToOF(user.getBoundingBox().max);
             
             // Joints
-            
-            for (nite::JointType joint = nite::JOINT_HEAD; joint < nite::JOINT_RIGHT_FOOT; joint++) {
+            for (nite::JointType i = nite::JOINT_HEAD; i < nite::JOINT_RIGHT_FOOT; i++) {
                 
-                const nite::Point3f joint_pos = user.getSkeleton().getJoint(joint).getPosition();
+                nite::SkeletonJoint joint = user.getSkeleton().getJoint(i);
                 
-                data_point.joints.at(joint) = (ofPoint(joint_pos.x, joint_pos.y, joint_pos.z));
+                data_point.joints.at(i) = NitePointToOF(joint.getPosition());
+                data_point.confidences.at(i) = joint.getPositionConfidence();
                 
-                data_point.confidences.at(joint) = user.getSkeleton().getJoint(joint).getPositionConfidence();
-                
-                // Joint orientations.
-                
-                // Convert from NiteQuaternion to ofQuaternion
-                NiteQuaternion orientation = user.getSkeleton().getJoint(joint).getOrientation();
-                data_point.joint_orientations.at(joint) = ofQuaternion(orientation.x, orientation.y, orientation.z, orientation.w);
-                data_point.orientation_confidences.at(joint) = user.getSkeleton().getJoint(joint).getOrientationConfidence();
+                data_point.joint_orientations.at(i) = NiteQuatToOF(joint.getOrientation());
+                data_point.orientation_confidences.at(i) = joint.getOrientationConfidence();
                 
             }
-            
-            data_point.bounding_box_min = ofPoint(user.getBoundingBox().min.x, user.getBoundingBox().min.y, user.getBoundingBox().min.z);
-            
-            data_point.bounding_box_max = ofPoint(user.getBoundingBox().max.x, user.getBoundingBox().max.y, user.getBoundingBox().max.z);
         }
     }
-    
+
     return data_point;
     
 }
 
-// TEMP: just look at joint coordinates
-// ------------------------------------------------------
-SkeletonDataPoint KinectInput::get_depth_data(int user_id) {
-    
-    SkeletonDataPoint depth_data_point;
-    
-    const nite::UserData& user = get_user(user_id);
-    
-    nite::UserTracker* pUserTracker;
-    
-    if (user.isNew())
-    {
-        user_tracker->startSkeletonTracking(user.getId());
-    }
-    else if (!user.isLost())
-    {
-        
-        if (user.getSkeleton().getState() == nite::SKELETON_TRACKED)
-        {
-            // Joints
-            
-            for (nite::JointType joint = nite::JOINT_HEAD; joint <= nite::JOINT_RIGHT_FOOT; joint++) {
-                
-                const nite::Point3f joint_pos = user.getSkeleton().getJoint(joint).getPosition();
-                
-                const float joint_conf = user.getSkeleton().getJoint(joint).getPositionConfidence();
-                
-                depth_data_point.joints.at(joint) = convert_world_to_depth(ofPoint(joint_pos.x, joint_pos.y, joint_pos.z));
-                
-                
-                depth_data_point.confidences.at(joint) = joint_conf;
-                
-                // Joint orientations.
-                
-                // Convert from NiteQuaternion to ofQuaternion
-                NiteQuaternion orientation = user.getSkeleton().getJoint(joint).getOrientation();
-                depth_data_point.joint_orientations.at(joint) = ofQuaternion(orientation.x, orientation.y, orientation.z, orientation.w);
-                depth_data_point.orientation_confidences.at(joint) = user.getSkeleton().getJoint(joint).getOrientationConfidence();
-                
-            }
-            
-            // Center of Mass
-            
-            depth_data_point.center_of_mass = convert_world_to_depth(ofPoint(user.getCenterOfMass().x, user.getCenterOfMass().y, user.getCenterOfMass().z));
-            
-            depth_data_point.bounding_box_min = convert_world_to_depth(ofPoint(user.getBoundingBox().min.x, user.getBoundingBox().min.y, user.getBoundingBox().min.z));
-            
-            depth_data_point.bounding_box_max = convert_world_to_depth(ofPoint(user.getBoundingBox().max.x, user.getBoundingBox().max.y, user.getBoundingBox().max.z));
-        }
-    }
-    
-    return depth_data_point;
+
+//--------------------------------------------------------------
+// MARK: Utilities
+//--------------------------------------------------------------
+
+//--------------------------------------------------------------
+ofPoint KinectInput::NitePointToOF(NitePoint3f point) {
+    return ofPoint(point.x, point.y, point.z);
 }
 
+//--------------------------------------------------------------
+ofQuaternion KinectInput::NiteQuatToOF(NiteQuaternion quat) {
+    return ofQuaternion(quat.x, quat.y, quat.z, quat.w);
+}
 
 //--------------------------------------------------------------
 ofPoint KinectInput::convert_world_to_depth(ofPoint coordinates) {
@@ -293,25 +225,21 @@ ofPoint KinectInput::convert_world_to_depth(ofPoint coordinates) {
 }
 
 
-
 //--------------------------------------------------------------
 // MARK: Displaying Depth Frame
 //--------------------------------------------------------------
 
+// Returns a reference to the Kinect Depth image for display
 //--------------------------------------------------------------
 ofImage* KinectInput::GetImage() {
-    
     return &depth_image;
 }
 
 //--------------------------------------------------------------
 void KinectInput::UpdateImage() {
     
-    if (get_is_running()) {
-        
+    if (get_is_running())
         UpdateDepth(userTrackerFrame.getDepthFrame());
-
-    }
 }
 
 //--------------------------------------------------------------
@@ -326,17 +254,14 @@ void KinectInput::UpdateDepth(openni::VideoFrameRef depth_frame)
         
         float* depth_histogram = CalculateHistogram(MAX_DEPTH, depth_frame);
         
-        // Allocate image (happens once)
+        // Allocate image
         if (!depth_image.isAllocated()) {
             
             depth_image.allocate(res_x, res_y, OF_IMAGE_GRAYSCALE);
             
             grayPixels = new unsigned char[numPixels];
             memset(grayPixels, 0, numPixels * sizeof(unsigned char));
-            
-            cout << "Kinect Image has been allocated.\n";
         }
-        
         
         const openni::DepthPixel* depthPixels = (const openni::DepthPixel*) depth_frame.getData();
         
@@ -356,17 +281,18 @@ void KinectInput::UpdateDepth(openni::VideoFrameRef depth_frame)
 }
 
 //--------------------------------------------------------------
-float* KinectInput::CalculateHistogram(int histogramSize,
-                                       const openni::VideoFrameRef& depthFrame)
+//--------------------------------------------------------------
+float* KinectInput::CalculateHistogram(int histogramSize, const openni::VideoFrameRef& depthFrame)
 {
 	const openni::DepthPixel* pDepth = (const openni::DepthPixel*)depthFrame.getData();
+    
 	int width = depthFrame.getWidth();
 	int height = depthFrame.getHeight();
     
     static float pHistogram[MAX_DEPTH];
     
 	// Calculate the accumulative histogram
-	memset(pHistogram, 0, histogramSize*sizeof(float));
+	memset(pHistogram, 0, histogramSize * sizeof(float));
 	int restOfRow = depthFrame.getStrideInBytes() / sizeof(openni::DepthPixel) - width;
     
 	unsigned int nNumberOfPoints = 0;
