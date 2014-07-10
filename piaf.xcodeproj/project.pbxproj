@@ -164,7 +164,7 @@
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
-			dstSubfolderSpec = 7;
+			dstSubfolderSpec = 6;
 			files = (
 				C6E9010A18EE388A00C0F2C1 /* libOpenNI2.dylib in CopyFiles */,
 				C6E9010B18EE388A00C0F2C1 /* libOpenNI2.jni.dylib in CopyFiles */,
@@ -181,7 +181,7 @@
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = OpenNI2/Drivers;
-			dstSubfolderSpec = 7;
+			dstSubfolderSpec = 6;
 			files = (
 				C6E9014A18EE558100C0F2C1 /* libFreenectDriver.0.4.1.dylib in CopyFiles */,
 				C6E9011518EE38A700C0F2C1 /* libOniFile.dylib in CopyFiles */,
@@ -196,7 +196,7 @@
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = NiTE2;
-			dstSubfolderSpec = 7;
+			dstSubfolderSpec = 6;
 			files = (
 				C6E9011B18EE38BA00C0F2C1 /* FeatureExtraction.ini in CopyFiles */,
 				C6E9011C18EE38BA00C0F2C1 /* h.dat in CopyFiles */,
@@ -209,7 +209,7 @@
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = NiTE2/Data;
-			dstSubfolderSpec = 7;
+			dstSubfolderSpec = 6;
 			files = (
 				C6E9012018EE38C700C0F2C1 /* lbsdata.idx in CopyFiles */,
 				C6E9012118EE38C700C0F2C1 /* lbsdata.lbd in CopyFiles */,
@@ -1250,7 +1250,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cp -f ../../../libs/fmodex/lib/osx/libfmodex.dylib \"$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/MacOS/libfmodex.dylib\"; install_name_tool -change ./libfmodex.dylib @executable_path/libfmodex.dylib \"$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/MacOS/$PRODUCT_NAME\";\n\n# change orig path of libNiTE2.dylib/libOpenNI2.dylib\ninstall_name_tool -change libOpenNI2.dylib @executable_path/libOpenNI2.dylib \"$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/MacOS/libNiTE2.dylib\";\n# change orig path of libNiTE2.dylib\ninstall_name_tool -change libNiTE2.dylib @executable_path/libNiTE2.dylib \"$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/MacOS/$PRODUCT_NAME\";\n# change orig path of libOpenNI2.dylib\ninstall_name_tool -change libOpenNI2.dylib @executable_path/libOpenNI2.dylib \"$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/MacOS/$PRODUCT_NAME\";\n# change orig path of libFreenectDriver.dylib\ninstall_name_tool -change @executable_path/libFreenectDriver0.4.1.dylib @executable_path/OpenNI2/Drivers/libFreenectDriver.0.4.1.dylib \"$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/MacOS/$PRODUCT_NAME\";\n# change orig path of libFreenectDriver.dylib\ninstall_name_tool -change /Users/avz/Programming/openNI_2/new_freenect/libfreenect/build/lib/OpenNI2-FreenectDriver/libFreenectDriver.0.4.dylib @executable_path/OpenNI2/Drivers/libFreenectDriver.0.4.1.dylib \"$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/MacOS/$PRODUCT_NAME\";\n#install_name_tool -change /Users/avz/Programming/openNI_2/new_freenect/libfreenect/build/lib/OpenNI2-FreenectDriver/libFreenectDriver.0.4.dylib @executable_path/libFreenectDriver0.4.1.dylib \"$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/MacOS/$PRODUCT_NAME\";\n\nmkdir -p \"$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/Resources/\"\ncp -f \"$ICON_FILE\" \"$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/Resources/\"\n";
+			shellScript = "cp -f ../../../libs/fmodex/lib/osx/libfmodex.dylib \"$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/MacOS/libfmodex.dylib\"; install_name_tool -change ./libfmodex.dylib @executable_path/libfmodex.dylib \"$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/MacOS/$PRODUCT_NAME\";\n\n# change orig path of libNiTE2.dylib/libOpenNI2.dylib\n#install_name_tool -change libOpenNI2.dylib @executable_path/libOpenNI2.dylib \"$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/MacOS/libNiTE2.dylib\";\n# change orig path of libNiTE2.dylib\ninstall_name_tool -change libNiTE2.dylib @executable_path/libNiTE2.dylib \"$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/MacOS/libNiTE2.dylib\";\n# change orig path of libOpenNI2.dylib\ninstall_name_tool -change libOpenNI2.dylib @executable_path/libOpenNI2.dylib \"$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/MacOS/libNiTE2.dylib\";\n# change orig path of libFreenectDriver.dylib\ninstall_name_tool -change @executable_path/libFreenectDriver0.4.1.dylib @executable_path/OpenNI2/Drivers/libFreenectDriver.0.4.1.dylib \"$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/MacOS/$PRODUCT_NAME\";\n# change orig path of libFreenectDriver.dylib\ninstall_name_tool -change /Users/avz/Programming/openNI_2/new_freenect/libfreenect/build/lib/OpenNI2-FreenectDriver/libFreenectDriver.0.4.dylib @executable_path/OpenNI2/Drivers/libFreenectDriver.0.4.1.dylib \"$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/MacOS/$PRODUCT_NAME\";\n#install_name_tool -change /Users/avz/Programming/openNI_2/new_freenect/libfreenect/build/lib/OpenNI2-FreenectDriver/libFreenectDriver.0.4.dylib @executable_path/libFreenectDriver0.4.1.dylib \"$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/MacOS/$PRODUCT_NAME\";\n\nmkdir -p \"$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/Resources/\"\ncp -f \"$ICON_FILE\" \"$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/Resources/\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
