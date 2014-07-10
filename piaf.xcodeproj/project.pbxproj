@@ -80,6 +80,7 @@
 		C643556118E5DA74008AE100 /* ofxSliderGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C643555718E5DA73008AE100 /* ofxSliderGroup.cpp */; };
 		C643556218E5DA74008AE100 /* ofxToggle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C643555918E5DA74008AE100 /* ofxToggle.cpp */; };
 		C661AF12196EEA30001C7107 /* GVFHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C661AF10196EEA2F001C7107 /* GVFHandler.cpp */; };
+		C661AF15196EF1F4001C7107 /* KinectDisplay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C661AF13196EF1F2001C7107 /* KinectDisplay.cpp */; };
 		C6771133196D5CF7003F7404 /* WaxAccInput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6771131196D5CF7003F7404 /* WaxAccInput.cpp */; };
 		C6771138196D9BB0003F7404 /* PianoInput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6771136196D9BB0003F7404 /* PianoInput.cpp */; };
 		C6A290DD1959CBAB006B3770 /* piafOSCSender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6A290DB1959CBAB006B3770 /* piafOSCSender.cpp */; };
@@ -380,6 +381,8 @@
 		C643555A18E5DA74008AE100 /* ofxToggle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxToggle.h; sourceTree = "<group>"; };
 		C661AF10196EEA2F001C7107 /* GVFHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GVFHandler.cpp; sourceTree = "<group>"; };
 		C661AF11196EEA2F001C7107 /* GVFHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GVFHandler.h; sourceTree = "<group>"; };
+		C661AF13196EF1F2001C7107 /* KinectDisplay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KinectDisplay.cpp; sourceTree = "<group>"; };
+		C661AF14196EF1F2001C7107 /* KinectDisplay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KinectDisplay.h; sourceTree = "<group>"; };
 		C6771131196D5CF7003F7404 /* WaxAccInput.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WaxAccInput.cpp; sourceTree = "<group>"; };
 		C6771132196D5CF7003F7404 /* WaxAccInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WaxAccInput.h; sourceTree = "<group>"; };
 		C6771136196D9BB0003F7404 /* PianoInput.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PianoInput.cpp; sourceTree = "<group>"; };
@@ -1122,6 +1125,8 @@
 				C6EDE9A61945FFC50097CBC4 /* ofApp.h */,
 				C62821901950C38800B12695 /* piafInterface.cpp */,
 				C62821911950C38900B12695 /* piafInterface.h */,
+				C661AF13196EF1F2001C7107 /* KinectDisplay.cpp */,
+				C661AF14196EF1F2001C7107 /* KinectDisplay.h */,
 				C661AF10196EEA2F001C7107 /* GVFHandler.cpp */,
 				C661AF11196EEA2F001C7107 /* GVFHandler.h */,
 				C6A49F4E18E31BD600C28D49 /* inputs */,
@@ -1343,6 +1348,7 @@
 				C6771133196D5CF7003F7404 /* WaxAccInput.cpp in Sources */,
 				C6771138196D9BB0003F7404 /* PianoInput.cpp in Sources */,
 				C661AF12196EEA30001C7107 /* GVFHandler.cpp in Sources */,
+				C661AF15196EF1F4001C7107 /* KinectDisplay.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

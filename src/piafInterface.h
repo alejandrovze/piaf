@@ -15,6 +15,7 @@
 
 #include "gvfPianoInputs.h"
 #include "GVFHandler.h"
+#include "KinectDisplay.h"
 
 class piafInterface {
     
@@ -45,15 +46,9 @@ private:
     vector<ofxUILabelToggle*> acc_toggles;
     ofxUIDropDownList* skeleton_list;
     
-    void DrawKinectInterface(int x, int y, int _width, int _height);
-    ofImage* kinect_image;
+    bool kinect_display_on;
+    KinectDisplay kinect_display;
     ofxUITextArea* kinect_status;
-    bool kinect_display;
-    void DrawSkeleton(vector<ofPoint> skeleton);
-    void DrawTemplates();
-    void DrawGesture();
-    ofPoint ScaleToKinect(ofPoint init_point);
-    void DrawParticles();
     
     // MARK: GVF STATUS
     ofxUISuperCanvas* gvf_gui;
@@ -88,11 +83,6 @@ private:
     
     void SaveGestures();
     void LoadGestures();
-    
-    // COLORS
-    void initColors();
-    ofColor generateRandomColor();
-    std::vector<ofColor> colors;
     
 };
 
