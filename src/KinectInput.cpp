@@ -8,7 +8,6 @@
 
 #include "KinectInput.h"
 
-
 //--------------------------------------------------------------
 KinectInput::KinectInput()
 {
@@ -74,6 +73,7 @@ openni::Status KinectInput::setup()
     
 }
 
+// TODO: Restructure this messy function. 
 //--------------------------------------------------------------
 void KinectInput::update() {
     
@@ -132,15 +132,9 @@ void KinectInput::update() {
                 }
             }
         }
+        
+        update_data(user_id);
     }
-}
-
-//--------------------------------------------------------------
-nite::SkeletonState KinectInput::get_state(int user_id) {
-    
-    assert(user_id < MAX_USERS);
-    return user_states[user_id];
-    
 }
 
 //--------------------------------------------------------------
@@ -152,16 +146,14 @@ bool KinectInput::get_is_running() {
 // MARK: Data Access
 //--------------------------------------------------------------
 
-
 // Get Tracking Data in OF-friendly format (convert Nite Points to OF points)
-//--------------------------------------------------------------
-SkeletonDataPoint KinectInput::get_data(int user_id) {
+void KinectInput::update_data(int user_id) {
     
     assert(user_id < MAX_USERS);
     
-    SkeletonDataPoint data_point;
+    current_skeleton.state = user_states[user_id];
     
-    // Get Data is User exists and is tracked.  
+    // Get Data is User exists and is tracked.
 	const nite::Array<nite::UserData>& users = userTrackerFrame.getUsers();
     if (user_id < users.getSize()) {
         
@@ -171,29 +163,30 @@ SkeletonDataPoint KinectInput::get_data(int user_id) {
         {
             
             // Center of Mass and Bounding Box
-            data_point.center_of_mass = NitePointToOF(user.getCenterOfMass());
-            data_point.bounding_box_min = NitePointToOF(user.getBoundingBox().min);
-            data_point.bounding_box_max = NitePointToOF(user.getBoundingBox().max);
+            current_skeleton.center_of_mass = NitePointToOF(user.getCenterOfMass());
+            current_skeleton.bounding_box_min = NitePointToOF(user.getBoundingBox().min);
+            current_skeleton.bounding_box_max = NitePointToOF(user.getBoundingBox().max);
             
             // Joints
             for (nite::JointType i = nite::JOINT_HEAD; i < nite::JOINT_RIGHT_FOOT; i++) {
                 
                 nite::SkeletonJoint joint = user.getSkeleton().getJoint(i);
                 
-                data_point.joints.at(i) = NitePointToOF(joint.getPosition());
-                data_point.confidences.at(i) = joint.getPositionConfidence();
+                current_skeleton.positions.at(i) = NitePointToOF(joint.getPosition());
+                current_skeleton.position_confidences.at(i) = joint.getPositionConfidence();
                 
-                data_point.joint_orientations.at(i) = NiteQuatToOF(joint.getOrientation());
-                data_point.orientation_confidences.at(i) = joint.getOrientationConfidence();
+                current_skeleton.orientations.at(i) = NiteQuatToOF(joint.getOrientation());
+                current_skeleton.orientation_confidences.at(i) = joint.getOrientationConfidence();
                 
             }
         }
     }
-
-    return data_point;
-    
 }
 
+//--------------------------------------------------------------
+SkeletonDataPoint KinectInput::get_data(int user_id) {
+    return current_skeleton;
+}
 
 //--------------------------------------------------------------
 // MARK: Utilities
@@ -209,8 +202,9 @@ ofQuaternion KinectInput::NiteQuatToOF(NiteQuaternion quat) {
     return ofQuaternion(quat.x, quat.y, quat.z, quat.w);
 }
 
+// MARK: Adapt to non-Kinect
 //--------------------------------------------------------------
-ofPoint KinectInput::convert_world_to_depth(ofPoint coordinates) {
+ofPoint KinectInput::WorldToDepth(ofPoint coordinates) {
     
     float x;
     float y;

@@ -14,7 +14,10 @@
 #include "ofMain.h"
 
 #include "ofxCsv.h"
+
 #include "KinectInput.h"
+#include "WaxAccInput.h"
+#include "PianoInput.h"
 
 class gvfPianoInputs {
     
@@ -23,16 +26,19 @@ public:
     void setup();
     bool update();
     vector<float> initialise();
+
+    vector<float> ConcatenateInput();
+    int get_input_size();
     
-    vector<float> getInputData();
-    vector<bool> GetKinectJoints();
     vector<ofPoint> GetKinectData();
-    void SetKinectJoints(vector<int> joints_on);
-    void SetAccInputs(bool accOn, int acc);
-    vector<bool> GetAccInputs();
-    int getInputSize();
-    
     KinectInput* get_kinect_input();
+    vector<WaxAccInput>* GetAccInputs();
+    
+    
+    vector<int> get_joints_on();
+    void set_joints_on(vector<int> _joints_on);
+    vector<int> get_acc_on();
+    void set_acc_on(vector<int> _acc_on);
     
     void StartFile();
     void EndFile();
@@ -43,27 +49,14 @@ private:
     vector<bool> kinect_joints_on;
     int n_joints;
     
-    bool accOneOn;
-    bool accTwoOn;
-    
-    vector<float> inputData;
-    int inputDataSize;
-    void storeInput();
-    
     // Kinect Input
     KinectInput kinect_input;
-    vector<ofPoint> current_point;
-    bool kinect_is_live;
+    vector<ofPoint> kinect_joints;
+    vector<int> joints_on;
     
-    // Accelerometer Input
-    ofxOscReceiver accReceiver;
-    vector<string> accAddresses;
-    vector<vector <float> > accData;
-    vector<vector<float> > accelerometerBounds;
-    
-    vector<float> getAccData(ofxOscReceiver& accReceiver, string address, int accId);
-    
-    //---------------------------------
+    vector<WaxAccInput> accelerometers;
+    vector<ofVec3f> acc_data;
+    vector<int> acc_on;
     
     // CSV Recorder
     bool is_writing;

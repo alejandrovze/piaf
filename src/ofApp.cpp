@@ -13,7 +13,7 @@ void ofApp::setup(){
     
     // SETUP ELEMENTS
     inputs.setup();                         // inputs devices
-    handler.setup(inputs.getInputSize());   // gvf
+    handler.setup(inputs.get_input_size());   // gvf
     interface.setup(&handler, &inputs);  // interface
     
     sender.setup();
@@ -25,31 +25,6 @@ void ofApp::setup(){
 	ofSetFrameRate(60);
     
     
-    
-    // MARK: Midi Input
-    // ================
-    //	midiIn.openPort(1);
-    //	midiIn.ignoreTypes(false, false, false);
-    //	midiIn.addListener(this);
-    //	midiIn.setVerbose(true);
-    //    cout << midiIn.getName(); // Check port
-    
-    
-    // MARK: AUDIO SETUP
-    // =================
-    // 2 output channels,
-	// 1 input channels
-	// 44100 samples per second
-	// 4 num buffers (latency)
-    
-    //	sampleRate 			= 44100; /* Sampling Rate */
-    //	initialBufferSize	= 512;	/* Buffer Size. you have to fill this buffer with sound*/
-    //  nOutputChannels = 2;
-    //  nInputChannels = 1;
-    //  nBuffers = 4;
-    //
-    //
-    //	ofSoundStreamSetup(nOutputChannels, nInputChannels, this, sampleRate, initialBufferSize, nBuffers);
 }
 
 
@@ -62,7 +37,8 @@ void ofApp::update(){
     
     // Feed data from inputs to gvf
     if (handler.getIsPlaying()) {
-        handler.gvf_data(inputs.getInputData());
+        handler.gvf_data(inputs.ConcatenateInput());
+
     }
     
     interface.update();
@@ -77,11 +53,15 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
     
-    float templatesScale = 1.0f; //Leave scale at 1.0.
-    ofBackgroundGradient(ofColor(2), ofColor(40), OF_GRADIENT_CIRCULAR);
+//    ofBackgroundGradient(ofColor::black, ofColor(40), OF_GRADIENT_CIRCULAR);
+    
+    ofMatrix4x4 matrix = ofGetCurrentMatrix(OF_MATRIX_MODELVIEW);
+    
     ofPushMatrix();
     
     interface.draw();
+    
+    ofPopMatrix();
     
     ofDisableAlphaBlending();
 }
@@ -148,34 +128,3 @@ void ofApp::LoadInputFile() {
 
 }
 
-//--------------------------------------------------------------
-void ofApp::newMidiMessage(ofxMidiMessage& msg) {
-    
-	// make a copy of the latest message
-	midiMessage = msg;
-    
-    // Press is start, release is stop when learning
-    // Release (or press) triggers for following
-    
-    
-    
-    /*
-     // Pedal Input Control Number: 64
-     if (midiMessage.control == 64) {
-     if (application.getState() == ofxGVF::STATE_LEARNING) {
-     if (midiMessage.value == 0) {
-     application.setFollowing(true);
-     }
-     else if (midiMessage.value == 127) {
-     application.setFollowing(false);
-     }
-     }
-     else {
-     if (midiMessage.value == 127) {
-     // Toggle Following
-     application.setFollowing(!application.getFollowing());
-     }
-     }
-     }
-     */
-}

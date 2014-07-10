@@ -7,12 +7,10 @@
 
 #include "ofMain.h"
 
-#include "ofxMidi.h"
-
 #include "piafInterface.h"
 #include "piafOSCSender.h"
 
-class ofApp : public ofBaseApp, public ofxMidiListener {
+class ofApp : public ofBaseApp {
 	
 public:
     
@@ -24,13 +22,6 @@ public:
     
     void keyPressed(int key);
     
-    
-    // MARK: Midi Input
-    ofxMidiIn midiIn;
-	ofxMidiMessage midiMessage;
-    
-	void newMidiMessage(ofxMidiMessage& eventArgs);
-    
 private:
     
     piafInterface   interface;
@@ -40,17 +31,6 @@ private:
     piafOSCSender sender;
     
     void LoadInputFile();
-    
-    //  // MARK: Audio setup
-    //	void audioIn (float * input, int bufferSize, int nChannels); /* input method */
-    //  void audioOut(float * output, int bufferSize, int nChannels); // output method
-    //
-    //  double outputs[2];
-    //  int nOutputChannels;
-    //  int nInputChannels;
-    //	int nBuffers;
-    //	int	initialBufferSize; /* buffer size */
-    //	int	sampleRate;
     
 };
 

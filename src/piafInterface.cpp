@@ -42,8 +42,8 @@ void piafInterface::setup(gvfPianoHandler* _handler, gvfPianoInputs* _inputs) {
     kinect_image = inputs->get_kinect_input()->GetImage(); // TODO: Fix path to image.
     kinect_display = false;
     
-    input_gesture = vector<ofxUIMovingGraph*>(inputs->getInputSize());
-    buffers = vector<vector<float> >(inputs->getInputSize(), vector<float>(256, 0));
+    input_gesture = vector<ofxUIMovingGraph*>(inputs->get_input_size());
+    buffers = vector<vector<float> >(inputs->get_input_size(), vector<float>(256, 0));
     
     initColors();
     
@@ -60,8 +60,6 @@ void piafInterface::setup(gvfPianoHandler* _handler, gvfPianoInputs* _inputs) {
 
 //--------------------------------------------------------------
 void piafInterface::draw(){
-    
-    ofBackground(255, 255, 255, 255);
     
     if (kinect_display)
         DrawKinectInterface(0, 0, ofGetWindowWidth(), ofGetWindowHeight());
@@ -96,20 +94,25 @@ void piafInterface::SetInputsGUI() {
     kinect_status = inputs_gui->addTextArea("textarea", "NULL KINECT", OFX_UI_FONT_SMALL);
     inputs_gui->addLabelToggle("KINECT_DISPLAY", false);
     
+    
+    // Potentially display Kinect image in menu. 
 //    inputs_gui->addImage("kinect", kinect_image,
 //                         kinect_image->getWidth() / 2.0,
 //                         kinect_image->getHeight() / 2.0);
     
-    // Currently deactivated Accelerometer interface.
-    inputs_gui->addSpacer();
-    inputs_gui->addLabel("ACCELEROMETER 1");
-    inputs_gui->addLabelToggle("ACC1 ON/OFF", inputs->GetAccInputs()[0]);
     
     inputs_gui->addSpacer();
-    
+   
     inputs_gui->addLabel("INPUT GESTURE", OFX_UI_FONT_MEDIUM);
     for (int i = 0; i < input_gesture.size(); ++i) {
         input_gesture[i] = inputs_gui->addMovingGraph("MOVING", buffers[i], 256, 0.0, 1.0);
+    }
+    
+    // Accelerometer Inputs (Default False)
+    for (int i = 0; i < inputs->GetAccInputs()->size(); ++i) {
+        inputs_gui->addSpacer();
+        string acc_name = "ACCELEROMETER " + ofToString(inputs->GetAccInputs()->at(i).get_id());
+        acc_toggles.push_back(inputs_gui->addLabelToggle(acc_name, false));
     }
     
     inputs_gui->addSpacer();
@@ -120,10 +123,11 @@ void piafInterface::SetInputsGUI() {
     }
     skeleton_list = inputs_gui->addDropDownList("JOINT SELECTION", skeleton_items);
     skeleton_list->setAllowMultiple(true);
-    for (int i = 0; i < NITE_JOINT_COUNT; ++i) {
-        skeleton_list->getToggles()[i]->setValue(inputs->GetKinectJoints()[i]);
+    for (int i = 0; i < inputs->get_joints_on().size(); ++i) {
+        skeleton_list->getToggles()[inputs->get_joints_on()[i]]->setValue(true);
     }
     
+    inputs_gui->addButton("RESET INPUTS", true);
     
     inputs_gui->autoSizeToFitWidgets();
 	ofAddListener(inputs_gui->newGUIEvent, this, &piafInterface::InputsGUIEvent);
@@ -136,7 +140,7 @@ void piafInterface::UpdateInputsGUI() {
     if (kinect_display)
         inputs->get_kinect_input()->UpdateImage();
     
-    switch(inputs->get_kinect_input()->get_state())
+    switch(inputs->get_kinect_input()->get_data().state)
     {
         case nite::SKELETON_NONE:
             kinect_status->setTextString("NOT TRACKING");
@@ -156,7 +160,10 @@ void piafInterface::UpdateInputsGUI() {
             break;
     }
     
-    vector<float> input_data = inputs->getInputData();
+    // TODO: inputs!!
+    
+    
+    vector<float> input_data = inputs->ConcatenateInput();
     
     //!!!: Quick fix for switching inputs. 
     if (input_data.size() == input_gesture.size()) {
@@ -171,7 +178,6 @@ void piafInterface::InputsGUIEvent(ofxUIEventArgs &e) {
     
     string name = e.getName();
 	int kind = e.getKind();
-//	cout << "got event from: " << name << endl;
 	
     if (kind == OFX_UI_WIDGET_LABELTOGGLE) {
         
@@ -183,12 +189,21 @@ void piafInterface::InputsGUIEvent(ofxUIEventArgs &e) {
         }
     }
     
-    if (name == "JOINT SELECTION" && (gvf_handler->getGVF()->getState() == ofxGVF::STATE_CLEAR)) {
+    if (name == "RESET INPUTS") {
+        if(gvf_handler->getGVF()->getState() == ofxGVF::STATE_CLEAR) {
+            
+            inputs->set_joints_on(skeleton_list->getSelectedIndeces());
+            
+            vector<int> acc_on;
+            for (int i = 0; i < acc_toggles.size(); ++i) {
+                if (acc_toggles[i]->getValue())
+                    acc_on.push_back(i);
+            }
+            inputs->set_acc_on(acc_on);
+        }
+        else
+            cout << "Reset Only available in STATE_CLEAR" << endl;
         
-        vector<int> selected = skeleton_list->getSelectedIndeces();
-        
-        inputs->SetKinectJoints(selected);
-
     }
 }
 
@@ -322,8 +337,12 @@ void piafInterface::SetSettingsGUI() {
     // !!!: Variance Coefficients (currently crash)
     settings_gui->addNumberDialer("Phase Variance", 0.000001, 0.1, gvf_handler->getGVF()->getPhaseVariance(), 6);
     settings_gui->addNumberDialer("Speed Variance", 0.000001, 0.1, gvf_handler->getGVF()->getSpeedVariance(), 5);
-    settings_gui->addNumberDialer("Scale Variance", 0.000001, 0.1, gvf_handler->getGVF()->getScaleVariance()[0], 5);
-    settings_gui->addNumberDialer("Rotation Variance", 0.000001, 0.1, gvf_handler->getGVF()->getRotationVariance()[0], 5);
+    for (int i = 0; i < gvf_handler->getGVF()->getScaleVariance().size(); ++i) {
+        settings_gui->addNumberDialer("Scale Variance", 0.000001, 0.1, gvf_handler->getGVF()->getScaleVariance()[i], 5); 
+    }
+    for (int i = 0; i < gvf_handler->getGVF()->getRotationVariance().size(); ++i) {
+        settings_gui->addNumberDialer("Rotation Variance", 0.000001, 0.1, gvf_handler->getGVF()->getRotationVariance()[i], 5);
+    }
 
     settings_gui->setPosition(column_width * 2,0);
     settings_gui->autoSizeToFitWidgets();
@@ -506,24 +525,118 @@ void piafInterface::LoadGestures() {
 //--------------------------------------------------------------
 //// Draw kinect templates and skeleton display
 //--------------------------------------------------------------
-void piafInterface::DrawKinectInterface(int x, int y, int width, int height) {
+void piafInterface::DrawKinectInterface(int x, int y, int _width, int _height) {
+    
+    ofPushMatrix();
+    
+    ofTranslate(x, y);
+    
+    float width = _width;
+    float height = _height;
     
     if (inputs->get_kinect_input()->get_is_running()) {
+        
         kinect_image->draw(x, y, width, height);
+        
+        width /= (float) kinect_image->getWidth();
+        height /= (float) kinect_image->getHeight();
     }
     
+    ofScale(width, height);
+    DrawSkeleton(inputs->GetKinectData());
+    
+    ofPopMatrix();
+    
 //    if (inputs->get_kinect_input()->get_state() == nite::SKELETON_TRACKED)
-    DrawSkeleton(inputs->GetKinectData(), x, y, width, height);
     
-    if (gvf_handler->getCurrentGesture()->getNumberOfTemplates() > 0)
-        DrawGesture(x, y, width, height);
+    ofMatrix4x4 matrix = ofGetCurrentMatrix(OF_MATRIX_MODELVIEW);
     
-    DrawTemplates(x, y, width, height);
+
+    ofPushMatrix();
+    ofTranslate(600, 500);
+    if (gvf_handler->getCurrentGesture()->getNumberOfTemplates() > 0) {
+        
+        gvf_handler->getCurrentGesture()->draw();
+        
+//        DrawGesture();
+    }
+    
+    for(int i = 0; i < gvf_handler->getGVF()->getNumberOfGestureTemplates(); i++){
+        
+        ofxGVFGesture & gestureTemplate = gvf_handler->getGVF()->getGestureTemplate(i);
+        
+        ofPushMatrix();
+        gestureTemplate.draw(i * 100.0f, 0, 100.0f, 100.0f);
+        ofPopMatrix();
+        
+    }
+    
+    DrawParticles();
+    
+    
+    
+    ofPopMatrix();
+    
+    
+//    DrawTemplates();
+    
     
 }
 
-void piafInterface::DrawGesture(int x, int y, int width, int height) {
+void piafInterface::DrawParticles() {
+    
+    vector< vector<float> > pp = gvf_handler->getGVF()->getParticlesPositions();
+    
+    int ppSize = pp.size();
+    float scale = 1;
+    
+    if(ppSize > 0 && gvf_handler->getCurrentGesture()->getNumberOfTemplates() > 0){
+        // as the colors show, the vector returned by getG()
+        // does not seem to be in synch with the information returned by particlesPositions
+        vector<int> gestureIndex = gvf_handler->getGVF()->getG();
+        vector<float> weights = gvf_handler->getGVF()->getW();
         
+        ofFill();
+        
+        float weightAverage = getMeanVec(weights);
+        
+        ofPoint offset = ofPoint(gvf_handler->getCurrentGesture()->getTemplateNormal()[0][0] - pp[0][0], gvf_handler->getCurrentGesture()->getTemplateNormal()[0][1] - pp[0][1]);
+        
+        for(int i = 0; i < ppSize; i++){
+            
+            // each particle position is retrieved
+            ofPoint point(pp[i][0], pp[i][1]);
+            
+            // and then scaled and translated in order to be drawn
+            float x = ((point.x)) * (gvf_handler->getCurrentGesture()->getMaxRange()[0] - gvf_handler->getCurrentGesture()->getMinRange()[0]);
+            float y = ((point.y)) * (gvf_handler->getCurrentGesture()->getMaxRange()[1] - gvf_handler->getCurrentGesture()->getMinRange()[1]);
+            
+            
+            // the weight of the particle is normalised
+            // and then used as the radius of the circle representing the particle
+            float radius = weights[i]/weightAverage;
+            ofColor c = ofColor(127, 0, 0);
+            
+            c.setBrightness(198);
+            ofSetColor(c);
+            ofPushMatrix();
+            ofTranslate(gvf_handler->getCurrentGesture()->getInitialObservationRaw()[0],gvf_handler->getCurrentGesture()->getInitialObservationRaw()[1]);
+            //ofCircle(x, y, radius);
+            ofCircle(x, y, 1); // MATT something wrong with radius above
+            ofPopMatrix();
+            
+        }
+    }
+
+}
+
+// FIXME: Gestures of more than one dimension. 
+void piafInterface::DrawGesture() {
+
+    
+//    ofPushMatrix();
+//    ofPopMatrix();
+    
     vector< vector<float> > template_data = gvf_handler->getCurrentGesture()->getTemplateRaw();
     vector<float> initial = gvf_handler->getCurrentGesture()->getInitialObservationRaw();
     
@@ -538,42 +651,8 @@ void piafInterface::DrawGesture(int x, int y, int width, int height) {
         
         ofPoint orig_pos = ofPoint(template_data[t][0] + initial[0], template_data[t][1] + initial[1], template_data[t][2] + initial[2]);
         
-        ofPoint pos = ScaleToKinect(orig_pos, x, y, width, height);
-        
-//        if (gvf_handler->getGVF()->getState() == ofxGVF::STATE_FOLLOWING && gvf_handler->getIsPlaying()) {
-//            
-//            // Set Color according to Probability
-//            // FIXME: quick fix for getOutcomes crashing
-//            float probability;
-//            if (gvf_handler->getGVF()->getMostProbableGestureIndex() > -1) {
-//                probability = gvf_handler->getGVF()->getOutcomes().allProbabilities[i];
-//            }
-//            else {
-//                probability = 0;
-//            }
-//            ofColor template_color = ofColor(255, 0, 0) * probability + colors[i] * (1 - probability); // FIXME: unsafe
-//            
-//            ofSetColor(template_color);
-//            
-//            // Set Fill according to Phase
-//            float phase = 0;
-            
-//            phase = gvf_handler->getGVF()->getOutcomes().allPhases[i];
-//            
-//            if (phase >= ((float) t / (float) length)) {
-//                ofFill();
-//            }
-//            else {
-//                ofNoFill();
-//            }
-//            
-//        }
-//        else {
-//            ofSetColor(colors[i]);
-//            ofNoFill();
-//        }
-//        // Fill according to phase reading.
-        
+        ofPoint pos = ScaleToKinect(orig_pos);
+      
         ofSetLineWidth(1);
         
         ofSetColor(ofColor(0, 255, 0));
@@ -596,7 +675,7 @@ void piafInterface::DrawGesture(int x, int y, int width, int height) {
 //--------------------------------------------------------------
 //// Draw each saved template, with phase if following
 //--------------------------------------------------------------
-void piafInterface::DrawTemplates(int x, int y, int width, int height) {
+void piafInterface::DrawTemplates() {
     
     int n_templates = gvf_handler->getGVF()->getNumberOfGestureTemplates();
     
@@ -616,7 +695,7 @@ void piafInterface::DrawTemplates(int x, int y, int width, int height) {
             
             ofPoint orig_pos = ofPoint(template_data[t][0] + initial[0], template_data[t][1] + initial[1], template_data[t][2] + initial[2]);
             
-            ofPoint pos = ScaleToKinect(orig_pos, x, y, width, height);
+            ofPoint pos = ScaleToKinect(orig_pos);
             
             if (gvf_handler->getGVF()->getState() == ofxGVF::STATE_FOLLOWING && gvf_handler->getIsPlaying()) {
                 
@@ -676,44 +755,38 @@ void piafInterface::DrawTemplates(int x, int y, int width, int height) {
 //--------------------------------------------------------------
 //// Live skeleton display
 //--------------------------------------------------------------
-void piafInterface::DrawSkeleton(vector<ofPoint> skeleton, int x, int y, int width, int height) {
+void piafInterface::DrawSkeleton(vector<ofPoint> skeleton) {
     
     int x_pos;
     int y_pos;
     
     ofFill();
     
-    
     ofSetColor(0, 0, 255);
     
     
     for (int i = 0; i <= NITE_JOINT_TORSO; ++i) {
         
-        ofPoint depth_pt = ScaleToKinect(skeleton[i], x, y, width, height);
+        ofPoint depth_pt = ScaleToKinect(skeleton[i]);
         
-        ofCircle(depth_pt, 5);
+        ofCircle(depth_pt, 1);
         
     }
     
-    ofNoFill();
-    
     ofSetColor(255, 255, 255);
+    
+    ofNoFill();
     
 }
 
-ofPoint piafInterface::ScaleToKinect(ofPoint init_point, int x, int y, int width, int height) {
+ofPoint piafInterface::ScaleToKinect(ofPoint init_point) {
     
     ofPoint point;
     
     if (inputs->get_kinect_input()->get_is_running()) {
         
         // FIXME: Convert World to Depth without Kinect plugged in?
-        point = inputs->get_kinect_input()->convert_world_to_depth(init_point);
-        
-        point.x = x + (int) ((float) (point.x) * (float) width / (float) kinect_image->getWidth());
-        point.y = y + (int) ((float) (point.y) * (float) height / (float) kinect_image->getHeight());
-        
-         
+        point = inputs->get_kinect_input()->WorldToDepth(init_point);
         
         return point;
     }

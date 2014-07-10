@@ -76,8 +76,8 @@ void gvfPianoHandler::gvf_data(int argc, float *argv)
         
         // FIXME: Range Adjustment
         currentGesture->setAutoAdjustRanges(false);
-        currentGesture->setMin(0., 0., 0.);
-        currentGesture->setMax(1000., 1000., 1000.);
+        currentGesture->setMinRange(vector<float>(3, -100.));
+        currentGesture->setMaxRange(vector<float>(3, 100.));
         
         currentGesture->addObservation(observation_vector);
         
@@ -91,8 +91,8 @@ void gvfPianoHandler::gvf_data(int argc, float *argv)
         
         // FIXME: Range Adjustment
         currentGesture->setAutoAdjustRanges(false);
-        currentGesture->setMin(0., 0., 0.);
-        currentGesture->setMax(1000., 1000., 1000.);
+        currentGesture->setMinRange(vector<float>(3, -100.));
+        currentGesture->setMaxRange(vector<float>(3, 100.));
         
         currentGesture->addObservation(observation_vector);
         

@@ -28,35 +28,36 @@ typedef struct SkeletonDataPoint {
     
     // Constructors
     SkeletonDataPoint():
-    joints(NITE_JOINT_COUNT),
-    confidences(NITE_JOINT_COUNT),
-    joint_orientations(NITE_JOINT_COUNT),
+    positions(NITE_JOINT_COUNT),
+    position_confidences(NITE_JOINT_COUNT),
+    orientations(NITE_JOINT_COUNT),
     orientation_confidences(NITE_JOINT_COUNT),
     center_of_mass(ofPoint(0, 0, 0)),
     bounding_box_min(ofPoint(0, 0, 0)),
-    bounding_box_max(ofPoint(0, 0, 0))
+    bounding_box_max(ofPoint(0, 0, 0)),
+    state(nite::SKELETON_NONE)
     {
     }
     
     ~SkeletonDataPoint()
     {
-        joints.clear();
-        confidences.clear();
-        joint_orientations.clear();
+        positions.clear();
+        position_confidences.clear();
+        orientations.clear();
         orientation_confidences.clear();
     }
     
     // Skeleton data
-    vector<ofPoint> joints;
-    vector<float> confidences;
-    vector<ofQuaternion> joint_orientations;
+    vector<ofPoint> positions;
+    vector<float> position_confidences;
+    vector<ofQuaternion> orientations;
     vector<float> orientation_confidences;
     
     ofPoint center_of_mass;
     ofPoint bounding_box_min;
     ofPoint bounding_box_max;
     
-    float time_stamp;
+    nite::SkeletonState state;
     
 } SkeletonDataPoint;
 
@@ -81,18 +82,18 @@ public:
     bool get_is_running(); // False is Kinect fails setup. 
     
     SkeletonDataPoint get_data(int user_id = 0);
-    nite::SkeletonState get_state(int user_id = 0);
     
     ofImage* GetImage();
     void UpdateImage();
     
     // Utility
-    ofPoint convert_world_to_depth(ofPoint coordinates);
-    
+    ofPoint WorldToDepth(ofPoint coordinates);
     
 private:
     
     bool is_running;
+    SkeletonDataPoint current_skeleton;
+    void update_data(int user_id = 0);
     
     openni::Device device;
     nite::UserTracker* user_tracker;
