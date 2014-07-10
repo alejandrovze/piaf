@@ -79,7 +79,6 @@
 		C643556018E5DA74008AE100 /* ofxSlider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C643555518E5DA73008AE100 /* ofxSlider.cpp */; };
 		C643556118E5DA74008AE100 /* ofxSliderGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C643555718E5DA73008AE100 /* ofxSliderGroup.cpp */; };
 		C643556218E5DA74008AE100 /* ofxToggle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C643555918E5DA74008AE100 /* ofxToggle.cpp */; };
-		C6615E7C196EB73000D2112F /* piafKinectDisplay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6615E7A196EB73000D2112F /* piafKinectDisplay.cpp */; };
 		C6771133196D5CF7003F7404 /* WaxAccInput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6771131196D5CF7003F7404 /* WaxAccInput.cpp */; };
 		C6771138196D9BB0003F7404 /* PianoInput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6771136196D9BB0003F7404 /* PianoInput.cpp */; };
 		C6A290DD1959CBAB006B3770 /* piafOSCSender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6A290DB1959CBAB006B3770 /* piafOSCSender.cpp */; };
@@ -379,8 +378,6 @@
 		C643555818E5DA74008AE100 /* ofxSliderGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxSliderGroup.h; sourceTree = "<group>"; };
 		C643555918E5DA74008AE100 /* ofxToggle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxToggle.cpp; sourceTree = "<group>"; };
 		C643555A18E5DA74008AE100 /* ofxToggle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxToggle.h; sourceTree = "<group>"; };
-		C6615E7A196EB73000D2112F /* piafKinectDisplay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = piafKinectDisplay.cpp; sourceTree = "<group>"; };
-		C6615E7B196EB73000D2112F /* piafKinectDisplay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = piafKinectDisplay.h; sourceTree = "<group>"; };
 		C6771131196D5CF7003F7404 /* WaxAccInput.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WaxAccInput.cpp; sourceTree = "<group>"; };
 		C6771132196D5CF7003F7404 /* WaxAccInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WaxAccInput.h; sourceTree = "<group>"; };
 		C6771136196D9BB0003F7404 /* PianoInput.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PianoInput.cpp; sourceTree = "<group>"; };
@@ -1125,8 +1122,6 @@
 				C6EDE9A61945FFC50097CBC4 /* ofApp.h */,
 				C62821901950C38800B12695 /* piafInterface.cpp */,
 				C62821911950C38900B12695 /* piafInterface.h */,
-				C6615E7A196EB73000D2112F /* piafKinectDisplay.cpp */,
-				C6615E7B196EB73000D2112F /* piafKinectDisplay.h */,
 				C6EDE9AE1945FFF30097CBC4 /* gvfPianoHandler.cpp */,
 				C6EDE9AF1945FFF30097CBC4 /* gvfPianoHandler.h */,
 				C6A49F4E18E31BD600C28D49 /* inputs */,
@@ -1250,7 +1245,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cp -f ../../../libs/fmodex/lib/osx/libfmodex.dylib \"$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/MacOS/libfmodex.dylib\"; install_name_tool -change ./libfmodex.dylib @executable_path/libfmodex.dylib \"$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/MacOS/$PRODUCT_NAME\";\n\n# change orig path of libNiTE2.dylib/libOpenNI2.dylib\n#install_name_tool -change libOpenNI2.dylib @executable_path/libOpenNI2.dylib \"$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/MacOS/libNiTE2.dylib\";\n# change orig path of libNiTE2.dylib\ninstall_name_tool -change libNiTE2.dylib @executable_path/libNiTE2.dylib \"$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/MacOS/libNiTE2.dylib\";\n# change orig path of libOpenNI2.dylib\ninstall_name_tool -change libOpenNI2.dylib @executable_path/libOpenNI2.dylib \"$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/MacOS/libNiTE2.dylib\";\n# change orig path of libFreenectDriver.dylib\ninstall_name_tool -change @executable_path/libFreenectDriver0.4.1.dylib @executable_path/OpenNI2/Drivers/libFreenectDriver.0.4.1.dylib \"$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/MacOS/$PRODUCT_NAME\";\n# change orig path of libFreenectDriver.dylib\ninstall_name_tool -change /Users/avz/Programming/openNI_2/new_freenect/libfreenect/build/lib/OpenNI2-FreenectDriver/libFreenectDriver.0.4.dylib @executable_path/OpenNI2/Drivers/libFreenectDriver.0.4.1.dylib \"$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/MacOS/$PRODUCT_NAME\";\n#install_name_tool -change /Users/avz/Programming/openNI_2/new_freenect/libfreenect/build/lib/OpenNI2-FreenectDriver/libFreenectDriver.0.4.dylib @executable_path/libFreenectDriver0.4.1.dylib \"$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/MacOS/$PRODUCT_NAME\";\n\nmkdir -p \"$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/Resources/\"\ncp -f \"$ICON_FILE\" \"$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/Resources/\"\n";
+			shellScript = "cp -f ../../../libs/fmodex/lib/osx/libfmodex.dylib \"$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/MacOS/libfmodex.dylib\"; install_name_tool -change ./libfmodex.dylib @executable_path/libfmodex.dylib \"$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/MacOS/$PRODUCT_NAME\";\n\n# change orig path of libNiTE2.dylib/libOpenNI2.dylib\ninstall_name_tool -change @executable_path/Contents/MacOS/libOpenNI2.dylib @executable_path/libOpenNI2.dylib \"$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/MacOS/$PRODUCT_NAME\";\n# change orig path of libNiTE2.dylib/libOpenNI2.dylib\ninstall_name_tool -change @executable_path/Contents/MacOS/libNiTE2.dylib @executable_path/libNiTE2.dylib \"$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/MacOS/$PRODUCT_NAME\";\n\n# change orig path of libNiTE2.dylib/libOpenNI2.dylib\ninstall_name_tool -change libOpenNI2.dylib @executable_path/Contents/MacOS/libOpenNI2.dylib \"$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/MacOS/libNiTE2.dylib\";\n# change orig path of libNiTE2.dylib\ninstall_name_tool -change libNiTE2.dylib @executable_path/libNiTE2.dylib \"$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/MacOS/libNiTE2.dylib\";\n# change orig path of libOpenNI2.dylib\n#install_name_tool -change libOpenNI2.dylib @executable_path/libOpenNI2.dylib \"$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/MacOS/libNiTE2.dylib\";\n# change orig path of libFreenectDriver.dylib\ninstall_name_tool -change @executable_path/libFreenectDriver0.4.1.dylib @executable_path/OpenNI2/Drivers/libFreenectDriver.0.4.1.dylib \"$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/MacOS/$PRODUCT_NAME\";\n# change orig path of libFreenectDriver.dylib\ninstall_name_tool -change /Users/avz/Programming/openNI_2/new_freenect/libfreenect/build/lib/OpenNI2-FreenectDriver/libFreenectDriver.0.4.dylib @executable_path/OpenNI2/Drivers/libFreenectDriver.0.4.1.dylib \"$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/MacOS/$PRODUCT_NAME\";\n#install_name_tool -change /Users/avz/Programming/openNI_2/new_freenect/libfreenect/build/lib/OpenNI2-FreenectDriver/libFreenectDriver.0.4.dylib @executable_path/libFreenectDriver0.4.1.dylib \"$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/MacOS/$PRODUCT_NAME\";\n\nmkdir -p \"$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/Resources/\"\ncp -f \"$ICON_FILE\" \"$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/Resources/\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -1348,7 +1343,6 @@
 				C6A290DD1959CBAB006B3770 /* piafOSCSender.cpp in Sources */,
 				C6771133196D5CF7003F7404 /* WaxAccInput.cpp in Sources */,
 				C6771138196D9BB0003F7404 /* PianoInput.cpp in Sources */,
-				C6615E7C196EB73000D2112F /* piafKinectDisplay.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
