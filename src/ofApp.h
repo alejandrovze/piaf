@@ -7,6 +7,8 @@
 
 #include "ofMain.h"
 
+#include "GVFHandler.h"
+
 #include "piafInterface.h"
 #include "piafOSCSender.h"
 
@@ -25,7 +27,7 @@ public:
 private:
     
     piafInterface   interface;
-    gvfPianoHandler     handler;
+    GVFHandler     handler;
     gvfPianoInputs      inputs;
     
     piafOSCSender sender;

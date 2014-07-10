@@ -14,20 +14,20 @@
 #include "ofxUI.h"
 
 #include "gvfPianoInputs.h"
-#include "gvfPianoHandler.h"
+#include "GVFHandler.h"
 
 class piafInterface {
     
 public:
     
-    void setup(gvfPianoHandler* _gvf_handler, gvfPianoInputs* _inputs);
+    void setup(GVFHandler* _gvf_handler, gvfPianoInputs* _inputs);
     void update();
     void draw();
     void exit();
     
 private:
     
-    gvfPianoHandler* gvf_handler;
+    GVFHandler* gvf_handler;
     gvfPianoInputs* inputs;
     
     int column_width;

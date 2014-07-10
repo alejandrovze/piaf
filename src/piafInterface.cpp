@@ -34,7 +34,7 @@ static const char * NiteJointStrings[] = {
 };
 
 //--------------------------------------------------------------
-void piafInterface::setup(gvfPianoHandler* _handler, gvfPianoInputs* _inputs) {
+void piafInterface::setup(GVFHandler* _handler, gvfPianoInputs* _inputs) {
 
     gvf_handler = _handler;
     inputs  = _inputs;
@@ -190,7 +190,7 @@ void piafInterface::InputsGUIEvent(ofxUIEventArgs &e) {
     }
     
     if (name == "RESET INPUTS") {
-        if(gvf_handler->getGVF()->getState() == ofxGVF::STATE_CLEAR) {
+        if(gvf_handler->getState() == ofxGVF::STATE_CLEAR) {
             
             inputs->set_joints_on(skeleton_list->getSelectedIndeces());
             
@@ -272,7 +272,7 @@ void piafInterface::GvfGUIEvent(ofxUIEventArgs &e) {
 
 void piafInterface::UpdateGvfGUI() {
 
-    switch(gvf_handler->getGVF()->getState()) {
+    switch(gvf_handler->getState()) {
         case ofxGVF::STATE_WAIT:
             gvf_status->setTextString("STATE: Waiting");
             break;
@@ -289,12 +289,12 @@ void piafInterface::UpdateGvfGUI() {
     
     is_playing->setValue(gvf_handler->getIsPlaying());
     
-    gvf_n_templates->setTextString("NTEMPLATES " + ofToString(gvf_handler->getGVF()->getNumberOfGestureTemplates()));
+    gvf_n_templates->setTextString("NTEMPLATES " + ofToString(gvf_handler->getNumberOfGestureTemplates()));
     
     gvf_most_probable->setTextString("Index " +
-                                     ofToString(gvf_handler->getGVF()->getMostProbableGestureIndex()));
+                                     ofToString(gvf_handler->getMostProbableGestureIndex()));
     
-    recognitionInfo status = gvf_handler->getRecogInfoOfMostProbable();
+    Estimation status = gvf_handler->getRecogInfoOfMostProbable();
     gvf_most_probable_probability->setTextString("Probability " + ofToString(status.probability));
     gvf_most_probable_phase->setTextString("Phase " + ofToString(status.phase));
     gvf_most_probable_speed->setTextString("Speed " + ofToString(status.speed));
@@ -314,7 +314,7 @@ void piafInterface::UpdateGvfGUI() {
     gvf_most_probable_rotation->setTextString("Rotation " + rotation_string);
     
 //    // Update Length of Gesture
-//    if ((gvf_handler->getGVF()->getState() != ofxGVF::STATE_CLEAR) && gvf_handler->getIsPlaying()) {
+//    if ((gvf_handler->getState() != ofxGVF::STATE_CLEAR) && gvf_handler->getIsPlaying()) {
 //        gesture_length->setTextString(ofToString(gvf_handler->getCurrentGesture()->getTemplateLength()));
 //    }
     
@@ -329,19 +329,19 @@ void piafInterface::SetSettingsGUI() {
     settings_gui = new ofxUISuperCanvas("GVF Settings");
     
     // Parameters
-    settings_gui->addNumberDialer("N Particles", 10, 10000, gvf_handler->getGVF()->getNumberOfParticles(), 0);
-    settings_gui->addNumberDialer("Resampling Threshold", 100, 10000, gvf_handler->getGVF()->getResamplingThreshold(), 0);
-    tolerance = settings_gui->addNumberDialer("Tolerance",  0.01, 1000.0, gvf_handler->getGVF()->getTolerance(), 3);
-    settings_gui->addNumberDialer("Distribution", 0.0, 2.0, gvf_handler->getGVF()->getDistribution(), 2);
+    settings_gui->addNumberDialer("N Particles", 10, 10000, gvf_handler->getNumberOfParticles(), 0);
+    settings_gui->addNumberDialer("Resampling Threshold", 100, 10000, gvf_handler->getResamplingThreshold(), 0);
+    tolerance = settings_gui->addNumberDialer("Tolerance",  0.01, 1000.0, gvf_handler->getTolerance(), 3);
+    settings_gui->addNumberDialer("Distribution", 0.0, 2.0, gvf_handler->getDistribution(), 2);
     
     // !!!: Variance Coefficients (currently crash)
-    settings_gui->addNumberDialer("Phase Variance", 0.000001, 0.1, gvf_handler->getGVF()->getPhaseVariance(), 6);
-    settings_gui->addNumberDialer("Speed Variance", 0.000001, 0.1, gvf_handler->getGVF()->getSpeedVariance(), 5);
-    for (int i = 0; i < gvf_handler->getGVF()->getScaleVariance().size(); ++i) {
-        settings_gui->addNumberDialer("Scale Variance", 0.000001, 0.1, gvf_handler->getGVF()->getScaleVariance()[i], 5); 
+    settings_gui->addNumberDialer("Phase Variance", 0.000001, 0.1, gvf_handler->getPhaseVariance(), 6);
+    settings_gui->addNumberDialer("Speed Variance", 0.000001, 0.1, gvf_handler->getSpeedVariance(), 5);
+    for (int i = 0; i < gvf_handler->getScaleVariance().size(); ++i) {
+        settings_gui->addNumberDialer("Scale Variance", 0.000001, 0.1, gvf_handler->getScaleVariance()[i], 5); 
     }
-    for (int i = 0; i < gvf_handler->getGVF()->getRotationVariance().size(); ++i) {
-        settings_gui->addNumberDialer("Rotation Variance", 0.000001, 0.1, gvf_handler->getGVF()->getRotationVariance()[i], 5);
+    for (int i = 0; i < gvf_handler->getRotationVariance().size(); ++i) {
+        settings_gui->addNumberDialer("Rotation Variance", 0.000001, 0.1, gvf_handler->getRotationVariance()[i], 5);
     }
 
     settings_gui->setPosition(column_width * 2,0);
@@ -362,28 +362,28 @@ void piafInterface::SettingsGUIEvent(ofxUIEventArgs &e) {
         float value = n->getValue();
         
         if (name == "N Particles") {
-            gvf_handler->getGVF()->setNumberOfParticles((int) value);
+            gvf_handler->setNumberOfParticles((int) value);
         }
         else if (name == "Resampling Threshold") {
-            gvf_handler->getGVF()->setResamplingThreshold((int) value);
+            gvf_handler->setResamplingThreshold((int) value);
         }
         else if (name == "Tolerance") {
-            gvf_handler->getGVF()->setTolerance(value);
+            gvf_handler->setTolerance(value);
         }
         else if (name == "Distribution") {
-            gvf_handler->getGVF()->setDistribution(value);
+            gvf_handler->setDistribution(value);
         }
         else if (name == "Phase Variance") {
-            gvf_handler->getGVF()->setPhaseVariance(value);
+            gvf_handler->setPhaseVariance(value);
         }
         else if (name == "Speed Variance") {
-            gvf_handler->getGVF()->setSpeedVariance(value);
+            gvf_handler->setSpeedVariance(value);
         }
         else if (name == "Scale Variance") {
-            gvf_handler->getGVF()->setScaleVariance(value);
+            gvf_handler->setScaleVariance(value);
         }
         else if (name == "Rotation Variance") {
-            gvf_handler->getGVF()->setRotationVariance(value);
+            gvf_handler->setRotationVariance(value);
         }
     }
     
@@ -393,7 +393,7 @@ void piafInterface::SettingsGUIEvent(ofxUIEventArgs &e) {
 void piafInterface::UpdateSettingsGUI() {
     
     // Update Tolerance (dyamically set within GVF algorithm)
-    tolerance->setValue(gvf_handler->getGVF()->getTolerance());
+    tolerance->setValue(gvf_handler->getTolerance());
     
 }
 
@@ -408,8 +408,8 @@ void piafInterface::SetTemplatesGUI() {
     
     n_templates = 0;
     
-    for (int id = 0; id < gvf_handler->getGVF()->getNumberOfGestureTemplates(); ++id) {
-        AddTemplate(id, gvf_handler->getGVF()->getGestureTemplate(id));
+    for (int id = 0; id < gvf_handler->getNumberOfGestureTemplates(); ++id) {
+        AddTemplate(id, gvf_handler->getGestureTemplate(id));
     }
     
     
@@ -424,7 +424,7 @@ void piafInterface::SetTemplatesGUI() {
 //--------------------------------------------------------------
 void piafInterface::UpdateTemplatesGUI() {
     
-    int current_templates = gvf_handler->getGVF()->getNumberOfGestureTemplates();
+    int current_templates = gvf_handler->getNumberOfGestureTemplates();
     
     if (current_templates != n_templates) {
         delete templates_gui;
@@ -434,11 +434,11 @@ void piafInterface::UpdateTemplatesGUI() {
     // Update Phases
     for (int i = 0; i < n_templates; ++i) {
         
-        if (gvf_handler->getGVF()->getState() == ofxGVF::STATE_FOLLOWING && gvf_handler->getIsPlaying()) {
-            if (gvf_handler->getGVF()->getMostProbableGestureIndex() > -1) {
-                phase_sliders[i]->setValue(gvf_handler->getGVF()->getOutcomes().allPhases[i]);
+        if (gvf_handler->getState() == ofxGVF::STATE_FOLLOWING && gvf_handler->getIsPlaying()) {
+            if (gvf_handler->getMostProbableGestureIndex() > -1) {
+                phase_sliders[i]->setValue(gvf_handler->getOutcomes().allPhases[i]);
             
-                float probability = gvf_handler->getGVF()->getOutcomes().allProbabilities[i];
+                float probability = gvf_handler->getOutcomes().allProbabilities[i];
                 phase_sliders[i]->setColorFill(ofColor(255 * probability, 0, 0));
             }
             
@@ -493,7 +493,7 @@ void piafInterface::SaveGestures() {
     filename = ss.str();
     cout << filename;
 
-    gvf_handler->getGVF()->saveTemplates(filename);
+    gvf_handler->saveTemplates(filename);
     cout << "Gestures saved.\n";
 }
 
@@ -511,7 +511,7 @@ void piafInterface::LoadGestures() {
     filename = ss.str();
     cout << filename;
 
-    gvf_handler->getGVF()->loadTemplates(filename);
+    gvf_handler->loadTemplates(filename);
     cout << "Gestures loaded.\n";
     
 }
@@ -542,9 +542,9 @@ void piafInterface::DrawKinectInterface(int x, int y, int _width, int _height) {
         height /= (float) kinect_image->getHeight();
     }
     
-    ofScale(width, height);
-    DrawSkeleton(inputs->GetKinectData());
+//    DrawSkeleton(inputs->GetKinectData());
     
+    ofScale(width, height);
     ofPopMatrix();
     
 //    if (inputs->get_kinect_input()->get_state() == nite::SKELETON_TRACKED)
@@ -561,16 +561,16 @@ void piafInterface::DrawKinectInterface(int x, int y, int _width, int _height) {
 //        DrawGesture();
     }
     
-    for(int i = 0; i < gvf_handler->getGVF()->getNumberOfGestureTemplates(); i++){
-        
-        ofxGVFGesture & gestureTemplate = gvf_handler->getGVF()->getGestureTemplate(i);
-        
-        ofPushMatrix();
-        gestureTemplate.draw(i * 100.0f, 0, 100.0f, 100.0f);
-        ofPopMatrix();
-        
-    }
-    
+//    for(int i = 0; i < gvf_handler->getNumberOfGestureTemplates(); i++){
+//        
+//        ofxGVFGesture & gestureTemplate = gvf_handler->getGestureTemplate(i);
+//        
+//        ofPushMatrix();
+//        gestureTemplate.draw(i * 100.0f, 0, 100.0f, 100.0f);
+//        ofPopMatrix();
+//        
+//    }
+//    
     DrawParticles();
     
     
@@ -585,7 +585,7 @@ void piafInterface::DrawKinectInterface(int x, int y, int _width, int _height) {
 
 void piafInterface::DrawParticles() {
     
-    vector< vector<float> > pp = gvf_handler->getGVF()->getParticlesPositions();
+    vector< vector<float> > pp = gvf_handler->getParticlesPositions();
     
     int ppSize = pp.size();
     float scale = 1;
@@ -593,8 +593,8 @@ void piafInterface::DrawParticles() {
     if(ppSize > 0 && gvf_handler->getCurrentGesture()->getNumberOfTemplates() > 0){
         // as the colors show, the vector returned by getG()
         // does not seem to be in synch with the information returned by particlesPositions
-        vector<int> gestureIndex = gvf_handler->getGVF()->getG();
-        vector<float> weights = gvf_handler->getGVF()->getW();
+        vector<int> gestureIndex = gvf_handler->getG();
+        vector<float> weights = gvf_handler->getW();
         
         ofFill();
         
@@ -677,12 +677,12 @@ void piafInterface::DrawGesture() {
 //--------------------------------------------------------------
 void piafInterface::DrawTemplates() {
     
-    int n_templates = gvf_handler->getGVF()->getNumberOfGestureTemplates();
+    int n_templates = gvf_handler->getNumberOfGestureTemplates();
     
     for (int i = 0; i < n_templates; ++i) {
         
-        vector< vector<float> > template_data = gvf_handler->getGVF()->getGestureTemplate(i).getTemplateRaw();
-        vector<float> initial = gvf_handler->getGVF()->getGestureTemplate(i).getInitialObservationRaw();
+        vector< vector<float> > template_data = gvf_handler->getGestureTemplate(i).getTemplateRaw();
+        vector<float> initial = gvf_handler->getGestureTemplate(i).getInitialObservationRaw();
         
         int length = template_data.size();
         
@@ -690,20 +690,20 @@ void piafInterface::DrawTemplates() {
         
         for (int t = 0; t < length; ++t) {
             
-            int dimension = gvf_handler->getGVF()->getGestureTemplate(i).getNumberDimensions();
+            int dimension = gvf_handler->getGestureTemplate(i).getNumberDimensions();
             assert(dimension == 3);
             
             ofPoint orig_pos = ofPoint(template_data[t][0] + initial[0], template_data[t][1] + initial[1], template_data[t][2] + initial[2]);
             
             ofPoint pos = ScaleToKinect(orig_pos);
             
-            if (gvf_handler->getGVF()->getState() == ofxGVF::STATE_FOLLOWING && gvf_handler->getIsPlaying()) {
+            if (gvf_handler->getState() == ofxGVF::STATE_FOLLOWING && gvf_handler->getIsPlaying()) {
                 
                 // Set Color according to Probability
                 // FIXME: quick fix for getOutcomes crashing
                 float probability;
-                if (gvf_handler->getGVF()->getMostProbableGestureIndex() > -1) {
-                    probability = gvf_handler->getGVF()->getOutcomes().allProbabilities[i];
+                if (gvf_handler->getMostProbableGestureIndex() > -1) {
+                    probability = gvf_handler->getOutcomes().allProbabilities[i];
                 }
                 else {
                     probability = 0;
@@ -717,7 +717,7 @@ void piafInterface::DrawTemplates() {
                 // Set Fill according to Phase
                 float phase = 0;
                 
-                phase = gvf_handler->getGVF()->getOutcomes().allPhases[i];
+                phase = gvf_handler->getOutcomes().allPhases[i];
                 
                 if (phase >= ((float) t / (float) length)) {
                     ofFill();

@@ -16,6 +16,10 @@
 
 #define MAX_USERS 1
 #define MAX_DEPTH 10000
+
+// OTOOL HELP
+// otool -L /Users/avz/Programming/openFrameworks/openFrameworks/apps/eaviPiano/PiaF/bin/piafDebug.app/Contents/MacOS/piafDebug
+
                   
 // ------------------------------------------------------
 // ------------------------------------------------------

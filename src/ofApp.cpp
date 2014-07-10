@@ -13,7 +13,7 @@ void ofApp::setup(){
     
     // SETUP ELEMENTS
     inputs.setup();                         // inputs devices
-    handler.setup(inputs.get_input_size());   // gvf
+    handler.init(inputs.get_input_size());   // gvf
     interface.setup(&handler, &inputs);  // interface
     
     sender.setup();
@@ -23,7 +23,6 @@ void ofApp::setup(){
 	ofSetupScreen();
 	ofBackground(0, 0, 0);
 	ofSetFrameRate(60);
-    
     
 }
 
@@ -43,8 +42,8 @@ void ofApp::update(){
     
     interface.update();
     
-    recognitionInfo mostProb = handler.getRecogInfoOfMostProbable();
-    sender.SendGVFOutcome(handler.getGVF()->getMostProbableGestureIndex(),
+    Estimation mostProb = handler.getRecogInfoOfMostProbable();
+    sender.SendGVFOutcome(handler.getMostProbableGestureIndex(),
                           mostProb.probability, mostProb.phase, mostProb.speed,
                           mostProb.scale, mostProb.rotation);
     
@@ -80,16 +79,16 @@ void ofApp::keyPressed(int key){
     
     // Set GVF to Learning State
 	if (key == 'l' || key == 'L'){
-        handler.setState(ofxGVF::STATE_LEARNING);
+        handler.set_state(ofxGVF::STATE_LEARNING);
 	}
     // Set GVF to Following State 
     else if (key == 'f' || key == 'F') {
-        handler.setState(ofxGVF::STATE_FOLLOWING);
+        handler.set_state(ofxGVF::STATE_FOLLOWING);
     }
     // Clear GVF
     else if(key == 'c' || key == 'C')
     {
-        handler.setState(ofxGVF::STATE_CLEAR);
+        handler.set_state(ofxGVF::STATE_CLEAR);
     }
     // Toggle Is Following
     else if (key == ' ') {
