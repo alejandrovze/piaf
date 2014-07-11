@@ -15,22 +15,21 @@ void KinectDisplay::setup(KinectInput* input, GVFHandler* handler) {
     
     initColors();
     
-    kinect_image = kinect_input->GetImage(); // TODO: Fix path to image.
+    kinect_image = kinect_input->GetImage();
     
 }
-
 
 //--------------------------------------------------------------
 //// Draw kinect templates and skeleton display
 //--------------------------------------------------------------
-void KinectDisplay::draw(int x, int y, int _width, int _height) {
+void KinectDisplay::draw(int x, int y, int w, int h, vector<ofPoint> skeleton) {
     
     ofPushMatrix();
     
     ofTranslate(x, y);
     
-    float width = _width;
-    float height = _height;
+    float width = w;
+    float height = h;
     
     if (kinect_input->get_is_running()) {
         
@@ -40,14 +39,12 @@ void KinectDisplay::draw(int x, int y, int _width, int _height) {
         height /= (float) kinect_image->getHeight();
     }
     
-    //    DrawSkeleton(inputs->GetKinectData());
+    ofTranslate(ofGetScreenWidth() / 4., ofGetScreenHeight() / 4.);
+    DrawSkeleton(skeleton); // TODO: better skeleton drawing. 
     
-    ofScale(width, height);
     ofPopMatrix();
     
     //    if (inputs->get_kinect_input()->get_state() == nite::SKELETON_TRACKED)
-    
-    ofMatrix4x4 matrix = ofGetCurrentMatrix(OF_MATRIX_MODELVIEW);
     
     
     ofPushMatrix();
@@ -59,22 +56,21 @@ void KinectDisplay::draw(int x, int y, int _width, int _height) {
         
         //        DrawGesture();
     }
-    
-    //    for(int i = 0; i < gvf_handler->getNumberOfGestureTemplates(); i++){
-    //
-    //        ofxGVFGesture & gestureTemplate = gvf_handler->getGestureTemplate(i);
-    //
-    //        ofPushMatrix();
-    //        gestureTemplate.draw(i * 100.0f, 0, 100.0f, 100.0f);
-    //        ofPopMatrix();
-    //
-    //    }
-    //
     DrawParticles();
     
-    
-    
     ofPopMatrix();
+    
+    for(int i = 0; i < gvf_handler->getNumberOfGestureTemplates(); i++){
+
+        ofxGVFGesture & gestureTemplate = gvf_handler->getGestureTemplate(i);
+
+        ofPushMatrix();
+        gestureTemplate.draw(i * 100.0f, ofGetHeight() - 100.0f, 100.0f, 100.0f);
+        ofPopMatrix();
+
+    }
+
+    
     
     
     //    DrawTemplates();
@@ -256,19 +252,19 @@ void KinectDisplay::DrawTemplates() {
 //--------------------------------------------------------------
 void KinectDisplay::DrawSkeleton(vector<ofPoint> skeleton) {
     
-    int x_pos;
-    int y_pos;
-    
     ofFill();
     
     ofSetColor(0, 0, 255);
     
-    
     for (int i = 0; i <= NITE_JOINT_TORSO; ++i) {
         
-        ofPoint depth_pt = ScaleToKinect(skeleton[i]);
+//        ofPoint depth_pt = ScaleToKinect(skeleton[i]);
+//         
+        //        ofCircle(depth_pt, 1.01);
+        ofMatrix4x4 matrix = ofGetCurrentMatrix(OF_MATRIX_MODELVIEW);
+    
         
-        ofCircle(depth_pt, 1);
+        ofCircle(ofPoint(skeleton[i].x, skeleton[i].y), 5.01);
         
     }
     

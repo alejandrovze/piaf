@@ -60,7 +60,7 @@ void piafInterface::setup(GVFHandler* _handler, gvfPianoInputs* _inputs) {
 void piafInterface::draw(){
     
     if (kinect_display_on)
-        kinect_display.draw(0, 0, ofGetWindowWidth(), ofGetWindowHeight());
+        kinect_display.draw(0, 0, ofGetWindowWidth(), ofGetWindowHeight(), inputs->GetKinectData());
 
     ofSetRectMode(OF_RECTMODE_CORNER);
     

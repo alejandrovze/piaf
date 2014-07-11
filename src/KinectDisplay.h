@@ -20,23 +20,20 @@ public:
     
     void setup(KinectInput* input, GVFHandler* handler);
     
-    void draw(int x, int y, int _width, int _height);
+    void draw(int x, int y, int width, int height, vector<ofPoint> skeleton);
     
 private:
-    
     
     KinectInput* kinect_input;
     GVFHandler* gvf_handler;
     
     ofImage* kinect_image;
+    ofPoint ScaleToKinect(ofPoint init_point);
     
     void DrawSkeleton(vector<ofPoint> skeleton);
     void DrawTemplates();
     void DrawGesture();
-    ofPoint ScaleToKinect(ofPoint init_point);
     void DrawParticles();
-    
-    
     
     // COLORS
     void initColors();

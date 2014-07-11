@@ -111,45 +111,6 @@
          shouldBeEnabled = "No"
          ignoreCount = "0"
          continueAfterRunningActions = "No"
-         filePath = "src/piafInterface.cpp"
-         timestampString = "426702391.564842"
-         startingColumnNumber = "9223372036854775807"
-         endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "516"
-         endingLineNumber = "516"
-         landmarkName = "piafInterface::DrawTemplates()"
-         landmarkType = "5">
-      </FileBreakpoint>
-      <FileBreakpoint
-         shouldBeEnabled = "No"
-         ignoreCount = "0"
-         continueAfterRunningActions = "No"
-         filePath = "src/piafInterface.cpp"
-         timestampString = "426702391.564842"
-         startingColumnNumber = "9223372036854775807"
-         endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "516"
-         endingLineNumber = "516"
-         landmarkName = "piafInterface::ScaleToKinect(ofPoint init_point)"
-         landmarkType = "5">
-      </FileBreakpoint>
-      <FileBreakpoint
-         shouldBeEnabled = "No"
-         ignoreCount = "0"
-         continueAfterRunningActions = "No"
-         filePath = "src/piafInterface.cpp"
-         timestampString = "426702391.564842"
-         startingColumnNumber = "9223372036854775807"
-         endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "516"
-         endingLineNumber = "516"
-         landmarkName = "piafInterface::DrawTemplates()"
-         landmarkType = "5">
-      </FileBreakpoint>
-      <FileBreakpoint
-         shouldBeEnabled = "No"
-         ignoreCount = "0"
-         continueAfterRunningActions = "No"
          filePath = "src/gvfPianoHandler.cpp"
          timestampString = "426446853.555891"
          startingColumnNumber = "9223372036854775807"
@@ -551,19 +512,6 @@
          shouldBeEnabled = "No"
          ignoreCount = "0"
          continueAfterRunningActions = "No"
-         filePath = "src/piafInterface.cpp"
-         timestampString = "426702391.564842"
-         startingColumnNumber = "9223372036854775807"
-         endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "516"
-         endingLineNumber = "516"
-         landmarkName = "piafInterface::DrawTemplates()"
-         landmarkType = "5">
-      </FileBreakpoint>
-      <FileBreakpoint
-         shouldBeEnabled = "No"
-         ignoreCount = "0"
-         continueAfterRunningActions = "No"
          filePath = "src/KinectInput.cpp"
          timestampString = "426616811.328762"
          startingColumnNumber = "9223372036854775807"
@@ -603,32 +551,6 @@
          shouldBeEnabled = "No"
          ignoreCount = "0"
          continueAfterRunningActions = "No"
-         filePath = "src/piafInterface.cpp"
-         timestampString = "426702391.564842"
-         startingColumnNumber = "9223372036854775807"
-         endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "516"
-         endingLineNumber = "516"
-         landmarkName = "piafInterface::DrawGesture()"
-         landmarkType = "5">
-      </FileBreakpoint>
-      <FileBreakpoint
-         shouldBeEnabled = "No"
-         ignoreCount = "0"
-         continueAfterRunningActions = "No"
-         filePath = "src/piafInterface.cpp"
-         timestampString = "426702391.564842"
-         startingColumnNumber = "9223372036854775807"
-         endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "516"
-         endingLineNumber = "516"
-         landmarkName = "piafInterface::DrawKinectInterface(int x, int y, int _width, int _height)"
-         landmarkType = "5">
-      </FileBreakpoint>
-      <FileBreakpoint
-         shouldBeEnabled = "No"
-         ignoreCount = "0"
-         continueAfterRunningActions = "No"
          filePath = "../../../addons/ofxGVF/src/ofxGVFGesture.h"
          timestampString = "426619900.266855"
          startingColumnNumber = "9223372036854775807"
@@ -655,19 +577,6 @@
          shouldBeEnabled = "No"
          ignoreCount = "0"
          continueAfterRunningActions = "No"
-         filePath = "src/piafInterface.cpp"
-         timestampString = "426702391.564842"
-         startingColumnNumber = "9223372036854775807"
-         endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "516"
-         endingLineNumber = "516"
-         landmarkName = "piafInterface::DrawGesture()"
-         landmarkType = "5">
-      </FileBreakpoint>
-      <FileBreakpoint
-         shouldBeEnabled = "No"
-         ignoreCount = "0"
-         continueAfterRunningActions = "No"
          filePath = "../../../addons/ofxGVF/src/ofxGVFGesture.h"
          timestampString = "426680544.661466"
          startingColumnNumber = "9223372036854775807"
@@ -675,19 +584,6 @@
          startingLineNumber = "479"
          endingLineNumber = "479"
          landmarkName = "draw(float x, float y, float w, float h)"
-         landmarkType = "5">
-      </FileBreakpoint>
-      <FileBreakpoint
-         shouldBeEnabled = "No"
-         ignoreCount = "0"
-         continueAfterRunningActions = "No"
-         filePath = "src/piafInterface.cpp"
-         timestampString = "426702391.564842"
-         startingColumnNumber = "9223372036854775807"
-         endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "516"
-         endingLineNumber = "516"
-         landmarkName = "piafInterface::DrawKinectInterface(int x, int y, int _width, int _height)"
          landmarkType = "5">
       </FileBreakpoint>
       <FileBreakpoint
@@ -740,19 +636,6 @@
          shouldBeEnabled = "No"
          ignoreCount = "0"
          continueAfterRunningActions = "No"
-         filePath = "src/piafInterface.cpp"
-         timestampString = "426702391.564842"
-         startingColumnNumber = "9223372036854775807"
-         endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "516"
-         endingLineNumber = "516"
-         landmarkName = "piafInterface::DrawKinectInterface(int x, int y, int _width, int _height)"
-         landmarkType = "5">
-      </FileBreakpoint>
-      <FileBreakpoint
-         shouldBeEnabled = "No"
-         ignoreCount = "0"
-         continueAfterRunningActions = "No"
          filePath = "src/ofApp.cpp"
          timestampString = "426700819.622306"
          startingColumnNumber = "9223372036854775807"
@@ -799,6 +682,82 @@
          startingLineNumber = "501"
          endingLineNumber = "501"
          landmarkName = "draw(float x, float y, float w, float h)"
+         landmarkType = "5">
+      </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "No"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "src/KinectDisplay.cpp"
+         timestampString = "426705723.841413"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "172"
+         endingLineNumber = "172">
+      </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "No"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "src/KinectDisplay.cpp"
+         timestampString = "426705723.841413"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "43"
+         endingLineNumber = "43"
+         landmarkName = "KinectDisplay::draw(int x, int y, int w, int h, vector&lt;ofPoint&gt; skeleton)"
+         landmarkType = "5">
+      </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "No"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "src/KinectDisplay.cpp"
+         timestampString = "426705723.841413"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "50"
+         endingLineNumber = "50"
+         landmarkName = "KinectDisplay::draw(int x, int y, int w, int h, vector&lt;ofPoint&gt; skeleton)"
+         landmarkType = "5">
+      </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "No"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "src/KinectDisplay.cpp"
+         timestampString = "426704838.058615"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "28"
+         endingLineNumber = "28"
+         landmarkName = "KinectDisplay::draw(int x, int y, int w, int h, vector&lt;ofPoint&gt; skeleton)"
+         landmarkType = "5">
+      </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "No"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "src/KinectDisplay.cpp"
+         timestampString = "426705723.841413"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "44"
+         endingLineNumber = "44"
+         landmarkName = "KinectDisplay::draw(int x, int y, int w, int h, vector&lt;ofPoint&gt; skeleton)"
+         landmarkType = "5">
+      </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "No"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "src/KinectDisplay.cpp"
+         timestampString = "426705723.841413"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "266"
+         endingLineNumber = "266"
+         landmarkName = "KinectDisplay::DrawSkeleton(vector&lt;ofPoint&gt; skeleton)"
          landmarkType = "5">
       </FileBreakpoint>
    </FileBreakpoints>
