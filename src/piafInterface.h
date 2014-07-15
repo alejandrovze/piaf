@@ -12,6 +12,7 @@
 #include <iostream>
 
 #include "ofxUI.h"
+#include "ofxUIMultiMovingGraph.h"
 
 #include "gvfPianoInputs.h"
 #include "GVFHandler.h"

@@ -11,47 +11,35 @@
 //--------------------------------------------------------------
 void PianoInput::setup() {
     
+    // Midi Setup
+    keys_listener.setup(1);
+    control_listener.setup(2);
+
+}
+
+
+ofEvent<ofxMidiMessage>& PianoInput::GetPianoEvent() {
+    return keys_listener.midi_event;
+}
+
+ofEvent<ofxMidiMessage>& PianoInput::GetControlEvent() {
+    return control_listener.midi_event;
     
-    // MARK: Midi Input
-    // ================
-    midiIn.openPort(1);
+}
+
+void PianoInput::MidiChannelListener::setup(int port) {
+    
+    midiIn.openPort(port);
     midiIn.ignoreTypes(false, false, false);
     midiIn.addListener(this);
     midiIn.setVerbose(true);
-    cout << midiIn.getName(); // Check port
-    
-    // MARK: AUDIO SETUP
-    // =================
-    // 2 output channels,
-    // 1 input channels
-    // 44100 samples per second
-    // 4 num buffers (latency)
-    
-    //	sampleRate 			= 44100; /* Sampling Rate */
-    //	initialBufferSize	= 512;	/* Buffer Size. you have to fill this buffer with sound*/
-    //  nOutputChannels = 2;
-    //  nInputChannels = 1;
-    //  nBuffers = 4;
-    //
-    //
-    //	ofSoundStreamSetup(nOutputChannels, nInputChannels, this, sampleRate, initialBufferSize, nBuffers);
+    cout << midiIn.getName() << endl; // Check port
 }
 
-
-
-
-//--------------------------------------------------------------
-void PianoInput::newMidiMessage(ofxMidiMessage& msg) {
+void PianoInput::MidiChannelListener::newMidiMessage(ofxMidiMessage& msg) {
     
-	// make a copy of the latest message
-	midiMessage = msg;
-    
-    // Press is start, release is stop when learning
-    // Release (or press) triggers for following
-    
-    // Pedal Input Control Number: 64
-    if (midiMessage.control == 64) {
-        // Toggle Playing
-    }
+    ofNotifyEvent(midi_event, msg, this);
     
 }
+
+                          

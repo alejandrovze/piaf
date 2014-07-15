@@ -83,6 +83,7 @@
 		C661AF15196EF1F4001C7107 /* KinectDisplay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C661AF13196EF1F2001C7107 /* KinectDisplay.cpp */; };
 		C6771133196D5CF7003F7404 /* WaxAccInput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6771131196D5CF7003F7404 /* WaxAccInput.cpp */; };
 		C6771138196D9BB0003F7404 /* PianoInput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6771136196D9BB0003F7404 /* PianoInput.cpp */; };
+		C69847A319753A2700FEF9FB /* ofxUIMultiMovingGraph.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C69847A119753A2700FEF9FB /* ofxUIMultiMovingGraph.cpp */; };
 		C6A290DD1959CBAB006B3770 /* piafOSCSender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6A290DB1959CBAB006B3770 /* piafOSCSender.cpp */; };
 		C6B015D1190C7B5800A5BF82 /* ofxCsv.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6B015CD190C7B5800A5BF82 /* ofxCsv.cpp */; };
 		C6B813F119583B58005B8935 /* ofxGVF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6B813E819583B58005B8935 /* ofxGVF.cpp */; };
@@ -388,6 +389,8 @@
 		C6771136196D9BB0003F7404 /* PianoInput.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PianoInput.cpp; sourceTree = "<group>"; };
 		C6771137196D9BB0003F7404 /* PianoInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PianoInput.h; sourceTree = "<group>"; };
 		C6937888E126BADC8777423B /* OscTypes.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = OscTypes.h; path = ../../../addons/ofxOsc/libs/oscpack/src/osc/OscTypes.h; sourceTree = SOURCE_ROOT; };
+		C69847A119753A2700FEF9FB /* ofxUIMultiMovingGraph.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxUIMultiMovingGraph.cpp; path = "ofxUI-extension/ofxUIMultiMovingGraph.cpp"; sourceTree = "<group>"; };
+		C69847A219753A2700FEF9FB /* ofxUIMultiMovingGraph.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxUIMultiMovingGraph.h; path = "ofxUI-extension/ofxUIMultiMovingGraph.h"; sourceTree = "<group>"; };
 		C6A290DB1959CBAB006B3770 /* piafOSCSender.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = piafOSCSender.cpp; sourceTree = "<group>"; };
 		C6A290DC1959CBAB006B3770 /* piafOSCSender.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = piafOSCSender.h; sourceTree = "<group>"; };
 		C6B015CD190C7B5800A5BF82 /* ofxCsv.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxCsv.cpp; sourceTree = "<group>"; };
@@ -813,6 +816,15 @@
 			path = src;
 			sourceTree = "<group>";
 		};
+		C69847A419753A2B00FEF9FB /* ofxUI-Extension */ = {
+			isa = PBXGroup;
+			children = (
+				C69847A119753A2700FEF9FB /* ofxUIMultiMovingGraph.cpp */,
+				C69847A219753A2700FEF9FB /* ofxUIMultiMovingGraph.h */,
+			);
+			name = "ofxUI-Extension";
+			sourceTree = "<group>";
+		};
 		C6A49F4E18E31BD600C28D49 /* inputs */ = {
 			isa = PBXGroup;
 			children = (
@@ -1131,6 +1143,7 @@
 				C661AF11196EEA2F001C7107 /* GVFHandler.h */,
 				C6A49F4E18E31BD600C28D49 /* inputs */,
 				C6D394C718F7AAC70043DD1C /* OSC */,
+				C69847A419753A2B00FEF9FB /* ofxUI-Extension */,
 			);
 			path = src;
 			sourceTree = SOURCE_ROOT;
@@ -1349,6 +1362,7 @@
 				C6771138196D9BB0003F7404 /* PianoInput.cpp in Sources */,
 				C661AF12196EEA30001C7107 /* GVFHandler.cpp in Sources */,
 				C661AF15196EF1F4001C7107 /* KinectDisplay.cpp in Sources */,
+				C69847A319753A2700FEF9FB /* ofxUIMultiMovingGraph.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

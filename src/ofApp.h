@@ -22,7 +22,10 @@ public:
     
     void exit();
     
+    // Event Listeners
     void keyPressed(int key);
+    void midiNotes(ofxMidiMessage& msg);
+    void midiControl(ofxMidiMessage& msg);
     
 private:
     

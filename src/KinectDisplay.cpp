@@ -13,6 +13,8 @@ void KinectDisplay::setup(KinectInput* input, GVFHandler* handler) {
     kinect_input = input;
     gvf_handler = handler;
     
+    SetupSkeleton();
+    
     initColors();
     
     kinect_image = kinect_input->GetImage();
@@ -22,62 +24,121 @@ void KinectDisplay::setup(KinectInput* input, GVFHandler* handler) {
 //--------------------------------------------------------------
 //// Draw kinect templates and skeleton display
 //--------------------------------------------------------------
-void KinectDisplay::draw(int x, int y, int w, int h, vector<ofPoint> skeleton) {
+void KinectDisplay::draw(int x, int y, int w, int h) {
+    
+    // DRAW KINECT SKELETON
     
     ofPushMatrix();
     
     ofTranslate(x, y);
+    ofScale(w, h);
     
-    float width = w;
-    float height = h;
-    
-    if (kinect_input->get_is_running()) {
-        
-        kinect_image->draw(x, y, width, height);
-        
-        width /= (float) kinect_image->getWidth();
-        height /= (float) kinect_image->getHeight();
-    }
-    
-    ofTranslate(ofGetScreenWidth() / 4., ofGetScreenHeight() / 4.);
-    DrawSkeleton(skeleton); // TODO: better skeleton drawing. 
+    if (kinect_input->get_is_running())
+        DrawKinect();
     
     ofPopMatrix();
     
-    //    if (inputs->get_kinect_input()->get_state() == nite::SKELETON_TRACKED)
     
-    
+    // DRAW CURRENT GESTURE
     ofPushMatrix();
-    ofTranslate(600, 500);
+    
+    ofTranslate(600, 500); // FIXME
+    
     
     if (gvf_handler->getCurrentGesture()->getNumberOfTemplates() > 0) {
         
+        if (gvf_handler->getIsPlaying())
+            ofSetColor(255, 255, 255);
+        else
+            ofSetColor(100, 100, 100);
+        
         gvf_handler->getCurrentGesture()->draw();
         
-        //        DrawGesture();
+        DrawParticles();
+        
     }
-    DrawParticles();
     
     ofPopMatrix();
+    
+    
+    // DRAW TEMPLATES
     
     for(int i = 0; i < gvf_handler->getNumberOfGestureTemplates(); i++){
 
         ofxGVFGesture & gestureTemplate = gvf_handler->getGestureTemplate(i);
-
+        
+        ofSetColor(colors[i]);
         ofPushMatrix();
-        gestureTemplate.draw(i * 100.0f, ofGetHeight() - 100.0f, 100.0f, 100.0f);
+        
+        if (gvf_handler->getState() == ofxGVF::STATE_FOLLOWING && gvf_handler->getIsPlaying()) {
+            
+            float phase = gvf_handler->getOutcomes(i).estimatedPhase;
+            float probability = gvf_handler->getOutcomes(i).allProbabilities[i];
+            
+            gestureTemplate.draw_following(phase, probability, i * 100.0f, ofGetHeight() - 100.0f, 100.0f, 100.0f);
+        }
+        else {
+            gestureTemplate.draw(i * 100.0f, ofGetHeight() - 100.0f, 100.0f, 100.0f);
+        }
         ofPopMatrix();
+        ofSetColor(255, 255, 255);
+        
+//         ofColor template_color = ofColor(255, 0, 0) * probability + colors[i] * (1 - probability);
 
     }
-
     
-    
-    
-    //    DrawTemplates();
-    
+    //if (gvf_handler->getState() == ofxGVF::STATE_FOLLOWING && gvf_handler->getIsPlaying()) {
     
 }
 
+//void KinectDisplay::DrawTemplate(ofxGVFGesture& gesture_template, float phase, float probability) {
+//    
+//    // Probability: color (interpolate between original color) + thickness
+//    // Phase: how much is uncolored
+//    
+//    ofPushMatrix();
+//    
+//    if (gvf_handler->getState() == ofxGVF::STATE_FOLLOWING && gvf_handler->getIsPlaying()) {
+//        
+//        gestureTemplate.draw_following(phase, probability, i * 100.0f, ofGetHeight() - 100.0f, 100.0f, 100.0f);
+//    }
+//    else {
+//        gestureTemplate.draw(i * 100.0f, ofGetHeight() - 100.0f, 100.0f, 100.0f);
+//    }
+//    ofPopMatrix();
+//    
+//}
+
+
+void KinectDisplay::DrawKinect() {
+    
+    SkeletonDataPoint skeleton = kinect_input->get_data();
+    
+    ofScale(1. / (float)kinect_image->getWidth(), 1. / (float) kinect_image->getHeight());
+    
+    // If tracked, sim the image.
+    if (skeleton.state == nite::SKELETON_TRACKED)
+        ofSetColor(50, 50, 60);
+    else
+        ofSetColor(150, 150, 180);
+    
+    kinect_image->draw(0, 0);
+    
+    for (int i = 0; i < NITE_JOINT_COUNT; ++i) {
+        
+        ofPoint depth_pt = ScaleToKinect(skeleton.positions[i]);
+        
+        skeleton_mesh.setVertex(i, depth_pt);
+        
+    }
+    
+    ofSetLineWidth(5);
+    
+    skeleton_mesh.draw();
+
+}
+
+// FIXME: Fix drawing of particles. 
 void KinectDisplay::DrawParticles() {
     
     vector< vector<float> > pp = gvf_handler->getParticlesPositions();
@@ -109,7 +170,7 @@ void KinectDisplay::DrawParticles() {
             
             // the weight of the particle is normalised
             // and then used as the radius of the circle representing the particle
-            float radius = weights[i]/weightAverage;
+            float radius = weights[i] / weightAverage;
             ofColor c = ofColor(127, 0, 0);
             
             c.setBrightness(198);
@@ -125,9 +186,85 @@ void KinectDisplay::DrawParticles() {
     
 }
 
-// FIXME: Gestures of more than one dimension.
-void KinectDisplay::DrawGesture() {
+
+
+void KinectDisplay::SetupSkeleton() {
     
+    skeleton_mesh.setMode(OF_PRIMITIVE_LINES);
+    skeleton_mesh.enableColors();
+    skeleton_mesh.enableIndices();
+    
+    for (int i = 0; i < NITE_JOINT_COUNT; ++i) {
+        
+        skeleton_mesh.addVertex(ofPoint(0, 0, 0));
+        
+        if (i <= NITE_JOINT_TORSO)
+            skeleton_mesh.addColor(ofColor(255, 0, 255));
+        else
+            skeleton_mesh.addColor(ofColor(30, 0, 30));
+        
+    }
+    
+    for (int i = 0; i < NITE_JOINT_CONNECTIONS_COUNT; ++i) {
+        skeleton_mesh.addIndex(NiteJointConnections[i][0]);
+        skeleton_mesh.addIndex(NiteJointConnections[i][1]);
+    }
+}
+
+
+ofPoint KinectDisplay::ScaleToKinect(ofPoint init_point) {
+    
+    ofPoint point;
+    
+    if (kinect_input->get_is_running()) {
+        
+        // FIXME: Convert World to Depth without Kinect plugged in?
+        point = kinect_input->WorldToDepth(init_point);
+        
+        return point;
+    }
+    
+    else {
+        // TODO: how to deal with this?
+        return init_point;
+    }
+    
+}
+
+// COLORS
+//--------------------------------------------------------------
+void KinectDisplay::initColors()
+{
+    colors.clear();
+    colors.push_back(ofColor::blue);
+    colors.push_back(ofColor::cyan);
+    colors.push_back(ofColor::aqua);
+    colors.push_back(ofColor::violet);
+    colors.push_back(ofColor::aliceBlue);
+    colors.push_back(ofColor::aquamarine);
+    colors.push_back(ofColor::azure);
+}
+
+//--------------------------------------------------------------
+ofColor KinectDisplay::generateRandomColor()
+{
+    ofColor c;
+    
+    if(colors.size() == 0)
+        initColors();
+    
+    int colorsRemaining = colors.size();
+    
+    int index = ofRandom(0, colorsRemaining - 1);
+    
+    c = colors[index];
+    colors.erase(colors.begin() + index);
+    return c;
+}
+
+
+
+void KinectDisplay::DrawGesture() {
     
     //    ofPushMatrix();
     //    ofPopMatrix();
@@ -160,10 +297,8 @@ void KinectDisplay::DrawGesture() {
     
     line.draw();
     
-    
     ofSetColor(255, 255, 255);
     ofNoFill();
-    
     
 }
 
@@ -246,81 +381,3 @@ void KinectDisplay::DrawTemplates() {
     
     
 }
-
-//--------------------------------------------------------------
-//// Live skeleton display
-//--------------------------------------------------------------
-void KinectDisplay::DrawSkeleton(vector<ofPoint> skeleton) {
-    
-    ofFill();
-    
-    ofSetColor(0, 0, 255);
-    
-    for (int i = 0; i <= NITE_JOINT_TORSO; ++i) {
-        
-//        ofPoint depth_pt = ScaleToKinect(skeleton[i]);
-//         
-        //        ofCircle(depth_pt, 1.01);
-        ofMatrix4x4 matrix = ofGetCurrentMatrix(OF_MATRIX_MODELVIEW);
-    
-        
-        ofCircle(ofPoint(skeleton[i].x, skeleton[i].y), 5.01);
-        
-    }
-    
-    ofSetColor(255, 255, 255);
-    
-    ofNoFill();
-    
-}
-
-ofPoint KinectDisplay::ScaleToKinect(ofPoint init_point) {
-    
-    ofPoint point;
-    
-    if (kinect_input->get_is_running()) {
-        
-        // FIXME: Convert World to Depth without Kinect plugged in?
-        point = kinect_input->WorldToDepth(init_point);
-        
-        return point;
-    }
-    
-    else {
-        // TODO: how to deal with this?
-        return init_point;
-    }
-    
-}
-
-// COLORS
-//--------------------------------------------------------------
-void KinectDisplay::initColors()
-{
-    colors.clear();
-    colors.push_back(ofColor::blue);
-    colors.push_back(ofColor::cyan);
-    colors.push_back(ofColor::aqua);
-    colors.push_back(ofColor::violet);
-    colors.push_back(ofColor::aliceBlue);
-    colors.push_back(ofColor::aquamarine);
-    colors.push_back(ofColor::azure);
-}
-
-//--------------------------------------------------------------
-ofColor KinectDisplay::generateRandomColor()
-{
-    ofColor c;
-    
-    if(colors.size() == 0)
-        initColors();
-    
-    int colorsRemaining = colors.size();
-    
-    int index = ofRandom(0, colorsRemaining - 1);
-    
-    c = colors[index];
-    colors.erase(colors.begin() + index);
-    return c;
-}
-

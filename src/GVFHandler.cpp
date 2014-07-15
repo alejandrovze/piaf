@@ -103,7 +103,7 @@ void GVFHandler::gvf_data(int argc, float *argv)
 void GVFHandler::UpdateRecogInfo() {
     
     // Only if a gesture has been recognized.
-    ofxGVFOutcomes gO = getOutcomes();
+    ofxGVFOutcomes outcomes = getOutcomes();
     
     // Update Recognition Info for all Templates
     char temp[100];
@@ -115,20 +115,20 @@ void GVFHandler::UpdateRecogInfo() {
     {
         Estimation info;
         
-        info.probability = gO.allProbabilities[i];
-        info.phase = gO.allPhases[i];
-        info.speed = gO.allSpeeds[i];
+        info.probability = outcomes.allProbabilities[i];
+        info.phase = outcomes.allPhases[i];
+        info.speed = outcomes.allSpeeds[i];
         
-        int numberOfScaleCoef = gO.allScales.size() / templates_count;
+        int numberOfScaleCoef = outcomes.allScales.size() / templates_count;
         info.scale = vector<float>(numberOfScaleCoef);
         for (int j= 0; j < numberOfScaleCoef; ++j) {
-            info.scale[j] = gO.allScales[i * numberOfScaleCoef + j];
+            info.scale[j] = outcomes.allScales[i * numberOfScaleCoef + j];
         }
         
-        int numberOfRotationCoef = gO.allRotations.size() / templates_count;
+        int numberOfRotationCoef = outcomes.allRotations.size() / templates_count;
         info.rotation = vector<float>(numberOfRotationCoef);
         for (int j = 0; j < numberOfRotationCoef; ++j) {
-            info.rotation[j] = gO.allRotations[i * numberOfRotationCoef + j];
+            info.rotation[j] = outcomes.allRotations[i * numberOfRotationCoef + j];
         }
         
         recogInfo.push_back(info);

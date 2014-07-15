@@ -12,27 +12,6 @@
 
 #include "piafInterface.h"
 
-static const char * NiteJointStrings[] = {
-	"NITE_JOINT_HEAD",
-	"NITE_JOINT_NECK",
-    
-	"NITE_JOINT_LEFT_SHOULDER",
-	"NITE_JOINT_RIGHT_SHOULDER",
-	"NITE_JOINT_LEFT_ELBOW",
-	"NITE_JOINT_RIGHT_ELBOW",
-	"NITE_JOINT_LEFT_HAND",
-	"NITE_JOINT_RIGHT_HAND",
-    
-	"NITE_JOINT_TORSO",
-    
-	"NITE_JOINT_LEFT_HIP",
-	"NITE_JOINT_RIGHT_HIP",
-	"NITE_JOINT_LEFT_KNEE",
-	"NITE_JOINT_RIGHT_KNEE",
-	"NITE_JOINT_LEFT_FOOT",
-	"NITE_JOINT_RIGHT_FOOT"
-};
-
 //--------------------------------------------------------------
 void piafInterface::setup(GVFHandler* _handler, gvfPianoInputs* _inputs) {
 
@@ -41,7 +20,7 @@ void piafInterface::setup(GVFHandler* _handler, gvfPianoInputs* _inputs) {
     
     kinect_display.setup(inputs->get_kinect_input(), gvf_handler);
     
-    kinect_display_on = false;
+    kinect_display_on = true;
     
     input_gesture = vector<ofxUIMovingGraph*>(inputs->get_input_size());
     buffers = vector<vector<float> >(inputs->get_input_size(), vector<float>(256, 0));
@@ -60,7 +39,7 @@ void piafInterface::setup(GVFHandler* _handler, gvfPianoInputs* _inputs) {
 void piafInterface::draw(){
     
     if (kinect_display_on)
-        kinect_display.draw(0, 0, ofGetWindowWidth(), ofGetWindowHeight(), inputs->GetKinectData());
+        kinect_display.draw(0, 0, ofGetWindowWidth(), ofGetWindowHeight());
 
     ofSetRectMode(OF_RECTMODE_CORNER);
     
@@ -90,7 +69,7 @@ void piafInterface::SetInputsGUI() {
     inputs_gui->addSpacer();
     inputs_gui->addLabel("KINECT");
     kinect_status = inputs_gui->addTextArea("textarea", "NULL KINECT", OFX_UI_FONT_SMALL);
-    inputs_gui->addLabelToggle("KINECT_DISPLAY", false);
+    inputs_gui->addLabelToggle("KINECT_DISPLAY", kinect_display_on);
     
     
     // Potentially display Kinect image in menu. 

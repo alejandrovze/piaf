@@ -16,6 +16,9 @@ void ofApp::setup(){
     handler.init(inputs.get_input_size());   // gvf
     interface.setup(&handler, &inputs);  // interface
     
+    ofAddListener(inputs.GetPianoEvent(), this, &ofApp::midiNotes);
+    ofAddListener(inputs.GetControlEvent(), this, &ofApp::midiControl);
+    
     sender.setup();
     
     // some standard setup stuff
@@ -109,6 +112,38 @@ void ofApp::keyPressed(int key){
     }
 }
 
+//--------------------------------------------------------------
+void ofApp::midiNotes(ofxMidiMessage& msg){
+    
+    if (msg.control == 64) {
+        if(msg.value == 0) {
+            handler.toggleIsPlaying();
+        }
+    }
+    
+}
+
+//--------------------------------------------------------------
+void ofApp::midiControl(ofxMidiMessage& msg) {
+    // Change States
+    if (msg.control == 82) {
+        if (msg.value == 0) {
+            switch (msg.channel) {
+                case 1:
+                    handler.set_state(ofxGVF::STATE_LEARNING);
+                    break;
+                case 2:
+                    handler.set_state(ofxGVF::STATE_FOLLOWING);
+                    break;
+                case 3:
+                    handler.set_state(ofxGVF::STATE_CLEAR);
+                    break;
+            }
+        }
+    }
+}
+
+//--------------------------------------------------------------
 void ofApp::LoadInputFile() {
 
     string filename;
@@ -126,4 +161,6 @@ void ofApp::LoadInputFile() {
     cout << "Playback gesture loaded.\n";
 
 }
+
+
 

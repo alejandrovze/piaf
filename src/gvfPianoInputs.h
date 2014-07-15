@@ -30,15 +30,18 @@ public:
     vector<float> ConcatenateInput();
     int get_input_size();
     
-    vector<ofPoint> GetKinectData();
     KinectInput* get_kinect_input();
     vector<WaxAccInput>* GetAccInputs();
-    
+    vector<ofPoint> GetKinectData();
+    vector<ofVec3f> get_acc_data;
     
     vector<int> get_joints_on();
     void set_joints_on(vector<int> _joints_on);
     vector<int> get_acc_on();
     void set_acc_on(vector<int> _acc_on);
+    
+    ofEvent<ofxMidiMessage>& GetPianoEvent();
+    ofEvent<ofxMidiMessage>& GetControlEvent();
     
     void StartFile();
     void EndFile();
@@ -54,9 +57,13 @@ private:
     vector<ofPoint> kinect_joints;
     vector<int> joints_on;
     
+    // Accelerometers
     vector<WaxAccInput> accelerometers;
     vector<ofVec3f> acc_data;
     vector<int> acc_on;
+    
+    // Piano Input
+    PianoInput piano;
     
     // CSV Recorder
     bool is_writing;

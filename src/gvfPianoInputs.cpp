@@ -20,6 +20,9 @@ void gvfPianoInputs::setup(){
     accelerometers.push_back(WaxAccInput(8200, 14));
     acc_data = vector<ofVec3f>(accelerometers.size());
     
+    
+    piano.setup();
+    
     // CSV File business
     is_writing = false;
     is_reading = false;
@@ -127,6 +130,14 @@ std::vector<ofPoint> gvfPianoInputs::GetKinectData() {
 //--------------------------------------------------------------
 vector<WaxAccInput>* gvfPianoInputs::GetAccInputs() {
     return &accelerometers;
+}
+
+//--------------------------------------------------------------
+ofEvent<ofxMidiMessage>& gvfPianoInputs::GetPianoEvent() {
+    return piano.GetPianoEvent();
+}
+ofEvent<ofxMidiMessage>& gvfPianoInputs::GetControlEvent() {
+    return piano.GetControlEvent();
 }
 
 //--------------------------------------------------------------
