@@ -72,14 +72,14 @@ public:
     
     void setup(KinectInput* input, GVFHandler* handler);
     
-    void draw(int x, int y, int width, int height);
+    void draw();
+    
+    void DrawKinect(SkeletonDataPoint skeleton, vector<int> joints_on = vector<int>(0));
     
 private:
     
     KinectInput* kinect_input;
     GVFHandler* gvf_handler;
-    
-    void DrawKinect();
     ofImage* kinect_image;
     ofPoint ScaleToKinect(ofPoint init_point);
     ofMesh skeleton_mesh;
@@ -95,6 +95,9 @@ private:
     void initColors();
     ofColor generateRandomColor();
     std::vector<ofColor> colors;
+    
+    void drawInteractionArea();
+    ofEasyCam cam; // add mouse controls for camera movement
     
 };
 

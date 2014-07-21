@@ -47,11 +47,11 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "../../../addons/ofxGVF/src/ofxGVF.cpp"
-         timestampString = "426786788.409238"
+         timestampString = "427639499.660653"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "1271"
-         endingLineNumber = "1271"
+         startingLineNumber = "1194"
+         endingLineNumber = "1194"
          landmarkName = "ofxGVF::setTolerance(float _tolerance)"
          landmarkType = "5">
       </FileBreakpoint>
@@ -151,37 +151,11 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "../../../addons/ofxGVF/src/ofxGVF.cpp"
-         timestampString = "426435482.079145"
+         timestampString = "427639499.660653"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "985"
-         endingLineNumber = "985"
-         landmarkName = "ofxGVF::updateEstimatedStatus()"
-         landmarkType = "5">
-      </FileBreakpoint>
-      <FileBreakpoint
-         shouldBeEnabled = "No"
-         ignoreCount = "0"
-         continueAfterRunningActions = "No"
-         filePath = "../../../addons/ofxGVF/src/ofxGVF.cpp"
-         timestampString = "426435482.079145"
-         startingColumnNumber = "9223372036854775807"
-         endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "998"
-         endingLineNumber = "998"
-         landmarkName = "ofxGVF::updateEstimatedStatus()"
-         landmarkType = "5">
-      </FileBreakpoint>
-      <FileBreakpoint
-         shouldBeEnabled = "No"
-         ignoreCount = "0"
-         continueAfterRunningActions = "No"
-         filePath = "../../../addons/ofxGVF/src/ofxGVF.cpp"
-         timestampString = "426435482.079145"
-         startingColumnNumber = "9223372036854775807"
-         endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "981"
-         endingLineNumber = "981"
+         startingLineNumber = "999"
+         endingLineNumber = "999"
          landmarkName = "ofxGVF::updateEstimatedStatus()"
          landmarkType = "5">
       </FileBreakpoint>
@@ -398,11 +372,11 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "src/gvfPianoInputs.cpp"
-         timestampString = "427041668.727152"
+         timestampString = "427628481.874406"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "223"
-         endingLineNumber = "223"
+         startingLineNumber = "276"
+         endingLineNumber = "276"
          landmarkName = "gvfPianoInputs::ReadCsvData()"
          landmarkType = "5">
       </FileBreakpoint>
@@ -411,35 +385,22 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "src/gvfPianoInputs.cpp"
-         timestampString = "427041668.727152"
+         timestampString = "427628481.874406"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "248"
-         endingLineNumber = "248">
+         startingLineNumber = "304"
+         endingLineNumber = "304">
       </FileBreakpoint>
       <FileBreakpoint
          shouldBeEnabled = "No"
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "src/gvfPianoInputs.cpp"
-         timestampString = "427041668.727152"
+         timestampString = "427628481.874406"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "172"
-         endingLineNumber = "172"
-         landmarkName = "gvfPianoInputs::WriteCsvData(wng::ofxCsv* _csv_recorder)"
-         landmarkType = "5">
-      </FileBreakpoint>
-      <FileBreakpoint
-         shouldBeEnabled = "No"
-         ignoreCount = "0"
-         continueAfterRunningActions = "No"
-         filePath = "src/gvfPianoInputs.cpp"
-         timestampString = "427041668.727152"
-         startingColumnNumber = "9223372036854775807"
-         endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "216"
-         endingLineNumber = "216"
+         startingLineNumber = "269"
+         endingLineNumber = "269"
          landmarkName = "gvfPianoInputs::ReadCsvData()"
          landmarkType = "5">
       </FileBreakpoint>
@@ -448,11 +409,11 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "src/gvfPianoInputs.cpp"
-         timestampString = "427041668.727152"
+         timestampString = "427628481.874406"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "197"
-         endingLineNumber = "197"
+         startingLineNumber = "250"
+         endingLineNumber = "250"
          landmarkName = "gvfPianoInputs::WriteCsvData(wng::ofxCsv* _csv_recorder)"
          landmarkType = "5">
       </FileBreakpoint>
@@ -467,19 +428,6 @@
          startingLineNumber = "101"
          endingLineNumber = "101"
          landmarkName = "ofxGVF::setup(ofxGVFConfig _config)"
-         landmarkType = "5">
-      </FileBreakpoint>
-      <FileBreakpoint
-         shouldBeEnabled = "No"
-         ignoreCount = "0"
-         continueAfterRunningActions = "No"
-         filePath = "src/gvfPianoInputs.cpp"
-         timestampString = "427026967.101977"
-         startingColumnNumber = "9223372036854775807"
-         endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "69"
-         endingLineNumber = "69"
-         landmarkName = "gvfPianoInputs::ConcatenateInput()"
          landmarkType = "5">
       </FileBreakpoint>
       <FileBreakpoint
@@ -532,19 +480,6 @@
          startingLineNumber = "290"
          endingLineNumber = "290"
          landmarkName = "KinectInput::CalculateHistogram(int histogramSize, const openni::VideoFrameRef&amp; depthFrame)"
-         landmarkType = "5">
-      </FileBreakpoint>
-      <FileBreakpoint
-         shouldBeEnabled = "No"
-         ignoreCount = "0"
-         continueAfterRunningActions = "No"
-         filePath = "src/gvfPianoInputs.cpp"
-         timestampString = "427026967.101977"
-         startingColumnNumber = "9223372036854775807"
-         endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "126"
-         endingLineNumber = "126"
-         landmarkName = "gvfPianoInputs::GetKinectData()"
          landmarkType = "5">
       </FileBreakpoint>
       <FileBreakpoint
@@ -636,19 +571,6 @@
          shouldBeEnabled = "No"
          ignoreCount = "0"
          continueAfterRunningActions = "No"
-         filePath = "src/ofApp.cpp"
-         timestampString = "427041668.727152"
-         startingColumnNumber = "9223372036854775807"
-         endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "62"
-         endingLineNumber = "62"
-         landmarkName = "ofApp::draw()"
-         landmarkType = "5">
-      </FileBreakpoint>
-      <FileBreakpoint
-         shouldBeEnabled = "No"
-         ignoreCount = "0"
-         continueAfterRunningActions = "No"
          filePath = "../../../addons/ofxGVF/src/ofxGVFGesture.h"
          timestampString = "426790263.603959"
          startingColumnNumber = "9223372036854775807"
@@ -689,12 +611,12 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "src/KinectDisplay.cpp"
-         timestampString = "427111708.698401"
+         timestampString = "427630575.099338"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "45"
-         endingLineNumber = "45"
-         landmarkName = "KinectDisplay::draw(int x, int y, int w, int h)"
+         startingLineNumber = "36"
+         endingLineNumber = "36"
+         landmarkName = "KinectDisplay::draw()"
          landmarkType = "5">
       </FileBreakpoint>
       <FileBreakpoint
@@ -788,19 +710,6 @@
          shouldBeEnabled = "No"
          ignoreCount = "0"
          continueAfterRunningActions = "No"
-         filePath = "src/ofApp.cpp"
-         timestampString = "427043086.672509"
-         startingColumnNumber = "9223372036854775807"
-         endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "12"
-         endingLineNumber = "12"
-         landmarkName = "ofApp::setup()"
-         landmarkType = "5">
-      </FileBreakpoint>
-      <FileBreakpoint
-         shouldBeEnabled = "No"
-         ignoreCount = "0"
-         continueAfterRunningActions = "No"
          filePath = "src/PianoInput.cpp"
          timestampString = "427050976.999296"
          startingColumnNumber = "9223372036854775807"
@@ -826,23 +735,216 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "src/KinectDisplay.cpp"
-         timestampString = "427111708.698401"
+         timestampString = "427630575.099338"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "113"
-         endingLineNumber = "113">
+         startingLineNumber = "294"
+         endingLineNumber = "294"
+         landmarkName = "KinectDisplay::DrawTemplates()"
+         landmarkType = "5">
+      </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "No"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "src/ofxUI-extension/ofxUIMultiMovingGraph.cpp"
+         timestampString = "427122179.106587"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "46"
+         endingLineNumber = "46"
+         landmarkName = "ofxUIMultiMovingGraph::drawFill()"
+         landmarkType = "5">
+      </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "No"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "src/ofxUI-extension/ofxUIMultiMovingGraph.cpp"
+         timestampString = "427122976.018852"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "57"
+         endingLineNumber = "57"
+         landmarkName = "ofxUIMultiMovingGraph::drawFill()"
+         landmarkType = "5">
+      </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "No"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "src/gvfPianoInputs.cpp"
+         timestampString = "427628481.874406"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "166"
+         endingLineNumber = "166">
+      </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "No"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "src/gvfPianoInputs.cpp"
+         timestampString = "427628481.874406"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "167"
+         endingLineNumber = "167"
+         landmarkName = "gvfPianoInputs::get_kinect_data()"
+         landmarkType = "5">
       </FileBreakpoint>
       <FileBreakpoint
          shouldBeEnabled = "No"
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "src/KinectDisplay.cpp"
-         timestampString = "427111708.698401"
+         timestampString = "427630575.099338"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "309"
-         endingLineNumber = "309"
-         landmarkName = "KinectDisplay::DrawTemplates()"
+         startingLineNumber = "61"
+         endingLineNumber = "61"
+         landmarkName = "KinectDisplay::draw()"
+         landmarkType = "5">
+      </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "No"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "src/gvfPianoInputs.cpp"
+         timestampString = "427628481.874406"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "233"
+         endingLineNumber = "233"
+         landmarkName = "gvfPianoInputs::WriteCsvData(wng::ofxCsv* _csv_recorder)"
+         landmarkType = "5">
+      </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "No"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "src/gvfPianoInputs.cpp"
+         timestampString = "427628481.874406"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "246"
+         endingLineNumber = "246"
+         landmarkName = "gvfPianoInputs::WriteCsvData(wng::ofxCsv* _csv_recorder)"
+         landmarkType = "5">
+      </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "No"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "src/gvfPianoInputs.cpp"
+         timestampString = "427628481.874406"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "245"
+         endingLineNumber = "245"
+         landmarkName = "gvfPianoInputs::WriteCsvData(wng::ofxCsv* _csv_recorder)"
+         landmarkType = "5">
+      </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "No"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "../../../../../openNI_2/NiTE-MacOSX-x64-2.2/Include/NiteCEnums.h"
+         timestampString = "427217773.265792"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "26"
+         endingLineNumber = "26">
+      </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "No"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "src/KinectDisplay.cpp"
+         timestampString = "427630575.099338"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "124"
+         endingLineNumber = "124"
+         landmarkName = "KinectDisplay::DrawKinect(SkeletonDataPoint skeleton, vector&lt;int&gt; joints_on)"
+         landmarkType = "5">
+      </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "No"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "src/KinectDisplay.cpp"
+         timestampString = "427630575.099338"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "125"
+         endingLineNumber = "125"
+         landmarkName = "KinectDisplay::DrawKinect(SkeletonDataPoint skeleton, vector&lt;int&gt; joints_on)"
+         landmarkType = "5">
+      </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "No"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "src/KinectDisplay.cpp"
+         timestampString = "427630575.099338"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "126"
+         endingLineNumber = "126"
+         landmarkName = "KinectDisplay::DrawKinect(SkeletonDataPoint skeleton, vector&lt;int&gt; joints_on)"
+         landmarkType = "5">
+      </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "No"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "src/KinectDisplay.cpp"
+         timestampString = "427630575.099338"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "118"
+         endingLineNumber = "118"
+         landmarkName = "KinectDisplay::DrawKinect(SkeletonDataPoint skeleton, vector&lt;int&gt; joints_on)"
+         landmarkType = "5">
+      </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "No"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "src/KinectDisplay.cpp"
+         timestampString = "427630575.099338"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "51"
+         endingLineNumber = "51"
+         landmarkName = "KinectDisplay::draw()"
+         landmarkType = "5">
+      </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "No"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "src/KinectDisplay.cpp"
+         timestampString = "427630575.099338"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "52"
+         endingLineNumber = "52"
+         landmarkName = "KinectDisplay::draw()"
+         landmarkType = "5">
+      </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "No"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "src/GVFHandler.cpp"
+         timestampString = "427635036.972217"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "101"
+         endingLineNumber = "101"
+         landmarkName = "GVFHandler::getTemplateRecogInfo(int templateNumber)"
          landmarkType = "5">
       </FileBreakpoint>
    </FileBreakpoints>

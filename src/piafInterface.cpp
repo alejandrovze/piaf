@@ -6,10 +6,6 @@
 //
 //
 
-// TODO: Add Accelerometer Display
-// TODO: Add current gesture data viz
-// TODO: Add templates data viz
-
 #include "piafInterface.h"
 
 //--------------------------------------------------------------
@@ -22,8 +18,6 @@ void piafInterface::setup(GVFHandler* _handler, gvfPianoInputs* _inputs) {
     
     kinect_display_on = true;
     
-    input_gesture = vector<ofxUIMovingGraph*>(inputs->get_input_size());
-    buffers = vector<vector<float> >(inputs->get_input_size(), vector<float>(256, 0));
     ofSetCircleResolution(120);
     
     column_width = 212;
@@ -36,12 +30,23 @@ void piafInterface::setup(GVFHandler* _handler, gvfPianoInputs* _inputs) {
 }
 
 //--------------------------------------------------------------
-void piafInterface::draw(){
+void piafInterface::draw() {
     
-    if (kinect_display_on)
-        kinect_display.draw(0, 0, ofGetWindowWidth(), ofGetWindowHeight());
-
     ofSetRectMode(OF_RECTMODE_CORNER);
+    
+    if (kinect_display_on) {
+        
+        ofPushMatrix();
+        
+        kinect_display.DrawKinect(inputs->get_kinect_data(), inputs->get_joints_on());
+        
+        // FIXME: Fix template drawing
+//        if (gvf_handler->getState() != ofxGVF::STATE_CLEAR) {
+//            kinect_display.draw(); // gesture and templates
+//        }
+        
+        ofPopMatrix();
+    }
     
 }
 
@@ -53,10 +58,6 @@ void piafInterface::update(){
     UpdateSettingsGUI();
     UpdateTemplatesGUI();
 
-}
-
-void piafInterface::exit() {
-    
 }
 
 //--------------------------------------------------------------
@@ -71,25 +72,22 @@ void piafInterface::SetInputsGUI() {
     kinect_status = inputs_gui->addTextArea("textarea", "NULL KINECT", OFX_UI_FONT_SMALL);
     inputs_gui->addLabelToggle("KINECT_DISPLAY", kinect_display_on);
     
-    
-    // Potentially display Kinect image in menu. 
+// Potentially display Kinect image in menu. 
 //    inputs_gui->addImage("kinect", kinect_image,
 //                         kinect_image->getWidth() / 2.0,
 //                         kinect_image->getHeight() / 2.0);
     
-    
     inputs_gui->addSpacer();
-   
-    inputs_gui->addLabel("INPUT GESTURE", OFX_UI_FONT_MEDIUM);
-    for (int i = 0; i < input_gesture.size(); ++i) {
-        input_gesture[i] = inputs_gui->addMovingGraph("MOVING", buffers[i], 256, 0.0, 1.0);
-    }
     
-    // Accelerometer Inputs (Default False)
-    for (int i = 0; i < inputs->GetAccInputs()->size(); ++i) {
+    // Accelerometer Inputs
+    for (int i = 0; i < inputs->GetAccInputs().size(); ++i) {
         inputs_gui->addSpacer();
-        string acc_name = "ACCELEROMETER " + ofToString(inputs->GetAccInputs()->at(i).get_id());
+        
+        string acc_name = "ACCELEROMETER " + ofToString(inputs->GetAccInputs()[i]->get_id());
         acc_toggles.push_back(inputs_gui->addLabelToggle(acc_name, false));
+        
+        acc_inputs.push_back(ofxUIMultiMovingGraph::addToCanvas(inputs_gui, "MOVING", vector<ofVec3f>(256), 256, -1.0, 1.0));
+        acc_inputs[i]->setColorFill(ofColor::blue);
     }
     
     inputs_gui->addSpacer();
@@ -104,6 +102,8 @@ void piafInterface::SetInputsGUI() {
         skeleton_list->getToggles()[inputs->get_joints_on()[i]]->setValue(true);
     }
     
+    // TODO: Add settings for ranges of inputs. 
+    
     inputs_gui->addButton("RESET INPUTS", true);
     
     inputs_gui->autoSizeToFitWidgets();
@@ -111,6 +111,7 @@ void piafInterface::SetInputsGUI() {
     
 }
 
+//--------------------------------------------------------------
 void piafInterface::UpdateInputsGUI() {
     
     // Kinect Image
@@ -137,20 +138,12 @@ void piafInterface::UpdateInputsGUI() {
             break;
     }
     
-    // TODO: inputs!!
-    
-    
-    vector<float> input_data = inputs->ConcatenateInput();
-    
-    //!!!: Quick fix for switching inputs. 
-    if (input_data.size() == input_gesture.size()) {
-        for (int i = 0; i < input_gesture.size(); ++i) {
-            input_gesture[i]->addPoint(input_data[i]);
-        }
-    }
+    for (int i = 0; i < inputs->GetAccInputs().size(); ++i)
+        acc_inputs[i]->addPoint(inputs->get_acc_data()[i]);
     
 }
 
+//--------------------------------------------------------------
 void piafInterface::InputsGUIEvent(ofxUIEventArgs &e) {
     
     string name = e.getName();
@@ -177,10 +170,20 @@ void piafInterface::InputsGUIEvent(ofxUIEventArgs &e) {
                     acc_on.push_back(i);
             }
             inputs->set_acc_on(acc_on);
+            
+            // Re-initialise GVF
+            gvf_handler->init(inputs->get_input_size(), inputs->get_input_ranges()[0], inputs->get_input_ranges()[1]);
+            
+            // Refresh interface
+            delete gvf_gui;
+            delete settings_gui;
+            
+            SetSettingsGUI();
+            SetGvfGUI();
+            
         }
         else
             cout << "Reset Only available in STATE_CLEAR" << endl;
-        
     }
 }
 
@@ -218,15 +221,17 @@ void piafInterface::SetGvfGUI() {
     gvf_most_probable_scale = gvf_gui->addTextArea("textarea", "Scale 0", OFX_UI_FONT_SMALL);
     gvf_most_probable_rotation = gvf_gui->addTextArea("textarea", "Rotation 0", OFX_UI_FONT_SMALL);
     
+    gvf_gui->addSpacer();
+    
+    gesture_length = gvf_gui->addTextArea("GESTURE_LENGTH", "GESTURE LENGTH 0", OFX_UI_FONT_SMALL);
+    
     gvf_gui->setPosition(column_width * 1, 0);
     gvf_gui->autoSizeToFitWidgets();
-    
-//    gvf_gui->addLabel("CURRENT GESTURE LENGTH", OFX_UI_FONT_SMALL);
-//    gesture_length = gvf_gui->addTextArea("textarea", "0", OFX_UI_FONT_SMALL);
     
 	ofAddListener(gvf_gui->newGUIEvent, this, &piafInterface::GvfGUIEvent);
 }
 
+//--------------------------------------------------------------
 void piafInterface::GvfGUIEvent(ofxUIEventArgs &e) {
     
     string name = e.getName();
@@ -247,6 +252,7 @@ void piafInterface::GvfGUIEvent(ofxUIEventArgs &e) {
     
 }
 
+//--------------------------------------------------------------
 void piafInterface::UpdateGvfGUI() {
 
     switch(gvf_handler->getState()) {
@@ -271,7 +277,7 @@ void piafInterface::UpdateGvfGUI() {
     gvf_most_probable->setTextString("Index " +
                                      ofToString(gvf_handler->getMostProbableGestureIndex()));
     
-    Estimation status = gvf_handler->getRecogInfoOfMostProbable();
+    ofxGVFEstimation status = gvf_handler->getRecogInfoOfMostProbable();
     gvf_most_probable_probability->setTextString("Probability " + ofToString(status.probability));
     gvf_most_probable_phase->setTextString("Phase " + ofToString(status.phase));
     gvf_most_probable_speed->setTextString("Speed " + ofToString(status.speed));
@@ -290,10 +296,10 @@ void piafInterface::UpdateGvfGUI() {
     }
     gvf_most_probable_rotation->setTextString("Rotation " + rotation_string);
     
-//    // Update Length of Gesture
-//    if ((gvf_handler->getState() != ofxGVF::STATE_CLEAR) && gvf_handler->getIsPlaying()) {
-//        gesture_length->setTextString(ofToString(gvf_handler->getCurrentGesture()->getTemplateLength()));
-//    }
+    if ((gvf_handler->getState() != ofxGVF::STATE_CLEAR) && gvf_handler->getIsPlaying()) {
+        string text_string = "GESTURE LENGTH " + ofToString(gvf_handler->getCurrentGesture()->getTemplateLength());
+        gesture_length->setTextString(text_string);
+    }
     
 }
 
@@ -413,19 +419,16 @@ void piafInterface::UpdateTemplatesGUI() {
         
         if (gvf_handler->getState() == ofxGVF::STATE_FOLLOWING && gvf_handler->getIsPlaying()) {
             if (gvf_handler->getMostProbableGestureIndex() > -1) {
-                phase_sliders[i]->setValue(gvf_handler->getOutcomes().allPhases[i]);
+                phase_sliders[i]->setValue(gvf_handler->getOutcomes().estimations[i].phase);
             
-                float probability = gvf_handler->getOutcomes().allProbabilities[i];
+                float probability = gvf_handler->getOutcomes().estimations[i].probability;
                 phase_sliders[i]->setColorFill(ofColor(255 * probability, 0, 0));
             }
-            
             
         }
         else
             phase_sliders[i]->setColorFill(ofColor(255, 255, 255));
     }
-    
-
 }
 
 //--------------------------------------------------------------

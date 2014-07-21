@@ -24,16 +24,18 @@ class gvfPianoInputs {
 public:
     
     void setup();
+    
     bool update();
     vector<float> initialise();
 
     vector<float> ConcatenateInput();
     int get_input_size();
+    vector<vector<float> > get_input_ranges();
     
     KinectInput* get_kinect_input();
-    vector<WaxAccInput>* GetAccInputs();
-    vector<ofPoint> GetKinectData();
-    vector<ofVec3f> get_acc_data;
+    vector<WaxAccInput*> GetAccInputs();
+    SkeletonDataPoint get_kinect_data();
+    vector<ofVec3f> get_acc_data();
     
     vector<int> get_joints_on();
     void set_joints_on(vector<int> _joints_on);
@@ -54,11 +56,12 @@ private:
     
     // Kinect Input
     KinectInput kinect_input;
-    vector<ofPoint> kinect_joints;
+    SkeletonDataPoint kinect_data;
     vector<int> joints_on;
     
     // Accelerometers
-    vector<WaxAccInput> accelerometers;
+    ofxOscReceiver wax_receiver;
+    vector<WaxAccInput*> accelerometers;
     vector<ofVec3f> acc_data;
     vector<int> acc_on;
     

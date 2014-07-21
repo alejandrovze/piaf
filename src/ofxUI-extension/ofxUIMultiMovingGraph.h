@@ -11,6 +11,7 @@
 
 #include "ofxUIWidget.h"
 #include "ofxUIDefines.h"
+#include "ofxUICanvas.h"
 
 
 class ofxUIMultiMovingGraph : public ofxUIWidget
@@ -32,6 +33,8 @@ public:
     float getMin();
     ofVec2f getMaxAndMind();
     void setMaxAndMin(float _max, float _min);
+    
+    static ofxUIMultiMovingGraph* addToCanvas(ofxUICanvas* canvas, string _name, vector<ofVec3f> _buffer, int _bufferSize, float _min, float _max, float _h = OFX_UI_GLOBAL_GRAPH_HEIGHT);
     
 protected:    //inherited: ofxUIRectangle *rect; ofxUIWidget *parent;
     vector<ofVec3f> buffer;

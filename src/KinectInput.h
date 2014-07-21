@@ -78,7 +78,7 @@ class KinectInput
 public:
     
 	KinectInput();
-	virtual ~KinectInput();
+	~KinectInput();
     
 	virtual openni::Status setup();
     void update();

@@ -53,8 +53,7 @@ void ofxUIMultiMovingGraph::drawFill()
         for (int i = 0; i < 3; ++i) {
             // Generate color
             ofColor palette_color = base_color;
-            palette_color.setHue(palette_color.getHue() + 0.1 * i);
-            
+            palette_color.setHue(palette_color.getHue() + 0.1 * i * palette_color.limit());
             drawLine(palette_color, i);
         }
     }
@@ -136,3 +135,25 @@ void ofxUIMultiMovingGraph::setMaxAndMin(float _max, float _min)
     max = _max;
     min = _min;
 }
+
+//------------------------------------------------------
+
+ofxUIMultiMovingGraph* ofxUIMultiMovingGraph::addToCanvas(ofxUICanvas* canvas, string _name, vector<ofVec3f> _buffer,
+                                                          int _bufferSize, float _min, float _max,
+                                                          float _h) {
+    
+    float globalGraphHeight = canvas->getGlobalGraphHeight();
+    float w = canvas->getRect()->getWidth() - canvas->getWidgetSpacing() * 2;
+    
+    if(_h != globalGraphHeight)
+    {
+        _h = globalGraphHeight;
+    }
+    ofxUIMultiMovingGraph* widget = new ofxUIMultiMovingGraph(w, _h, _buffer, _bufferSize, _min, _max, _name);
+    canvas->addWidgetPosition(widget, canvas->getWidgetPosition(), OFX_UI_ALIGN_LEFT);
+    
+    return widget;
+
+}
+
+

@@ -168,7 +168,7 @@ void KinectInput::update_data(int user_id) {
             current_skeleton.bounding_box_max = NitePointToOF(user.getBoundingBox().max);
             
             // Joints
-            for (nite::JointType i = nite::JOINT_HEAD; i < nite::JOINT_RIGHT_FOOT; i++) {
+            for (nite::JointType i = nite::JOINT_HEAD; i <= nite::JOINT_RIGHT_FOOT; i++) {
                 
                 nite::SkeletonJoint joint = user.getSkeleton().getJoint(i);
                 

@@ -11,6 +11,12 @@
 //--------------------------------------------------------------
 void GVFHandler::init(int inputDimension)
 {
+    init(inputDimension, vector<float>(inputDimension, -1.), vector<float>(inputDimension, 1.));
+}
+
+//--------------------------------------------------------------
+void GVFHandler::init(int inputDimension, vector<float> _min_range, vector<float> _max_range)
+{
     currentGesture = new ofxGVFGesture(inputDimension);
     isPlaying = false;
     
@@ -23,6 +29,9 @@ void GVFHandler::init(int inputDimension)
     gC.segmentation = true;
     
     setup(gC);
+    
+    min_range = _min_range;
+    max_range = _max_range;
 }
 
 //--------------------------------------------------------------
@@ -61,10 +70,6 @@ void GVFHandler::gvf_data(int argc, float *argv)
         for (int k=0; k < argc; k++)
             observation_vector[k] = argv[k];
         
-        // FIXME: Range Adjustment
-        currentGesture->setAutoAdjustRanges(false);
-        currentGesture->setMinRange(vector<float>(3, -100.));
-        currentGesture->setMaxRange(vector<float>(3, 100.));
         
         currentGesture->addObservation(observation_vector);
         
@@ -75,18 +80,10 @@ void GVFHandler::gvf_data(int argc, float *argv)
         for (int k=0; k < argc; k++) {
             observation_vector[k] = argv[k];
         }
-        
-        // FIXME: Range Adjustment
-        currentGesture->setAutoAdjustRanges(false);
-        currentGesture->setMinRange(vector<float>(3, -100.));
-        currentGesture->setMaxRange(vector<float>(3, 100.));
-        
         currentGesture->addObservation(observation_vector);
         
         // inference on the last observation
         infer(currentGesture->getLastObservation());
-        
-        UpdateRecogInfo();
         
         WriteCsvData(&csv_recorder);
         
@@ -100,68 +97,30 @@ void GVFHandler::gvf_data(int argc, float *argv)
 //--------------------------------------------------------------
 
 //--------------------------------------------------------------
-void GVFHandler::UpdateRecogInfo() {
+ofxGVFEstimation GVFHandler::getTemplateRecogInfo(int templateNumber) { // FIXME: Rename!
     
-    // Only if a gesture has been recognized.
-    ofxGVFOutcomes outcomes = getOutcomes();
+    // ???: Later transfer to an assert here. 
+//    assert(templateNumber >= 0 && templateNumber < getOutcomes().estimations.size());
     
-    // Update Recognition Info for all Templates
-    char temp[100];
-    int  templates_count = getNumberOfGestureTemplates();
-    
-    recogInfo.clear();
-    
-    for(int i = 0; i < templates_count; i++)
-    {
-        Estimation info;
-        
-        info.probability = outcomes.allProbabilities[i];
-        info.phase = outcomes.allPhases[i];
-        info.speed = outcomes.allSpeeds[i];
-        
-        int numberOfScaleCoef = outcomes.allScales.size() / templates_count;
-        info.scale = vector<float>(numberOfScaleCoef);
-        for (int j= 0; j < numberOfScaleCoef; ++j) {
-            info.scale[j] = outcomes.allScales[i * numberOfScaleCoef + j];
-        }
-        
-        int numberOfRotationCoef = outcomes.allRotations.size() / templates_count;
-        info.rotation = vector<float>(numberOfRotationCoef);
-        for (int j = 0; j < numberOfRotationCoef; ++j) {
-            info.rotation[j] = outcomes.allRotations[i * numberOfRotationCoef + j];
-        }
-        
-        recogInfo.push_back(info);
-    }
-}
-
-//--------------------------------------------------------------
-Estimation GVFHandler::getTemplateRecogInfo(int templateNumber) {
-    
-    if (recogInfo.size() <= templateNumber) {
-        Estimation blankRecogInfo = {0., 0., 0.};
-        return blankRecogInfo;
+    if (getOutcomes().estimations.size() <= templateNumber) {
+        ofxGVFEstimation estimation;
+        return estimation; // blank
     }
     else
-        return recogInfo.at(templateNumber);
+        return getOutcomes().estimations[templateNumber];
 }
 
 //--------------------------------------------------------------
-Estimation GVFHandler::getRecogInfoOfMostProbable()
+ofxGVFEstimation GVFHandler::getRecogInfoOfMostProbable() // FIXME: Rename!
 {
     int indexMostProbable = getMostProbableGestureIndex();
     
-    if (getState() == ofxGVF::STATE_FOLLOWING) {
-        if (indexMostProbable == -1) { // Need this because sometimes goes out of bounds.
-            Estimation blankRecogInfo = {0., 0., 0.};
-            return blankRecogInfo;
-        }
-        else
-            return getTemplateRecogInfo(indexMostProbable);
+    if ((getState() == ofxGVF::STATE_FOLLOWING) && (getMostProbableGestureIndex() != -1)) {
+        return getTemplateRecogInfo(indexMostProbable);
     }
     else {
-        Estimation blankRecogInfo = {0., 0., 0.};
-        return blankRecogInfo;
+        ofxGVFEstimation estimation;
+        return estimation; // blank
     }
 }
 
@@ -180,6 +139,17 @@ ofxGVFGesture* GVFHandler::getCurrentGesture(){
 void GVFHandler::startGesture() {
     
     currentGesture->clear();
+    
+    
+    // FIXME: Input ranges need to be better adjusted. 
+    int dim = getConfig().inputDimensions;
+    currentGesture->setAutoAdjustRanges(false);
+    currentGesture->setMinRange(vector<float>(dim, -100.));
+    currentGesture->setMaxRange(vector<float>(dim, 100.));
+    
+    if (dim != 3 && dim != 2)
+        currentGesture->setType(ofxGVFGesture::TEMPORAL);
+    
     
     if(getState() == ofxGVF::STATE_FOLLOWING) {
         csv_recorder.clear();

@@ -15,31 +15,21 @@
 #include "ofxGVF.h"
 #include "ofxCsv.h"
 
-typedef struct {
-    float probability;
-    float phase;
-    float speed;
-    vector<float> scale;
-    vector<float> rotation;
-}  Estimation;
-
 class GVFHandler: public ofxGVF {
     
 public:
     
     void init(int inputDimension);
+    void init(int inputDimension, vector<float> _min_range, vector<float> _max_range);
     
     // feeds data to gvf based on the current state
     // argc is the number of dimentions on the input and argv is the input array
     void gvf_data(int argc, float *argv);
     void gvf_data(std::vector<float> p);
     
-    // vector containing one recognitionInfo struct for each template
-    // these structs will contain real time information on how each template is being recognised
-    vector<Estimation> recogInfo;
-    Estimation getTemplateRecogInfo(int templateNumber);
-    Estimation getRecogInfoOfMostProbable(); // !!!: bad naming
-    void UpdateRecogInfo();
+    
+    ofxGVFEstimation getTemplateRecogInfo(int templateNumber);
+    ofxGVFEstimation getRecogInfoOfMostProbable(); // !!!: bad naming
     
     ofxGVFGesture* getCurrentGesture();
     
@@ -55,6 +45,9 @@ private:
     bool isPlaying;
     void startGesture();
     void endGesture();
+    
+    vector<float> min_range;
+    vector<float> max_range;
     
     // Data dump
     

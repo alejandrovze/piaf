@@ -19,32 +19,20 @@ void KinectDisplay::setup(KinectInput* input, GVFHandler* handler) {
     
     kinect_image = kinect_input->GetImage();
     
+    cam.enableMouseInput();
+    cam.setDistance(1500);
+    
 }
 
-//--------------------------------------------------------------
+//---------------------------------------------------------x-----
 //// Draw kinect templates and skeleton display
 //--------------------------------------------------------------
-void KinectDisplay::draw(int x, int y, int w, int h) {
+void KinectDisplay::draw() {
     
-    // DRAW KINECT SKELETON
-    
+    // FIXME: DRAW CURRENT GESTURE
     ofPushMatrix();
     
-    ofTranslate(x, y);
-    ofScale(w, h);
-    
-    if (kinect_input->get_is_running())
-        DrawKinect();
-    
-    ofPopMatrix();
-    
-    
-    // DRAW CURRENT GESTURE
-    ofPushMatrix();
-    
-    ofTranslate(600, 500); // FIXME
-    
-    
+    ofTranslate(600, 500);
     if (gvf_handler->getCurrentGesture()->getNumberOfTemplates() > 0) {
         
         if (gvf_handler->getIsPlaying())
@@ -61,7 +49,7 @@ void KinectDisplay::draw(int x, int y, int w, int h) {
     ofPopMatrix();
     
     
-    // DRAW TEMPLATES
+    // FIXME: REWORK DRAW TEMPLATES
     
     for(int i = 0; i < gvf_handler->getNumberOfGestureTemplates(); i++){
 
@@ -72,8 +60,8 @@ void KinectDisplay::draw(int x, int y, int w, int h) {
         
         if (gvf_handler->getState() == ofxGVF::STATE_FOLLOWING && gvf_handler->getIsPlaying()) {
             
-            float phase = gvf_handler->getOutcomes(i).estimatedPhase;
-            float probability = gvf_handler->getOutcomes(i).allProbabilities[i];
+            float phase = gvf_handler->getTemplateRecogInfo(i).phase;
+            float probability = gvf_handler->getTemplateRecogInfo(i).probability;
             
             gestureTemplate.draw_following(phase, probability, i * 100.0f, ofGetHeight() - 100.0f, 100.0f, 100.0f);
         }
@@ -87,107 +75,86 @@ void KinectDisplay::draw(int x, int y, int w, int h) {
 
     }
     
-    //if (gvf_handler->getState() == ofxGVF::STATE_FOLLOWING && gvf_handler->getIsPlaying()) {
     
 }
 
-//void KinectDisplay::DrawTemplate(ofxGVFGesture& gesture_template, float phase, float probability) {
-//    
-//    // Probability: color (interpolate between original color) + thickness
-//    // Phase: how much is uncolored
-//    
-//    ofPushMatrix();
-//    
-//    if (gvf_handler->getState() == ofxGVF::STATE_FOLLOWING && gvf_handler->getIsPlaying()) {
-//        
-//        gestureTemplate.draw_following(phase, probability, i * 100.0f, ofGetHeight() - 100.0f, 100.0f, 100.0f);
-//    }
-//    else {
-//        gestureTemplate.draw(i * 100.0f, ofGetHeight() - 100.0f, 100.0f, 100.0f);
-//    }
-//    ofPopMatrix();
-//    
-//}
 
-
-void KinectDisplay::DrawKinect() {
+void KinectDisplay::DrawKinect(SkeletonDataPoint skeleton, vector<int> joints_on) {
     
-    SkeletonDataPoint skeleton = kinect_input->get_data();
+    ofPushMatrix();
+	cam.begin();
     
-    ofScale(1. / (float)kinect_image->getWidth(), 1. / (float) kinect_image->getHeight());
-    
-    // If tracked, sim the image.
-    if (skeleton.state == nite::SKELETON_TRACKED)
-        ofSetColor(50, 50, 60);
-    else
-        ofSetColor(150, 150, 180);
-    
-    kinect_image->draw(0, 0);
-    
-    for (int i = 0; i < NITE_JOINT_COUNT; ++i) {
+    if (kinect_input->get_is_running()) {
         
-        ofPoint depth_pt = ScaleToKinect(skeleton.positions[i]);
+        ofScale(ofGetWindowWidth() / (float)kinect_image->getWidth(), ofGetWindowHeight() / (float) kinect_image->getHeight());
         
-        skeleton_mesh.setVertex(i, depth_pt);
+        // If tracked, dim the image.
+        if (skeleton.state != nite::SKELETON_TRACKED) {
+            skeleton_mesh.disableColors();
+            ofSetColor(50, 50, 60);
+        }
+        else {
+            skeleton_mesh.enableColors();
+            ofSetColor(150, 150, 180);
+        }
         
+        kinect_image->draw(0, 0);
+        
+        for (int i = 0; i < NITE_JOINT_COUNT; ++i) {
+            
+            ofPoint depth_pt = ScaleToKinect(skeleton.positions[i]);
+            
+            skeleton_mesh.setVertex(i, depth_pt);
+            
+        }
+    }
+    else {
+        // Z values are very large.
+        ofScale(1., 1., 1. / 2000.);
+        
+        // TODO: display scaling without kinect plugged in?
+        
+        for (int i = 0; i < NITE_JOINT_COUNT; ++i)
+            skeleton_mesh.setVertex(i, skeleton.positions[i]);
     }
     
     ofSetLineWidth(5);
     
     skeleton_mesh.draw();
-
-}
-
-// FIXME: Fix drawing of particles. 
-void KinectDisplay::DrawParticles() {
     
-    vector< vector<float> > pp = gvf_handler->getParticlesPositions();
+    ofSetColor(0, 0, 255);
     
-    int ppSize = pp.size();
-    float scale = 1;
-    
-    if(ppSize > 0 && gvf_handler->getCurrentGesture()->getNumberOfTemplates() > 0){
-        // as the colors show, the vector returned by getG()
-        // does not seem to be in synch with the information returned by particlesPositions
-        vector<int> gestureIndex = gvf_handler->getG();
-        vector<float> weights = gvf_handler->getW();
-        
-        ofFill();
-        
-        float weightAverage = getMeanVec(weights);
-        
-        ofPoint offset = ofPoint(gvf_handler->getCurrentGesture()->getTemplateNormal()[0][0] - pp[0][0], gvf_handler->getCurrentGesture()->getTemplateNormal()[0][1] - pp[0][1]);
-        
-        for(int i = 0; i < ppSize; i++){
-            
-            // each particle position is retrieved
-            ofPoint point(pp[i][0], pp[i][1]);
-            
-            // and then scaled and translated in order to be drawn
-            float x = ((point.x)) * (gvf_handler->getCurrentGesture()->getMaxRange()[0] - gvf_handler->getCurrentGesture()->getMinRange()[0]);
-            float y = ((point.y)) * (gvf_handler->getCurrentGesture()->getMaxRange()[1] - gvf_handler->getCurrentGesture()->getMinRange()[1]);
-            
-            
-            // the weight of the particle is normalised
-            // and then used as the radius of the circle representing the particle
-            float radius = weights[i] / weightAverage;
-            ofColor c = ofColor(127, 0, 0);
-            
-            c.setBrightness(198);
-            ofSetColor(c);
-            ofPushMatrix();
-            ofTranslate(gvf_handler->getCurrentGesture()->getInitialObservationRaw()[0],gvf_handler->getCurrentGesture()->getInitialObservationRaw()[1]);
-            //ofCircle(x, y, radius);
-            ofCircle(x, y, 1); // MATT something wrong with radius above
-            ofPopMatrix();
-            
-        }
+    // Add circle for Joints ON.
+    for (int i = 0; i < joints_on.size(); ++i) {
+        ofCircle(skeleton_mesh.getVertex(joints_on[i]), 8);
     }
     
+    cam.end();
+    ofPopMatrix();
+    
+//    drawInteractionArea();
+    
 }
 
+// ???: Probably unnecessary
+//--------------------------------------------------------------
+void KinectDisplay::drawInteractionArea(){
+	ofRectangle vp = ofGetCurrentViewport();
+	float r = MIN(vp.width, vp.height) * 0.5f;
+	float x = vp.width * 0.5f;
+	float y = vp.height * 0.5f;
+	
+	ofPushStyle();
+	ofSetLineWidth(3);
+	ofSetColor(255, 255, 0);
+	ofNoFill();
+	glDepthMask(false);
+	ofCircle(x, y, r);
+	glDepthMask(true);
+	ofPopStyle();
+}
 
-
+//--------------------------------------------------------------
 void KinectDisplay::SetupSkeleton() {
     
     skeleton_mesh.setMode(OF_PRIMITIVE_LINES);
@@ -333,7 +300,7 @@ void KinectDisplay::DrawTemplates() {
                 // FIXME: quick fix for getOutcomes crashing
                 float probability;
                 if (gvf_handler->getMostProbableGestureIndex() > -1) {
-                    probability = gvf_handler->getOutcomes().allProbabilities[i];
+                    probability = gvf_handler->getTemplateRecogInfo(i).probability;
                 }
                 else {
                     probability = 0;
@@ -347,7 +314,7 @@ void KinectDisplay::DrawTemplates() {
                 // Set Fill according to Phase
                 float phase = 0;
                 
-                phase = gvf_handler->getOutcomes().allPhases[i];
+                phase = gvf_handler->getTemplateRecogInfo(i).phase;
                 
                 if (phase >= ((float) t / (float) length)) {
                     ofFill();
@@ -379,5 +346,53 @@ void KinectDisplay::DrawTemplates() {
         
     }
     
+    
+}
+
+// FIXME: Fix drawing of particles.
+void KinectDisplay::DrawParticles() {
+    
+    vector< vector<float> > pp = gvf_handler->getParticlesPositions();
+    
+    int ppSize = pp.size();
+    float scale = 1;
+    
+    if(ppSize > 0 && gvf_handler->getCurrentGesture()->getNumberOfTemplates() > 0){
+        // as the colors show, the vector returned by getG()
+        // does not seem to be in synch with the information returned by particlesPositions
+        vector<int> gestureIndex = gvf_handler->getG();
+        vector<float> weights = gvf_handler->getW();
+        
+        ofFill();
+        
+        float weightAverage = getMeanVec(weights);
+        
+        ofPoint offset = ofPoint(gvf_handler->getCurrentGesture()->getTemplateNormal()[0][0] - pp[0][0], gvf_handler->getCurrentGesture()->getTemplateNormal()[0][1] - pp[0][1]);
+        
+        for(int i = 0; i < ppSize; i++){
+            
+            // each particle position is retrieved
+            ofPoint point(pp[i][0], pp[i][1]);
+            
+            // and then scaled and translated in order to be drawn
+            float x = ((point.x)) * (gvf_handler->getCurrentGesture()->getMaxRange()[0] - gvf_handler->getCurrentGesture()->getMinRange()[0]);
+            float y = ((point.y)) * (gvf_handler->getCurrentGesture()->getMaxRange()[1] - gvf_handler->getCurrentGesture()->getMinRange()[1]);
+            
+            
+            // the weight of the particle is normalised
+            // and then used as the radius of the circle representing the particle
+            float radius = weights[i] / weightAverage;
+            ofColor c = ofColor(127, 0, 0);
+            
+            c.setBrightness(198);
+            ofSetColor(c);
+            ofPushMatrix();
+            ofTranslate(gvf_handler->getCurrentGesture()->getInitialObservationRaw()[0],gvf_handler->getCurrentGesture()->getInitialObservationRaw()[1]);
+            //ofCircle(x, y, radius);
+            ofCircle(x, y, 1); // MATT something wrong with radius above
+            ofPopMatrix();
+            
+        }
+    }
     
 }

@@ -9,23 +9,23 @@ void ofApp::setup(){
 	ofSetWindowTitle("openframeworks gvf visualiser");
     ofSetWindowShape(1024, 768);
     
-	ofSetFrameRate(60); // if vertical sync is off, we can go a bit fast... this caps the framerate at 60fps.
+    // Standard setup
+	ofEnableAlphaBlending();
+	ofSetupScreen();
+	ofBackground(0, 0, 0);
+	ofSetFrameRate(60);
     
     // SETUP ELEMENTS
-    inputs.setup();                         // inputs devices
-    handler.init(inputs.get_input_size());   // gvf
-    interface.setup(&handler, &inputs);  // interface
+    inputs.setup();
+    handler.init(inputs.get_input_size(),
+                 inputs.get_input_ranges()[0],
+                 inputs.get_input_ranges()[1]);
+    interface.setup(&handler, &inputs);
     
     ofAddListener(inputs.GetPianoEvent(), this, &ofApp::midiNotes);
     ofAddListener(inputs.GetControlEvent(), this, &ofApp::midiControl);
     
     sender.setup();
-    
-    // some standard setup stuff
-	ofEnableAlphaBlending();
-	ofSetupScreen();
-	ofBackground(0, 0, 0);
-	ofSetFrameRate(60);
     
 }
 
@@ -45,19 +45,22 @@ void ofApp::update(){
     
     interface.update();
     
-    Estimation mostProb = handler.getRecogInfoOfMostProbable();
-    sender.SendGVFOutcome(handler.getMostProbableGestureIndex(),
-                          mostProb.probability, mostProb.phase, mostProb.speed,
-                          mostProb.scale, mostProb.rotation);
+    ofxGVFEstimation mostProb = handler.getRecogInfoOfMostProbable();
+    
+    if (handler.getIsPlaying() && handler.getState() == ofxGVF::STATE_FOLLOWING) {
+        sender.SendGVFOutcome(handler.getMostProbableGestureIndex(),
+                              mostProb.probability, mostProb.phase, mostProb.speed,
+                              mostProb.scale, mostProb.rotation);
+    }
+    else {
+        sender.SendGVFOutcome(handler.getMostProbableGestureIndex(),
+                              0, 0, 1., vector<float>(1, 0), vector<float>(1, 0));
+    }
     
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-    
-//    ofBackgroundGradient(ofColor::black, ofColor(40), OF_GRADIENT_CIRCULAR);
-    
-    ofMatrix4x4 matrix = ofGetCurrentMatrix(OF_MATRIX_MODELVIEW);
     
     ofPushMatrix();
     
@@ -65,15 +68,12 @@ void ofApp::draw(){
     
     ofPopMatrix();
     
-    ofDisableAlphaBlending();
 }
 
 //--------------------------------------------------------------
 void ofApp::exit() {
     
-    // TODO: Shutdown for Inputs (Close Kinect, etc.)
-    
-    interface.exit();
+    // FIXME: Shutdown Kinect?
 }
 
 
@@ -118,6 +118,24 @@ void ofApp::midiNotes(ofxMidiMessage& msg){
     if (msg.control == 64) {
         if(msg.value == 0) {
             handler.toggleIsPlaying();
+            if (handler.getIsPlaying()) {
+                inputs.StartFile();
+            }
+            else {
+                inputs.EndFile();
+            }
+        }
+    }
+    
+    if (msg.control == 11) {
+        if(msg.value == 0) {
+            handler.toggleIsPlaying();
+            if (handler.getIsPlaying()) {
+                inputs.StartFile();
+            }
+            else {
+                inputs.EndFile();
+            }
         }
     }
     

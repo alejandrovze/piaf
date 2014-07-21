@@ -19,21 +19,20 @@ class WaxAccInput {
     
 public:
     
-    WaxAccInput(int port, int wax_id);
+    WaxAccInput(int wax_id);
     
-    void update();
+    void update(ofxOscMessage& acc_message);
     
     ofVec3f get_data();
     int get_id();
+    string get_address();
 
 private:
     
     int id;
-    
     string address;
+    
     ofVec3f acc_data;
-
-    ofxOscReceiver acc_receiver;
     
 };
 

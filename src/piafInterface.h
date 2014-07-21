@@ -25,7 +25,6 @@ public:
     void setup(GVFHandler* _gvf_handler, gvfPianoInputs* _inputs);
     void update();
     void draw();
-    void exit();
     
 private:
     
@@ -41,8 +40,7 @@ private:
     void InputsGUIEvent(ofxUIEventArgs &e);
     
     ofxUITextArea* gesture_length;
-    vector<ofxUIMovingGraph*> input_gesture;
-    vector<vector<float> > buffers;
+    vector<ofxUIMultiMovingGraph*> acc_inputs;
     
     vector<ofxUILabelToggle*> acc_toggles;
     ofxUIDropDownList* skeleton_list;
