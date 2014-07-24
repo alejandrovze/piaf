@@ -33,20 +33,19 @@ void piafInterface::setup(GVFHandler* _handler, gvfPianoInputs* _inputs) {
 void piafInterface::draw() {
     
     ofSetRectMode(OF_RECTMODE_CORNER);
+        
+    ofPushMatrix();
+    
+    SkeletonDataPoint skeleton = inputs->get_kinect_data();
     
     if (kinect_display_on) {
-        
-        ofPushMatrix();
-        
-        kinect_display.DrawKinect(inputs->get_kinect_data(), inputs->get_joints_on());
-        
-        // FIXME: Fix template drawing
-//        if (gvf_handler->getState() != ofxGVF::STATE_CLEAR) {
-//            kinect_display.draw(); // gesture and templates
-//        }
-        
-        ofPopMatrix();
+        kinect_display.DrawKinect(skeleton);
     }
+    else {
+        kinect_display.Draw(skeleton, inputs->get_joints_on());
+    }
+    
+    ofPopMatrix();
     
 }
 
@@ -208,6 +207,8 @@ void piafInterface::SetGvfGUI() {
     gvf_gui->setGlobalButtonDimension(32);
     gvf_gui->addButton("SAVE", false)->setLabelVisible(true);
     gvf_gui->addButton("LOAD", false)->setLabelVisible(true);
+    gvf_gui->addButton("SET DUMP FOLDER", false)->setLabelVisible(true);
+    
     
     gvf_gui->addSpacer();
     gvf_n_templates = gvf_gui->addTextArea("textarea", "NTEMPLATES 0", OFX_UI_FONT_SMALL);
@@ -243,10 +244,37 @@ void piafInterface::GvfGUIEvent(ofxUIEventArgs &e) {
         ofxUIButton *button = (ofxUIButton *) e.getButton();
         
         if(!button->getValue()) { // Execute on release
-            if(name == "SAVE")
+            if(name == "SAVE") {
                 SaveGestures();
-            else if(name == "LOAD")
+            }
+            else if(name == "LOAD") {
                 LoadGestures();
+            }
+            else if(name == "SET DUMP FOLDER") {
+                
+                string path;
+                
+                ofFileDialogResult dialogResult = ofSystemSaveDialog("gvf_dump-", "Select dump location.");
+                if(!dialogResult.bSuccess)
+                    return;
+                
+                dialogResult.getPath();
+                
+                stringstream ss;
+                ss << dialogResult.filePath;
+                path = ss.str();
+                cout << path;
+                
+                gvf_handler->set_csv_path(path);
+                
+            }
+        }
+    }
+    else if (kind == OFX_UI_WIDGET_LABELTOGGLE) {
+        ofxUIToggle *toggle = (ofxUIToggle *) e.getToggle();
+        
+        if (name == "PLAYING ON/OFF") {
+            gvf_handler->toggleIsPlaying();
         }
     }
     
@@ -256,9 +284,6 @@ void piafInterface::GvfGUIEvent(ofxUIEventArgs &e) {
 void piafInterface::UpdateGvfGUI() {
 
     switch(gvf_handler->getState()) {
-        case ofxGVF::STATE_WAIT:
-            gvf_status->setTextString("STATE: Waiting");
-            break;
         case ofxGVF::STATE_LEARNING:
             gvf_status->setTextString("STATE: Learning");
             break;

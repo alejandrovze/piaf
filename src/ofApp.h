@@ -36,6 +36,7 @@ private:
     piafOSCSender sender;
     
     void LoadInputFile();
+    string loaded_file;
     
 };
 

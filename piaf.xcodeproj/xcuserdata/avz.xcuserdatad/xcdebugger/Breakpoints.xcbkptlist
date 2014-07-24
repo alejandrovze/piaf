@@ -13,7 +13,7 @@
          endingColumnNumber = "9223372036854775807"
          startingLineNumber = "972"
          endingLineNumber = "972"
-         landmarkName = "ofxGVF::infer(vector&lt;float&gt; vect)"
+         landmarkName = "ofxGVF::UpdateOutcomes()"
          landmarkType = "5">
       </FileBreakpoint>
       <FileBreakpoint
@@ -26,7 +26,7 @@
          endingColumnNumber = "9223372036854775807"
          startingLineNumber = "845"
          endingLineNumber = "845"
-         landmarkName = "ofxGVF::particleFilter(vector&lt;float&gt; &amp; obs)"
+         landmarkName = "ofxGVF::resampleAccordingToWeights(vector&lt;float&gt; obs)"
          landmarkType = "5">
       </FileBreakpoint>
       <FileBreakpoint
@@ -47,13 +47,11 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "../../../addons/ofxGVF/src/ofxGVF.cpp"
-         timestampString = "427639499.660653"
+         timestampString = "427738341.410801"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "1194"
-         endingLineNumber = "1194"
-         landmarkName = "ofxGVF::setTolerance(float _tolerance)"
-         landmarkType = "5">
+         startingLineNumber = "1211"
+         endingLineNumber = "1211">
       </FileBreakpoint>
       <FileBreakpoint
          shouldBeEnabled = "No"
@@ -104,7 +102,7 @@
          endingColumnNumber = "9223372036854775807"
          startingLineNumber = "358"
          endingLineNumber = "358"
-         landmarkName = "ofxGVF::addGestureTemplate(ofxGVFGesture &amp; gestureTemplate)"
+         landmarkName = "ofxGVF::getGestureTemplate(int index)"
          landmarkType = "5">
       </FileBreakpoint>
       <FileBreakpoint
@@ -151,13 +149,11 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "../../../addons/ofxGVF/src/ofxGVF.cpp"
-         timestampString = "427639499.660653"
+         timestampString = "427738341.410801"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "999"
-         endingLineNumber = "999"
-         landmarkName = "ofxGVF::updateEstimatedStatus()"
-         landmarkType = "5">
+         startingLineNumber = "1028"
+         endingLineNumber = "1028">
       </FileBreakpoint>
       <FileBreakpoint
          shouldBeEnabled = "No"
@@ -168,9 +164,7 @@
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
          startingLineNumber = "589"
-         endingLineNumber = "589"
-         landmarkName = "ofxGVF::spreadParticles(ofxGVFParameters _parameters)"
-         landmarkType = "5">
+         endingLineNumber = "589">
       </FileBreakpoint>
       <FileBreakpoint
          shouldBeEnabled = "No"
@@ -182,7 +176,7 @@
          endingColumnNumber = "9223372036854775807"
          startingLineNumber = "856"
          endingLineNumber = "856"
-         landmarkName = "ofxGVF::particleFilter(vector&lt;float&gt; &amp; obs)"
+         landmarkName = "ofxGVF::resampleAccordingToWeights(vector&lt;float&gt; obs)"
          landmarkType = "5">
       </FileBreakpoint>
       <FileBreakpoint
@@ -195,7 +189,7 @@
          endingColumnNumber = "9223372036854775807"
          startingLineNumber = "830"
          endingLineNumber = "830"
-         landmarkName = "ofxGVF::particleFilter(vector&lt;float&gt; &amp; obs)"
+         landmarkName = "ofxGVF::resampleAccordingToWeights(vector&lt;float&gt; obs)"
          landmarkType = "5">
       </FileBreakpoint>
       <FileBreakpoint
@@ -208,7 +202,7 @@
          endingColumnNumber = "9223372036854775807"
          startingLineNumber = "821"
          endingLineNumber = "821"
-         landmarkName = "ofxGVF::particleFilter(vector&lt;float&gt; &amp; obs)"
+         landmarkName = "ofxGVF::resampleAccordingToWeights(vector&lt;float&gt; obs)"
          landmarkType = "5">
       </FileBreakpoint>
       <FileBreakpoint
@@ -221,8 +215,8 @@
          endingColumnNumber = "9223372036854775807"
          startingLineNumber = "666"
          endingLineNumber = "666"
-         landmarkName = "distance_weightedEuclidean(vector&lt;float&gt; x, vector&lt;float&gt; y, vector&lt;float&gt; w)"
-         landmarkType = "7">
+         landmarkName = "ofxGVF::particleFilter(vector&lt;float&gt; &amp; obs)"
+         landmarkType = "5">
       </FileBreakpoint>
       <FileBreakpoint
          shouldBeEnabled = "No"
@@ -234,8 +228,8 @@
          endingColumnNumber = "9223372036854775807"
          startingLineNumber = "665"
          endingLineNumber = "665"
-         landmarkName = "distance_weightedEuclidean(vector&lt;float&gt; x, vector&lt;float&gt; y, vector&lt;float&gt; w)"
-         landmarkType = "7">
+         landmarkName = "ofxGVF::particleFilter(vector&lt;float&gt; &amp; obs)"
+         landmarkType = "5">
       </FileBreakpoint>
       <FileBreakpoint
          shouldBeEnabled = "No"
@@ -247,8 +241,8 @@
          endingColumnNumber = "9223372036854775807"
          startingLineNumber = "667"
          endingLineNumber = "667"
-         landmarkName = "distance_weightedEuclidean(vector&lt;float&gt; x, vector&lt;float&gt; y, vector&lt;float&gt; w)"
-         landmarkType = "7">
+         landmarkName = "ofxGVF::particleFilter(vector&lt;float&gt; &amp; obs)"
+         landmarkType = "5">
       </FileBreakpoint>
       <FileBreakpoint
          shouldBeEnabled = "No"
@@ -260,7 +254,7 @@
          endingColumnNumber = "9223372036854775807"
          startingLineNumber = "818"
          endingLineNumber = "818"
-         landmarkName = "ofxGVF::particleFilter(vector&lt;float&gt; &amp; obs)"
+         landmarkName = "ofxGVF::resampleAccordingToWeights(vector&lt;float&gt; obs)"
          landmarkType = "5">
       </FileBreakpoint>
       <FileBreakpoint
@@ -389,7 +383,9 @@
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
          startingLineNumber = "304"
-         endingLineNumber = "304">
+         endingLineNumber = "304"
+         landmarkName = "gvfPianoInputs::ReadCsvData()"
+         landmarkType = "5">
       </FileBreakpoint>
       <FileBreakpoint
          shouldBeEnabled = "No"
@@ -401,7 +397,7 @@
          endingColumnNumber = "9223372036854775807"
          startingLineNumber = "269"
          endingLineNumber = "269"
-         landmarkName = "gvfPianoInputs::ReadCsvData()"
+         landmarkName = "gvfPianoInputs::LoadFile(string filename)"
          landmarkType = "5">
       </FileBreakpoint>
       <FileBreakpoint
@@ -487,11 +483,11 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "../../../addons/ofxGVF/src/ofxGVFGesture.h"
-         timestampString = "426790263.603959"
+         timestampString = "427642666.587447"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "476"
-         endingLineNumber = "476"
+         startingLineNumber = "481"
+         endingLineNumber = "481"
          landmarkName = "draw()"
          landmarkType = "5">
       </FileBreakpoint>
@@ -500,11 +496,11 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "../../../addons/ofxGVF/src/ofxGVFGesture.h"
-         timestampString = "426790263.603959"
+         timestampString = "427642666.587447"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "523"
-         endingLineNumber = "523"
+         startingLineNumber = "528"
+         endingLineNumber = "528"
          landmarkName = "draw(float x, float y, float w, float h)"
          landmarkType = "5">
       </FileBreakpoint>
@@ -513,11 +509,11 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "../../../addons/ofxGVF/src/ofxGVFGesture.h"
-         timestampString = "426790263.603959"
+         timestampString = "427642666.587447"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "508"
-         endingLineNumber = "508"
+         startingLineNumber = "513"
+         endingLineNumber = "513"
          landmarkName = "draw(float x, float y, float w, float h)"
          landmarkType = "5">
       </FileBreakpoint>
@@ -526,11 +522,11 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "../../../addons/ofxGVF/src/ofxGVFGesture.h"
-         timestampString = "426790263.603959"
+         timestampString = "427642666.587447"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "525"
-         endingLineNumber = "525"
+         startingLineNumber = "530"
+         endingLineNumber = "530"
          landmarkName = "draw(float x, float y, float w, float h)"
          landmarkType = "5">
       </FileBreakpoint>
@@ -572,33 +568,7 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "../../../addons/ofxGVF/src/ofxGVFGesture.h"
-         timestampString = "426790263.603959"
-         startingColumnNumber = "9223372036854775807"
-         endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "526"
-         endingLineNumber = "526"
-         landmarkName = "draw(float x, float y, float w, float h)"
-         landmarkType = "5">
-      </FileBreakpoint>
-      <FileBreakpoint
-         shouldBeEnabled = "No"
-         ignoreCount = "0"
-         continueAfterRunningActions = "No"
-         filePath = "../../../addons/ofxGVF/src/ofxGVFGesture.h"
-         timestampString = "426790263.603959"
-         startingColumnNumber = "9223372036854775807"
-         endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "532"
-         endingLineNumber = "532"
-         landmarkName = "draw(float x, float y, float w, float h)"
-         landmarkType = "5">
-      </FileBreakpoint>
-      <FileBreakpoint
-         shouldBeEnabled = "No"
-         ignoreCount = "0"
-         continueAfterRunningActions = "No"
-         filePath = "../../../addons/ofxGVF/src/ofxGVFGesture.h"
-         timestampString = "426790263.603959"
+         timestampString = "427642666.587447"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
          startingLineNumber = "531"
@@ -610,13 +580,13 @@
          shouldBeEnabled = "No"
          ignoreCount = "0"
          continueAfterRunningActions = "No"
-         filePath = "src/KinectDisplay.cpp"
-         timestampString = "427630575.099338"
+         filePath = "../../../addons/ofxGVF/src/ofxGVFGesture.h"
+         timestampString = "427642666.587447"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "36"
-         endingLineNumber = "36"
-         landmarkName = "KinectDisplay::draw()"
+         startingLineNumber = "537"
+         endingLineNumber = "537"
+         landmarkName = "draw(float x, float y, float w, float h)"
          landmarkType = "5">
       </FileBreakpoint>
       <FileBreakpoint
@@ -624,12 +594,12 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "../../../addons/ofxGVF/src/ofxGVFGesture.h"
-         timestampString = "426790263.603959"
+         timestampString = "427642666.587447"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "452"
-         endingLineNumber = "452"
-         landmarkName = "draw_following(float _phase, float _probability, float x, float y, float w, float h)"
+         startingLineNumber = "536"
+         endingLineNumber = "536"
+         landmarkName = "draw(float x, float y, float w, float h)"
          landmarkType = "5">
       </FileBreakpoint>
       <FileBreakpoint
@@ -654,19 +624,6 @@
          startingLineNumber = "135"
          endingLineNumber = "135"
          landmarkName = "ofMesh::addVertex(const ofVec3f&amp; v)"
-         landmarkType = "5">
-      </FileBreakpoint>
-      <FileBreakpoint
-         shouldBeEnabled = "No"
-         ignoreCount = "0"
-         continueAfterRunningActions = "No"
-         filePath = "../../../addons/ofxGVF/src/ofxGVFGesture.h"
-         timestampString = "426790263.603959"
-         startingColumnNumber = "9223372036854775807"
-         endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "456"
-         endingLineNumber = "456"
-         landmarkName = "draw_following(float _phase, float _probability, float x, float y, float w, float h)"
          landmarkType = "5">
       </FileBreakpoint>
       <FileBreakpoint
@@ -734,19 +691,6 @@
          shouldBeEnabled = "No"
          ignoreCount = "0"
          continueAfterRunningActions = "No"
-         filePath = "src/KinectDisplay.cpp"
-         timestampString = "427630575.099338"
-         startingColumnNumber = "9223372036854775807"
-         endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "294"
-         endingLineNumber = "294"
-         landmarkName = "KinectDisplay::DrawTemplates()"
-         landmarkType = "5">
-      </FileBreakpoint>
-      <FileBreakpoint
-         shouldBeEnabled = "No"
-         ignoreCount = "0"
-         continueAfterRunningActions = "No"
          filePath = "src/ofxUI-extension/ofxUIMultiMovingGraph.cpp"
          timestampString = "427122179.106587"
          startingColumnNumber = "9223372036854775807"
@@ -791,19 +735,6 @@
          startingLineNumber = "167"
          endingLineNumber = "167"
          landmarkName = "gvfPianoInputs::get_kinect_data()"
-         landmarkType = "5">
-      </FileBreakpoint>
-      <FileBreakpoint
-         shouldBeEnabled = "No"
-         ignoreCount = "0"
-         continueAfterRunningActions = "No"
-         filePath = "src/KinectDisplay.cpp"
-         timestampString = "427630575.099338"
-         startingColumnNumber = "9223372036854775807"
-         endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "61"
-         endingLineNumber = "61"
-         landmarkName = "KinectDisplay::draw()"
          landmarkType = "5">
       </FileBreakpoint>
       <FileBreakpoint
@@ -861,12 +792,12 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "src/KinectDisplay.cpp"
-         timestampString = "427630575.099338"
+         timestampString = "427651067.54231"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "124"
-         endingLineNumber = "124"
-         landmarkName = "KinectDisplay::DrawKinect(SkeletonDataPoint skeleton, vector&lt;int&gt; joints_on)"
+         startingLineNumber = "113"
+         endingLineNumber = "113"
+         landmarkName = "KinectDisplay::DrawTemplates()"
          landmarkType = "5">
       </FileBreakpoint>
       <FileBreakpoint
@@ -874,77 +805,12 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "src/KinectDisplay.cpp"
-         timestampString = "427630575.099338"
+         timestampString = "427651067.54231"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "125"
-         endingLineNumber = "125"
-         landmarkName = "KinectDisplay::DrawKinect(SkeletonDataPoint skeleton, vector&lt;int&gt; joints_on)"
-         landmarkType = "5">
-      </FileBreakpoint>
-      <FileBreakpoint
-         shouldBeEnabled = "No"
-         ignoreCount = "0"
-         continueAfterRunningActions = "No"
-         filePath = "src/KinectDisplay.cpp"
-         timestampString = "427630575.099338"
-         startingColumnNumber = "9223372036854775807"
-         endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "126"
-         endingLineNumber = "126"
-         landmarkName = "KinectDisplay::DrawKinect(SkeletonDataPoint skeleton, vector&lt;int&gt; joints_on)"
-         landmarkType = "5">
-      </FileBreakpoint>
-      <FileBreakpoint
-         shouldBeEnabled = "No"
-         ignoreCount = "0"
-         continueAfterRunningActions = "No"
-         filePath = "src/KinectDisplay.cpp"
-         timestampString = "427630575.099338"
-         startingColumnNumber = "9223372036854775807"
-         endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "118"
-         endingLineNumber = "118"
-         landmarkName = "KinectDisplay::DrawKinect(SkeletonDataPoint skeleton, vector&lt;int&gt; joints_on)"
-         landmarkType = "5">
-      </FileBreakpoint>
-      <FileBreakpoint
-         shouldBeEnabled = "No"
-         ignoreCount = "0"
-         continueAfterRunningActions = "No"
-         filePath = "src/KinectDisplay.cpp"
-         timestampString = "427630575.099338"
-         startingColumnNumber = "9223372036854775807"
-         endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "51"
-         endingLineNumber = "51"
-         landmarkName = "KinectDisplay::draw()"
-         landmarkType = "5">
-      </FileBreakpoint>
-      <FileBreakpoint
-         shouldBeEnabled = "No"
-         ignoreCount = "0"
-         continueAfterRunningActions = "No"
-         filePath = "src/KinectDisplay.cpp"
-         timestampString = "427630575.099338"
-         startingColumnNumber = "9223372036854775807"
-         endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "52"
-         endingLineNumber = "52"
-         landmarkName = "KinectDisplay::draw()"
-         landmarkType = "5">
-      </FileBreakpoint>
-      <FileBreakpoint
-         shouldBeEnabled = "No"
-         ignoreCount = "0"
-         continueAfterRunningActions = "No"
-         filePath = "src/GVFHandler.cpp"
-         timestampString = "427635036.972217"
-         startingColumnNumber = "9223372036854775807"
-         endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "101"
-         endingLineNumber = "101"
-         landmarkName = "GVFHandler::getTemplateRecogInfo(int templateNumber)"
+         startingLineNumber = "82"
+         endingLineNumber = "82"
+         landmarkName = "KinectDisplay::DrawTemplates()"
          landmarkType = "5">
       </FileBreakpoint>
    </FileBreakpoints>

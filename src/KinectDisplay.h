@@ -72,9 +72,9 @@ public:
     
     void setup(KinectInput* input, GVFHandler* handler);
     
-    void draw();
+    void Draw(SkeletonDataPoint skeleton, vector<int> joints_on = vector<int>(0));
     
-    void DrawKinect(SkeletonDataPoint skeleton, vector<int> joints_on = vector<int>(0));
+    void DrawKinect(SkeletonDataPoint skeleton);
     
 private:
     

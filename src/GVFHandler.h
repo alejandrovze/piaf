@@ -27,16 +27,14 @@ public:
     void gvf_data(int argc, float *argv);
     void gvf_data(std::vector<float> p);
     
-    
-    ofxGVFEstimation getTemplateRecogInfo(int templateNumber);
-    ofxGVFEstimation getRecogInfoOfMostProbable(); // !!!: bad naming
-    
     ofxGVFGesture* getCurrentGesture();
     
     void set_state(ofxGVF::ofxGVFState _state);
     
     bool getIsPlaying();
-    bool toggleIsPlaying();    
+    bool toggleIsPlaying();
+    
+    void set_csv_path(string path);
     
 private:
     
@@ -52,9 +50,14 @@ private:
     // Data dump
     
     // CSV Recorder
-    wng::ofxCsv csv_recorder;
-    void WriteCsvData(wng::ofxCsv* csv_recorder);
+    string csv_path;
+    int n_file;
     
+    wng::ofxCsv csv_recorder;
+    void SetupCsvData();
+    void WriteCsvDataRow();
+    void WriteCsvTemplates();
+    void WriteCsvSettings();
     
 };
 

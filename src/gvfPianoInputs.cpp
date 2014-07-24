@@ -197,23 +197,27 @@ ofEvent<ofxMidiMessage>& gvfPianoInputs::GetControlEvent() {
 //--------------------------------------------------------------
 void gvfPianoInputs::StartFile() {
     
-    csv_recorder.clear();
-    string filename = "gesture-" + ofToString(file_num) + ".csv";
-    csv_recorder.createFile(ofToDataPath(filename));
-    csv_recorder.fileSeparator = ' ';
-    
-    is_writing = true;
+    if (!is_reading) {
+        csv_recorder.clear();
+        string filename = "gesture-" + ofToString(file_num) + ".csv";
+        csv_recorder.createFile(ofToDataPath(filename));
+        csv_recorder.fileSeparator = ' ';
+        
+        is_writing = true;
+    }
 }
 
 //--------------------------------------------------------------
 void gvfPianoInputs::EndFile() {
     
-    string filename = "gesture-" + ofToString(file_num) + ".csv";
-    
-    csv_recorder.saveFile(ofToDataPath(filename));
-    
-    ++ file_num;
-    is_writing = false;
+    if (!is_reading) {
+        string filename = "gesture-" + ofToString(file_num) + ".csv";
+        
+        csv_recorder.saveFile(ofToDataPath(filename));
+        
+        ++ file_num;
+        is_writing = false;
+    }
 }
 
 //--------------------------------------------------------------

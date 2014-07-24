@@ -32,6 +32,15 @@ void GVFHandler::init(int inputDimension, vector<float> _min_range, vector<float
     
     min_range = _min_range;
     max_range = _max_range;
+    
+    csv_path = ofToDataPath("gvf-dump-");
+    n_file = 0;
+}
+
+//--------------------------------------------------------------
+void GVFHandler::set_csv_path(string path) {
+    
+    csv_path = path;
 }
 
 //--------------------------------------------------------------
@@ -85,7 +94,7 @@ void GVFHandler::gvf_data(int argc, float *argv)
         // inference on the last observation
         infer(currentGesture->getLastObservation());
         
-        WriteCsvData(&csv_recorder);
+        WriteCsvDataRow();
         
     }
 }
@@ -96,33 +105,6 @@ void GVFHandler::gvf_data(int argc, float *argv)
 //--------------------------------------------------------------
 //--------------------------------------------------------------
 
-//--------------------------------------------------------------
-ofxGVFEstimation GVFHandler::getTemplateRecogInfo(int templateNumber) { // FIXME: Rename!
-    
-    // ???: Later transfer to an assert here. 
-//    assert(templateNumber >= 0 && templateNumber < getOutcomes().estimations.size());
-    
-    if (getOutcomes().estimations.size() <= templateNumber) {
-        ofxGVFEstimation estimation;
-        return estimation; // blank
-    }
-    else
-        return getOutcomes().estimations[templateNumber];
-}
-
-//--------------------------------------------------------------
-ofxGVFEstimation GVFHandler::getRecogInfoOfMostProbable() // FIXME: Rename!
-{
-    int indexMostProbable = getMostProbableGestureIndex();
-    
-    if ((getState() == ofxGVF::STATE_FOLLOWING) && (getMostProbableGestureIndex() != -1)) {
-        return getTemplateRecogInfo(indexMostProbable);
-    }
-    else {
-        ofxGVFEstimation estimation;
-        return estimation; // blank
-    }
-}
 
 //--------------------------------------------------------------
 //--------------------------------------------------------------
@@ -144,18 +126,15 @@ void GVFHandler::startGesture() {
     // FIXME: Input ranges need to be better adjusted. 
     int dim = getConfig().inputDimensions;
     currentGesture->setAutoAdjustRanges(false);
-    currentGesture->setMinRange(vector<float>(dim, -100.));
-    currentGesture->setMaxRange(vector<float>(dim, 100.));
+    currentGesture->setMinRange(min_range);
+    currentGesture->setMaxRange(max_range);
     
     if (dim != 3 && dim != 2)
         currentGesture->setType(ofxGVFGesture::TEMPORAL);
     
     
     if(getState() == ofxGVF::STATE_FOLLOWING) {
-        csv_recorder.clear();
-        csv_recorder.createFile(ofToDataPath("new_file.csv"));
-        csv_recorder.fileSeparator = ' ';
-        
+        SetupCsvData();
         
         spreadParticles();
     }
@@ -167,11 +146,14 @@ void GVFHandler::endGesture() {
     
     switch (getState())
     {
-        case ofxGVF::STATE_LEARNING:
+        case ofxGVF::STATE_LEARNING: 
             addGestureTemplate(*currentGesture);
             break;
         case ofxGVF::STATE_FOLLOWING:
-            csv_recorder.saveFile(ofToDataPath("new_file.csv"));
+            csv_recorder.saveFile(csv_path + ofToString(n_file++) + ".csv");
+            WriteCsvTemplates();
+            WriteCsvSettings();
+            break;
         default:
             break;
     }
@@ -231,30 +213,173 @@ bool GVFHandler::toggleIsPlaying() {
     return isPlaying;
 }
 
-
 //--------------------------------------------------------------
 //--------------------------------------------------------------
 // MARK: Data Output
 //--------------------------------------------------------------
 //--------------------------------------------------------------
-void GVFHandler::WriteCsvData(wng::ofxCsv* _csv_recorder) {
+
+//--------------------------------------------------------------
+//--------------------------------------------------------------
+void GVFHandler::SetupCsvData() {
     
-    int row = _csv_recorder->numRows;
+    csv_recorder.clear();
+    csv_recorder.createFile(csv_path + ofToString(n_file) + ".csv");
+    csv_recorder.fileSeparator = ' ';
+    
+    int n_templates = getNumberOfGestureTemplates();
+    int scale_dim = getRecogInfoOfMostProbable().scale.size();
+    int rotation_dim = getRecogInfoOfMostProbable().rotation.size();
+    int info_length = 1 + 1 + 1 + 1 + scale_dim + rotation_dim; // id + prob + phase + speed + rot + scale;
+    
+    csv_recorder.setInt(0, 0, n_templates);
+    csv_recorder.setInt(0, 1, getConfig().inputDimensions);
+    csv_recorder.setInt(0, 2, info_length);
+    csv_recorder.setInt(0, 3, rotation_dim);
+    csv_recorder.setInt(0, 4, scale_dim);
+    
+}
+//--------------------------------------------------------------
+//--------------------------------------------------------------
+void GVFHandler::WriteCsvDataRow() {
+    
+    int row = csv_recorder.numRows;
+    
+    int column = 0;
     
     int input_dim = currentGesture->getNumberDimensions();
     
-    _csv_recorder->setInt(row, 0, row);
+    csv_recorder.setInt(row, column++, row);
     
     // Write input data.
-    for (int i = 0; i < currentGesture->getNumberDimensions(); ++i)
-        _csv_recorder->setFloat(row, i + 1, currentGesture->getLastObservation()[i]);
+    for (int i = 0; i < input_dim; ++i)
+        csv_recorder.setFloat(row, column + i, currentGesture->getLastObservation()[i]);
+    
+    column += input_dim;
     
     // Write Most Probable Index
-    _csv_recorder->setInt(row, input_dim + 1, getMostProbableGestureIndex());
+    csv_recorder.setInt(row, column++, getMostProbableGestureIndex());
     
     // Write Recognition Information
     for (int i = 0; i < getNumberOfGestureTemplates(); ++i) {
-        // TODO: (needs ofxGVF output first).
+        
+        ofxGVFEstimation estimation = getOutcomes().estimations[i];
+        
+        // Write Template Number
+        csv_recorder.setInt(row, column++, i);
+        
+        // Write Probability
+        csv_recorder.setFloat(row, column++, estimation.probability);
+        
+        // Write Phase
+        csv_recorder.setFloat(row, column++, estimation.phase);
+        
+        // Write Speed
+        csv_recorder.setFloat(row, column++, estimation.speed);
+        
+        // Write Rotation
+        for (int j = 0; j < estimation.rotation.size(); ++j)
+            csv_recorder.setFloat(row, column++, estimation.rotation[j]);
+        
+        // Write Scale
+        for (int j = 0; j < estimation.scale.size(); ++j)
+            csv_recorder.setFloat(row, column++, estimation.scale[j]);
+            
     }
     
+}
+
+//--------------------------------------------------------------
+void GVFHandler::WriteCsvSettings() {
+    
+    wng::ofxCsv csv;
+    
+    string file_name = csv_path + ofToString(n_file) + "-settings.csv";
+    
+    csv.clear();
+    csv.createFile(file_name);
+    csv.fileSeparator = ' ';
+    
+    ofxGVFParameters params = getParameters();
+    
+    int row = 0;
+    
+    csv.setInt(row++, 0, params.numberParticles);
+    csv.setFloat(row++, 0, params.tolerance);
+    csv.setInt(row++, 0, params.resamplingThreshold);
+    csv.setFloat(row++, 0, params.distribution);
+    csv.setFloat(row++, 0, params.phaseVariance);
+    csv.setFloat(row++, 0, params.speedVariance);
+    
+    for(int i = 0; i < params.scaleVariance.size(); ++i) {
+        csv.setFloat(row, i, params.scaleVariance[i]);
+    }
+    ++row;
+    
+    for(int i = 0; i < params.rotationVariance.size(); ++i) {
+        csv.setFloat(row, i, params.rotationVariance[i]);
+    }
+    ++row;
+    
+    
+    csv.setFloat(row++, 0, params.phaseInitialSpreading);
+    
+    
+    csv.setFloat(row++, 0, params.speedInitialSpreading);
+    
+    for(int i = 0; i < params.scaleInitialSpreading.size(); ++i) {
+        csv.setFloat(row, i, params.scaleInitialSpreading[i]);
+    }
+    ++row;
+    
+    for(int i = 0; i < params.rotationInitialSpreading.size(); ++i) {
+        csv.setFloat(row, i, params.rotationInitialSpreading[i]);
+    }
+
+    csv.saveFile(file_name);
+}
+
+
+//--------------------------------------------------------------
+void GVFHandler::WriteCsvTemplates() {
+    
+    wng::ofxCsv csv;
+    
+    string file_name = csv_path + ofToString(n_file) + "-templates.csv";
+    
+    csv.clear();
+    csv.createFile(file_name);
+    csv.fileSeparator = ' ';
+    
+    vector<ofxGVFGesture> templates = getAllGestureTemplates();
+    
+    int input_dim = templates[0].getNumberDimensions();
+    int n_templates = templates.size();
+    
+
+    csv.setInt(0, 0, input_dim); // n templates
+    csv.setInt(0, 1, n_templates); // input dimensions
+    
+    int row = 1;
+    
+    for (int i = 0; i < templates.size(); i++) {
+        
+        int template_length = templates[i].getTemplateLength();
+        
+        vector<vector<float> >& data = templates[i].getTemplatesNormal()[0];
+        
+        csv.setInt(0, i + 2, template_length); // Template Length
+        
+        for (int j = 0; j < template_length; ++j) {
+            
+            for (int k = 0; k < input_dim; ++k) {
+                csv.setFloat(row, k, data[j][k]);
+            }
+            
+            ++row;
+        }
+        
+    }
+    
+    csv.saveFile(file_name);
 }

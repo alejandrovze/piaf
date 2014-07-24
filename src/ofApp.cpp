@@ -104,9 +104,12 @@ void ofApp::keyPressed(int key){
             inputs.EndFile();
         }
     }
-    else if (key == 'i' || 'I') {
+    else if (key == 'i' || key == 'I') {
+        LoadInputFile();
+    }
+    else if (key == 'p' || key == 'P') {
         if (!handler.getIsPlaying()) {
-            LoadInputFile();
+            inputs.LoadFile(loaded_file);
             handler.toggleIsPlaying();
         }
     }
@@ -163,8 +166,6 @@ void ofApp::midiControl(ofxMidiMessage& msg) {
 
 //--------------------------------------------------------------
 void ofApp::LoadInputFile() {
-
-    string filename;
     
     ofFileDialogResult dialogResult = ofSystemLoadDialog("Select the file containing gesture to be played.");
     if(!dialogResult.bSuccess)
@@ -172,11 +173,9 @@ void ofApp::LoadInputFile() {
     
     stringstream ss;
     ss << dialogResult.filePath;
-    filename = ss.str();
-    cout << filename;
+    loaded_file = ss.str();
+    cout << loaded_file;
     
-    inputs.LoadFile(filename);
-    cout << "Playback gesture loaded.\n";
 
 }
 

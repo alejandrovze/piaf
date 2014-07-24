@@ -19,71 +19,134 @@ void KinectDisplay::setup(KinectInput* input, GVFHandler* handler) {
     
     kinect_image = kinect_input->GetImage();
     
+    // TODO: Fine-Tune Camera Setup
     cam.enableMouseInput();
-    cam.setDistance(1500);
-    
+    cam.setAutoDistance(false);
+    cam.setDistance(100);
+    cam.setOrientation(ofQuaternion(0, -1, 0, 0));
 }
 
-//---------------------------------------------------------x-----
-//// Draw kinect templates and skeleton display
 //--------------------------------------------------------------
-void KinectDisplay::draw() {
-    
-    // FIXME: DRAW CURRENT GESTURE
-    ofPushMatrix();
-    
-    ofTranslate(600, 500);
-    if (gvf_handler->getCurrentGesture()->getNumberOfTemplates() > 0) {
-        
-        if (gvf_handler->getIsPlaying())
-            ofSetColor(255, 255, 255);
-        else
-            ofSetColor(100, 100, 100);
-        
-        gvf_handler->getCurrentGesture()->draw();
-        
-        DrawParticles();
-        
-    }
-    
-    ofPopMatrix();
-    
-    
-    // FIXME: REWORK DRAW TEMPLATES
-    
-    for(int i = 0; i < gvf_handler->getNumberOfGestureTemplates(); i++){
-
-        ofxGVFGesture & gestureTemplate = gvf_handler->getGestureTemplate(i);
-        
-        ofSetColor(colors[i]);
-        ofPushMatrix();
-        
-        if (gvf_handler->getState() == ofxGVF::STATE_FOLLOWING && gvf_handler->getIsPlaying()) {
-            
-            float phase = gvf_handler->getTemplateRecogInfo(i).phase;
-            float probability = gvf_handler->getTemplateRecogInfo(i).probability;
-            
-            gestureTemplate.draw_following(phase, probability, i * 100.0f, ofGetHeight() - 100.0f, 100.0f, 100.0f);
-        }
-        else {
-            gestureTemplate.draw(i * 100.0f, ofGetHeight() - 100.0f, 100.0f, 100.0f);
-        }
-        ofPopMatrix();
-        ofSetColor(255, 255, 255);
-        
-//         ofColor template_color = ofColor(255, 0, 0) * probability + colors[i] * (1 - probability);
-
-    }
-    
-    
-}
-
-
-void KinectDisplay::DrawKinect(SkeletonDataPoint skeleton, vector<int> joints_on) {
-    
+void KinectDisplay::Draw(SkeletonDataPoint skeleton, vector<int> joints_on) {
     ofPushMatrix();
 	cam.begin();
     
+    for (int i = 0; i < NITE_JOINT_COUNT; ++i)
+        skeleton_mesh.setVertex(i, skeleton.positions[i]);
+    
+    ofSetLineWidth(5);
+    
+    skeleton_mesh.draw();
+    
+    ofSetColor(0, 0, 255);
+    
+    // Add circle for Joints ON.
+    for (int i = 0; i < joints_on.size(); ++i) {
+        ofCircle(skeleton_mesh.getVertex(joints_on[i]), 8);
+    }
+    
+    DrawGesture();
+    DrawTemplates();
+    
+    cam.end();
+    ofPopMatrix();
+    
+}
+
+//--------------------------------------------------------------
+//// Draw each saved template, with phase if following
+//--------------------------------------------------------------
+// TODO: generalize (currently 1 3d point)
+void KinectDisplay::DrawTemplates() {
+    
+    
+    for (int i = 0; i < gvf_handler->getNumberOfGestureTemplates(); ++i) {
+        
+        ofMesh& representation = gvf_handler->getGestureTemplate(i).getRepresentationsRaw()[0][0];
+        
+        ofColor color = colors[i];
+        
+        ofPushMatrix();
+        
+        if (gvf_handler->getState() == ofxGVF::STATE_FOLLOWING) {
+            
+            representation.enableColors();
+        
+            float phase = gvf_handler->getTemplateRecogInfo(i).phase;
+            float probability = gvf_handler->getTemplateRecogInfo(i).probability;
+            
+            if (phase >= 1.)
+                phase = 1.;
+            if (phase < 0.)
+                phase = 0.;
+            if (isnan(phase)) {
+                cout << "gotnan phase\n"; //FIXME: Why do we get NANs?
+                phase = 0.;
+            }
+            
+            float n_vertices = (float) representation.getNumColors();
+            int end_index = (int) (phase * n_vertices);
+            
+            if (end_index < 0)
+                cout << "i " << i << " end " << end_index << " phase " << phase << " prob " << probability << endl;
+            
+            ofSetLineWidth(0.5 + 10 * probability);
+            
+            ofColor redness = ofColor(255, 0, 0) * probability + color * (1 - probability);
+            
+            for (int j = 0; j < end_index; ++j) {
+                representation.setColor(j, redness);
+            }
+            
+            representation.draw();
+            
+            for (int j = end_index; j < n_vertices; ++j) {
+                representation.setColor(j, color);
+            }
+            
+            ofSetLineWidth(1);
+
+        }
+        else {
+            representation.disableColors();
+            ofSetColor(color);
+            representation.draw();
+        }
+        
+        
+        ofPopMatrix();
+        
+    }
+    
+}
+
+//--------------------------------------------------------------
+// TODO: generalize (currently 1 3d point)
+void KinectDisplay::DrawGesture() {
+    
+    if (gvf_handler->getCurrentGesture()->getNumberOfTemplates() > 0) {
+        ofMesh representation = gvf_handler->getCurrentGesture()->getRepresentationsRaw()[0][0];
+        
+        representation.disableColors();
+        
+        if (gvf_handler->getIsPlaying()) {
+            if ((gvf_handler->getState() == ofxGVF::STATE_FOLLOWING) && (gvf_handler->getMostProbableGestureIndex() > -1))
+                ofSetColor(colors[gvf_handler->getMostProbableGestureIndex()]);
+            else
+                ofSetColor(255, 255, 255);
+        }
+        else
+            ofSetColor(50, 50, 50);
+        
+        representation.draw();
+    }
+
+}
+
+
+//--------------------------------------------------------------
+void KinectDisplay::DrawKinect(SkeletonDataPoint skeleton) {
+
     if (kinect_input->get_is_running()) {
         
         ofScale(ofGetWindowWidth() / (float)kinect_image->getWidth(), ofGetWindowHeight() / (float) kinect_image->getHeight());
@@ -107,32 +170,8 @@ void KinectDisplay::DrawKinect(SkeletonDataPoint skeleton, vector<int> joints_on
             skeleton_mesh.setVertex(i, depth_pt);
             
         }
-    }
-    else {
-        // Z values are very large.
-        ofScale(1., 1., 1. / 2000.);
         
-        // TODO: display scaling without kinect plugged in?
-        
-        for (int i = 0; i < NITE_JOINT_COUNT; ++i)
-            skeleton_mesh.setVertex(i, skeleton.positions[i]);
     }
-    
-    ofSetLineWidth(5);
-    
-    skeleton_mesh.draw();
-    
-    ofSetColor(0, 0, 255);
-    
-    // Add circle for Joints ON.
-    for (int i = 0; i < joints_on.size(); ++i) {
-        ofCircle(skeleton_mesh.getVertex(joints_on[i]), 8);
-    }
-    
-    cam.end();
-    ofPopMatrix();
-    
-//    drawInteractionArea();
     
 }
 
@@ -178,7 +217,7 @@ void KinectDisplay::SetupSkeleton() {
     }
 }
 
-
+//--------------------------------------------------------------
 ofPoint KinectDisplay::ScaleToKinect(ofPoint init_point) {
     
     ofPoint point;
@@ -205,11 +244,11 @@ void KinectDisplay::initColors()
     colors.clear();
     colors.push_back(ofColor::blue);
     colors.push_back(ofColor::cyan);
-    colors.push_back(ofColor::aqua);
+    colors.push_back(ofColor::green);
     colors.push_back(ofColor::violet);
-    colors.push_back(ofColor::aliceBlue);
-    colors.push_back(ofColor::aquamarine);
-    colors.push_back(ofColor::azure);
+    colors.push_back(ofColor::orange);
+    colors.push_back(ofColor::yellow);
+    colors.push_back(ofColor::pink);
 }
 
 //--------------------------------------------------------------
@@ -231,123 +270,9 @@ ofColor KinectDisplay::generateRandomColor()
 
 
 
-void KinectDisplay::DrawGesture() {
-    
-    //    ofPushMatrix();
-    //    ofPopMatrix();
-    
-    vector< vector<float> > template_data = gvf_handler->getCurrentGesture()->getTemplateRaw();
-    vector<float> initial = gvf_handler->getCurrentGesture()->getInitialObservationRaw();
-    
-    int length = template_data.size();
-    
-    ofPolyline line;
-    
-    for (int t = 0; t < length; ++t) {
-        
-        int dimension = gvf_handler->getCurrentGesture()->getNumberDimensions();
-        assert(dimension == 3);
-        
-        ofPoint orig_pos = ofPoint(template_data[t][0] + initial[0], template_data[t][1] + initial[1], template_data[t][2] + initial[2]);
-        
-        ofPoint pos = ScaleToKinect(orig_pos);
-        
-        ofSetLineWidth(1);
-        
-        ofSetColor(ofColor(0, 255, 0));
-        ofFill();
-        
-        line.addVertex(pos);
-        ofCircle(pos, 5);
-        
-    }
-    
-    line.draw();
-    
-    ofSetColor(255, 255, 255);
-    ofNoFill();
-    
-}
-
 //--------------------------------------------------------------
-//// Draw each saved template, with phase if following
 //--------------------------------------------------------------
-void KinectDisplay::DrawTemplates() {
-    
-    int n_templates = gvf_handler->getNumberOfGestureTemplates();
-    
-    for (int i = 0; i < n_templates; ++i) {
-        
-        vector< vector<float> > template_data = gvf_handler->getGestureTemplate(i).getTemplateRaw();
-        vector<float> initial = gvf_handler->getGestureTemplate(i).getInitialObservationRaw();
-        
-        int length = template_data.size();
-        
-        ofPolyline line;
-        
-        for (int t = 0; t < length; ++t) {
-            
-            int dimension = gvf_handler->getGestureTemplate(i).getNumberDimensions();
-            assert(dimension == 3);
-            
-            ofPoint orig_pos = ofPoint(template_data[t][0] + initial[0], template_data[t][1] + initial[1], template_data[t][2] + initial[2]);
-            
-            ofPoint pos = ScaleToKinect(orig_pos);
-            
-            if (gvf_handler->getState() == ofxGVF::STATE_FOLLOWING && gvf_handler->getIsPlaying()) {
-                
-                // Set Color according to Probability
-                // FIXME: quick fix for getOutcomes crashing
-                float probability;
-                if (gvf_handler->getMostProbableGestureIndex() > -1) {
-                    probability = gvf_handler->getTemplateRecogInfo(i).probability;
-                }
-                else {
-                    probability = 0;
-                }
-                ofColor template_color = ofColor(255, 0, 0) * probability + colors[i] * (1 - probability); // FIXME: unsafe
-                
-                ofSetColor(template_color);
-                
-                ofSetLineWidth(0.5 + 10 * probability);
-                
-                // Set Fill according to Phase
-                float phase = 0;
-                
-                phase = gvf_handler->getTemplateRecogInfo(i).phase;
-                
-                if (phase >= ((float) t / (float) length)) {
-                    ofFill();
-                }
-                else {
-                    ofNoFill();
-                }
-                
-            }
-            else {
-                
-                ofSetLineWidth(1);
-                ofSetColor(colors[i]);
-                ofNoFill();
-            }
-            // Fill according to phase reading.
-            
-            line.addVertex(pos);
-            ofCircle(pos, 5);
-            
-        }
-        line.draw();
-        
-        
-        ofSetColor(255, 255, 255);
-        ofNoFill();
-        
-        
-        
-    }
-    
-    
-}
+//--------------------------------------------------------------
 
 // FIXME: Fix drawing of particles.
 void KinectDisplay::DrawParticles() {
