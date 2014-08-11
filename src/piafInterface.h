@@ -18,6 +18,10 @@
 #include "GVFHandler.h"
 #include "KinectDisplay.h"
 
+#define KINECT_ON 0
+#define ACC_ON 0
+#define MOCAP_ON 1
+
 class piafInterface {
     
 public:
@@ -39,9 +43,14 @@ private:
     void UpdateInputsGUI();
     void InputsGUIEvent(ofxUIEventArgs &e);
     
+    bool acc_active;
+    bool kinect_active;
+    
     ofxUITextArea* gesture_length;
     vector<ofxUIMultiMovingGraph*> acc_inputs;
+    vector<ofxUIMultiMovingGraph*> mocap_inputs;
     
+    vector<ofxUILabelToggle*> mocap_toggles;
     vector<ofxUILabelToggle*> acc_toggles;
     ofxUIDropDownList* skeleton_list;
     

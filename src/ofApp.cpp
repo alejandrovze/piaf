@@ -13,7 +13,7 @@ void ofApp::setup(){
 	ofEnableAlphaBlending();
 	ofSetupScreen();
 	ofBackground(0, 0, 0);
-	ofSetFrameRate(60);
+	ofSetFrameRate(30);
     
     // SETUP ELEMENTS
     inputs.setup();
@@ -48,13 +48,23 @@ void ofApp::update(){
     ofxGVFEstimation mostProb = handler.getRecogInfoOfMostProbable();
     
     if (handler.getIsPlaying() && handler.getState() == ofxGVF::STATE_FOLLOWING) {
-        sender.SendGVFOutcome(handler.getMostProbableGestureIndex(),
-                              mostProb.probability, mostProb.phase, mostProb.speed,
-                              mostProb.scale, mostProb.rotation);
+        
+        ofxGVFOutcomes outcomes = handler.getOutcomes();
+        int n_templates = outcomes.estimations.size();
+        
+        sender.SendInfo(n_templates, "/n_templates");
+        sender.SendInfo(outcomes.most_probable, "/most_probable_id");
+        
+        for (int i = 0; i < n_templates; ++i) {
+            sender.SendGVFOutcome(i, outcomes.estimations[i]);
+        }
     }
-    else {
-        sender.SendGVFOutcome(handler.getMostProbableGestureIndex(),
-                              0, 0, 1., vector<float>(1, 0), vector<float>(1, 0));
+    else { 
+        sender.SendInfo(-1, "/most_probable_id");
+    }
+    
+    for (int i = 0; i < inputs.get_mocap_data().size(); ++i) {
+        sender.SendDataPoint(i, inputs.get_mocap_data()[i]);
     }
     
 }

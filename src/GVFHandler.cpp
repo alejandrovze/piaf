@@ -28,12 +28,25 @@ void GVFHandler::init(int inputDimension, vector<float> _min_range, vector<float
     gC.translate = true;
     gC.segmentation = true;
     
-    setup(gC);
+    // Parameters for tracking MOCAP
+    ofxGVFParameters mocap_params;
+    mocap_params.numberParticles = 2000;
+    mocap_params.tolerance = 0.2;
+    mocap_params.resamplingThreshold = 500;
+    mocap_params.distribution = 0.0;
+    mocap_params.phaseVariance = 0.000001;
+    mocap_params.speedVariance = 0.1;
+    mocap_params.scaleVariance = vector<float>(3, 0.1);
+    mocap_params.scaleVariance[1] = 0.0001;
+    mocap_params.rotationVariance = vector<float>(3, 0.00001);
+    
+    
+    setup(gC, mocap_params);
     
     min_range = _min_range;
     max_range = _max_range;
     
-    csv_path = ofToDataPath("gvf-dump-");
+    csv_path = ofToDataPath("dump/gvf-dump-");
     n_file = 0;
 }
 
@@ -73,29 +86,33 @@ void GVFHandler::gvf_data(int argc, float *argv)
     {
         return;
     }
+    
+    // FIXME: Quick "dirty" scaling.
+    
+//    cout << "OBSERVATION" << endl;
+    vector<float> observation_vector(argc);
+    for (int k=0; k < argc; k++) {
+        observation_vector[k] = (argv[k] - currentGesture->getMinRange()[k]) / (currentGesture->getMaxRange()[k] - currentGesture->getMinRange()[k]);
+        
+//        cout << observation_vector[k] << " ";
+    }
+//    cout << endl;
+    
+    
     if(getState() == ofxGVF::STATE_LEARNING)
     {
-        vector<float> observation_vector(argc);
-        for (int k=0; k < argc; k++)
-            observation_vector[k] = argv[k];
-        
-        
         currentGesture->addObservation(observation_vector);
         
     }
     else if(getState() == ofxGVF::STATE_FOLLOWING)
     {
-        vector<float> observation_vector(argc);
-        for (int k=0; k < argc; k++) {
-            observation_vector[k] = argv[k];
-        }
+
         currentGesture->addObservation(observation_vector);
         
         // inference on the last observation
         infer(currentGesture->getLastObservation());
         
         WriteCsvDataRow();
-        
     }
 }
 

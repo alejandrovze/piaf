@@ -47,11 +47,11 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "../../../addons/ofxGVF/src/ofxGVF.cpp"
-         timestampString = "427738341.410801"
+         timestampString = "428254116.7274"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "1211"
-         endingLineNumber = "1211">
+         startingLineNumber = "1225"
+         endingLineNumber = "1225">
       </FileBreakpoint>
       <FileBreakpoint
          shouldBeEnabled = "No"
@@ -366,11 +366,22 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "src/gvfPianoInputs.cpp"
-         timestampString = "427628481.874406"
+         timestampString = "429118981.736297"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "276"
-         endingLineNumber = "276"
+         startingLineNumber = "364"
+         endingLineNumber = "364">
+      </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "No"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "src/gvfPianoInputs.cpp"
+         timestampString = "429118981.736297"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "392"
+         endingLineNumber = "392"
          landmarkName = "gvfPianoInputs::ReadCsvData()"
          landmarkType = "5">
       </FileBreakpoint>
@@ -379,38 +390,12 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "src/gvfPianoInputs.cpp"
-         timestampString = "427628481.874406"
+         timestampString = "429118981.736297"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "304"
-         endingLineNumber = "304"
-         landmarkName = "gvfPianoInputs::ReadCsvData()"
-         landmarkType = "5">
-      </FileBreakpoint>
-      <FileBreakpoint
-         shouldBeEnabled = "No"
-         ignoreCount = "0"
-         continueAfterRunningActions = "No"
-         filePath = "src/gvfPianoInputs.cpp"
-         timestampString = "427628481.874406"
-         startingColumnNumber = "9223372036854775807"
-         endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "269"
-         endingLineNumber = "269"
+         startingLineNumber = "357"
+         endingLineNumber = "357"
          landmarkName = "gvfPianoInputs::LoadFile(string filename)"
-         landmarkType = "5">
-      </FileBreakpoint>
-      <FileBreakpoint
-         shouldBeEnabled = "No"
-         ignoreCount = "0"
-         continueAfterRunningActions = "No"
-         filePath = "src/gvfPianoInputs.cpp"
-         timestampString = "427628481.874406"
-         startingColumnNumber = "9223372036854775807"
-         endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "250"
-         endingLineNumber = "250"
-         landmarkName = "gvfPianoInputs::WriteCsvData(wng::ofxCsv* _csv_recorder)"
          landmarkType = "5">
       </FileBreakpoint>
       <FileBreakpoint
@@ -656,17 +641,6 @@
          shouldBeEnabled = "No"
          ignoreCount = "0"
          continueAfterRunningActions = "No"
-         filePath = "src/ofApp.h"
-         timestampString = "427031086.599348"
-         startingColumnNumber = "9223372036854775807"
-         endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "14"
-         endingLineNumber = "14">
-      </FileBreakpoint>
-      <FileBreakpoint
-         shouldBeEnabled = "No"
-         ignoreCount = "0"
-         continueAfterRunningActions = "No"
          filePath = "src/PianoInput.cpp"
          timestampString = "427050976.999296"
          startingColumnNumber = "9223372036854775807"
@@ -718,61 +692,33 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "src/gvfPianoInputs.cpp"
-         timestampString = "427628481.874406"
+         timestampString = "429118981.736297"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "166"
-         endingLineNumber = "166">
+         startingLineNumber = "223"
+         endingLineNumber = "223">
       </FileBreakpoint>
       <FileBreakpoint
          shouldBeEnabled = "No"
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "src/gvfPianoInputs.cpp"
-         timestampString = "427628481.874406"
+         timestampString = "429118981.736297"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "167"
-         endingLineNumber = "167"
-         landmarkName = "gvfPianoInputs::get_kinect_data()"
-         landmarkType = "5">
+         startingLineNumber = "224"
+         endingLineNumber = "224">
       </FileBreakpoint>
       <FileBreakpoint
          shouldBeEnabled = "No"
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "src/gvfPianoInputs.cpp"
-         timestampString = "427628481.874406"
+         timestampString = "429118981.736297"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "233"
-         endingLineNumber = "233"
-         landmarkName = "gvfPianoInputs::WriteCsvData(wng::ofxCsv* _csv_recorder)"
-         landmarkType = "5">
-      </FileBreakpoint>
-      <FileBreakpoint
-         shouldBeEnabled = "No"
-         ignoreCount = "0"
-         continueAfterRunningActions = "No"
-         filePath = "src/gvfPianoInputs.cpp"
-         timestampString = "427628481.874406"
-         startingColumnNumber = "9223372036854775807"
-         endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "246"
-         endingLineNumber = "246"
-         landmarkName = "gvfPianoInputs::WriteCsvData(wng::ofxCsv* _csv_recorder)"
-         landmarkType = "5">
-      </FileBreakpoint>
-      <FileBreakpoint
-         shouldBeEnabled = "No"
-         ignoreCount = "0"
-         continueAfterRunningActions = "No"
-         filePath = "src/gvfPianoInputs.cpp"
-         timestampString = "427628481.874406"
-         startingColumnNumber = "9223372036854775807"
-         endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "245"
-         endingLineNumber = "245"
+         startingLineNumber = "309"
+         endingLineNumber = "309"
          landmarkName = "gvfPianoInputs::WriteCsvData(wng::ofxCsv* _csv_recorder)"
          landmarkType = "5">
       </FileBreakpoint>
@@ -811,6 +757,214 @@
          startingLineNumber = "82"
          endingLineNumber = "82"
          landmarkName = "KinectDisplay::DrawTemplates()"
+         landmarkType = "5">
+      </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "No"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "src/MocapInput.cpp"
+         timestampString = "428412131.374185"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "35"
+         endingLineNumber = "35"
+         landmarkName = "MocapInput::update()"
+         landmarkType = "5">
+      </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "No"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "src/gvfPianoInputs.cpp"
+         timestampString = "429118981.736297"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "106"
+         endingLineNumber = "106"
+         landmarkName = "gvfPianoInputs::ConcatenateInput()"
+         landmarkType = "5">
+      </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "No"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "../../../addons/ofxGVF/src/ofxGVF.cpp"
+         timestampString = "428002978.721241"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "885"
+         endingLineNumber = "885"
+         landmarkName = "ofxGVF::infer(vector&lt;float&gt; vect)"
+         landmarkType = "5">
+      </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "No"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "../../../addons/ofxGVF/src/ofxGVF.cpp"
+         timestampString = "428236009.786855"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "658"
+         endingLineNumber = "658"
+         landmarkName = "ofxGVF::particleFilter(vector&lt;float&gt; &amp; obs)"
+         landmarkType = "5">
+      </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "No"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "src/GVFHandler.cpp"
+         timestampString = "428327170.147609"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "46"
+         endingLineNumber = "46"
+         landmarkName = "GVFHandler::init(int inputDimension, vector&lt;float&gt; _min_range, vector&lt;float&gt; _max_range)"
+         landmarkType = "5">
+      </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "No"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "src/GVFHandler.cpp"
+         timestampString = "428327170.147609"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "49"
+         endingLineNumber = "49"
+         landmarkName = "GVFHandler::init(int inputDimension, vector&lt;float&gt; _min_range, vector&lt;float&gt; _max_range)"
+         landmarkType = "5">
+      </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "No"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "src/GVFHandler.cpp"
+         timestampString = "428327170.147609"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "50"
+         endingLineNumber = "50"
+         landmarkName = "GVFHandler::init(int inputDimension, vector&lt;float&gt; _min_range, vector&lt;float&gt; _max_range)"
+         landmarkType = "5">
+      </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "No"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "src/gvfPianoInputs.cpp"
+         timestampString = "429118981.736297"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "140"
+         endingLineNumber = "140"
+         landmarkName = "gvfPianoInputs::get_input_ranges()"
+         landmarkType = "5">
+      </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "No"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "src/gvfPianoInputs.cpp"
+         timestampString = "429118981.736297"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "147"
+         endingLineNumber = "147"
+         landmarkName = "gvfPianoInputs::get_input_ranges()"
+         landmarkType = "5">
+      </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "No"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "../../../addons/ofxGVF/src/ofxGVF.cpp"
+         timestampString = "428251737.504766"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "1159"
+         endingLineNumber = "1159"
+         landmarkName = "ofxGVF::setSpeedVariance(float speedVariance)"
+         landmarkType = "5">
+      </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "No"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "src/gvfPianoInputs.cpp"
+         timestampString = "429118981.736297"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "102"
+         endingLineNumber = "102"
+         landmarkName = "gvfPianoInputs::ConcatenateInput()"
+         landmarkType = "5">
+      </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "No"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "src/GVFHandler.cpp"
+         timestampString = "428337596.537614"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "102"
+         endingLineNumber = "102"
+         landmarkName = "GVFHandler::gvf_data(int argc, float *argv)"
+         landmarkType = "5">
+      </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "No"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "src/MocapInput.cpp"
+         timestampString = "429114156.029525"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "45"
+         endingLineNumber = "45"
+         landmarkName = "MocapInput::update()"
+         landmarkType = "5">
+      </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "No"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "src/MocapInput.cpp"
+         timestampString = "429114843.664757"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "36"
+         endingLineNumber = "36"
+         landmarkName = "MocapInput::update()"
+         landmarkType = "5">
+      </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "No"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "src/MocapInput.cpp"
+         timestampString = "429115259.443338"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "46"
+         endingLineNumber = "46"
+         landmarkName = "MocapInput::update()"
+         landmarkType = "5">
+      </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "No"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "src/MocapInput.cpp"
+         timestampString = "429115297.882171"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "47"
+         endingLineNumber = "47"
+         landmarkName = "MocapInput::update()"
          landmarkType = "5">
       </FileBreakpoint>
    </FileBreakpoints>

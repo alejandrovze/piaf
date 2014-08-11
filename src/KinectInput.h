@@ -20,7 +20,6 @@
 // OTOOL HELP
 // otool -L /Users/avz/Programming/openFrameworks/openFrameworks/apps/eaviPiano/PiaF/bin/piafDebug.app/Contents/MacOS/piafDebug
 
-                  
 // ------------------------------------------------------
 // ------------------------------------------------------
 // Skeleton Gesture Structure

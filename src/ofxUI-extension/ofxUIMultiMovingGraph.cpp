@@ -136,6 +136,12 @@ void ofxUIMultiMovingGraph::setMaxAndMin(float _max, float _min)
     min = _min;
 }
 
+// TODO: finish implementing (currently has no effect).
+void ofxUIMultiMovingGraph::set_auto_bounds(bool _auto_bounds)
+{
+    auto_bounds = _auto_bounds;
+}
+
 //------------------------------------------------------
 
 ofxUIMultiMovingGraph* ofxUIMultiMovingGraph::addToCanvas(ofxUICanvas* canvas, string _name, vector<ofVec3f> _buffer,

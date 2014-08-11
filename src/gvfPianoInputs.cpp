@@ -12,9 +12,11 @@
 void gvfPianoInputs::setup(){
     
     // KINET SETUP
+#if KINECT_ON
     kinect_input.setup();
+#endif
     kinect_data = SkeletonDataPoint();
-    joints_on.push_back(NITE_JOINT_LEFT_HAND);
+//    joints_on.push_back(NITE_JOINT_LEFT_HAND);
     
     // WAX ACC SETUP
     wax_receiver.setup(8200);
@@ -25,10 +27,16 @@ void gvfPianoInputs::setup(){
     // PIANO INPUT SETUP (MIDI)
     piano.setup();
     
+    // MOCAP Receiver
+    mocap_input.setup();
+    mocap_data = vector<RigidBody>(mocap_input.get_n_body_parts());
+    mocap_on.push_back(1);
+    
     // CSV File business
     is_writing = false;
     is_reading = false;
     file_num = 0;
+    csv_path = ofToDataPath("gvf-gesture-");
     
 }
 
@@ -56,6 +64,12 @@ bool gvfPianoInputs::update(){
                 acc_data[i] = accelerometers[i]->get_data();
             }
         }
+        
+        //Update mocap input.
+        mocap_input.update();
+        for (int i = 0; i < mocap_input.get_n_body_parts(); ++i) {
+            mocap_data[i] = mocap_input.GetRigidBody(i);
+        }
     }
     
     if (is_writing) {
@@ -80,7 +94,13 @@ vector<float> gvfPianoInputs::ConcatenateInput() {
     for (int i = 0; i < acc_on.size(); ++i) {
         ofVec3f acc_data = accelerometers[acc_on[i]]->get_data();
         for (int j = 0; j < 3; ++j)
-            input_data.push_back(acc_data[i]);
+            input_data.push_back(acc_data[j]);
+    }
+
+    for (int i = 0; i < mocap_on.size(); ++i) {
+        for (int j = 0; j < 3; ++j)
+            input_data.push_back(mocap_data[mocap_on[i]].position[j]);
+        // TODO: pass quaternion data as well (optional).
     }
     
     return input_data;
@@ -115,8 +135,32 @@ vector<vector<float> > gvfPianoInputs::get_input_ranges() {
         }
     }
     
+    // Mocap Ranges
+    // ???: What should they be, how to set?
+    for (int i = 0; i < mocap_on.size(); ++i) {
+        
+        int part_id = mocap_on[i];
+        
+        for (int j = 0; j < 3; ++j) {
+            
+            input_ranges[0].push_back(mocap_input.get_bounds()[part_id * 2][j]);
+            input_ranges[1].push_back(mocap_input.get_bounds()[part_id * 2 + 1][j]);
+            
+        }
+    }
+    
     assert(input_ranges[0].size() == get_input_size());
     assert(input_ranges[1].size() == get_input_size());
+    
+    // TODO: remove eventually, for debugging
+//    cout << "Input ranges: MIN\n";
+//    for (int i = 0; i < input_ranges[0].size(); ++i)
+//        cout << input_ranges[0][i] << " ";
+//    cout << endl;
+//    cout << "Input ranges:: MAX\n";
+//    for (int i = 0; i < input_ranges[1].size(); ++i)
+//        cout << input_ranges[1][i] << " ";
+//    cout << endl;
     
     return input_ranges;
     
@@ -125,7 +169,7 @@ vector<vector<float> > gvfPianoInputs::get_input_ranges() {
 //--------------------------------------------------------------
 int gvfPianoInputs::get_input_size() {
     
-    return 3 * (joints_on.size() + acc_on.size());
+    return 3 * (joints_on.size() + acc_on.size() + mocap_on.size());
     
 }
 
@@ -144,6 +188,11 @@ vector<int> gvfPianoInputs::get_joints_on() {
 }
 
 //--------------------------------------------------------------
+void gvfPianoInputs::ResetBounds() {
+    mocap_input.ResetBounds();
+}
+
+//--------------------------------------------------------------
 void gvfPianoInputs::set_acc_on(vector<int> _acc_on) {
     
     for (int i = 0; i < _acc_on.size(); ++i)
@@ -155,6 +204,20 @@ void gvfPianoInputs::set_acc_on(vector<int> _acc_on) {
 //--------------------------------------------------------------
 vector<int> gvfPianoInputs::get_acc_on() {
     return acc_on;
+}
+
+//--------------------------------------------------------------
+void gvfPianoInputs::set_mocap_on(vector<int> _mocap_on) {
+    
+    for (int i = 0; i < _mocap_on.size(); ++i)
+        assert(_mocap_on[i] < mocap_input.get_n_body_parts() && _mocap_on[i] >= 0);
+    
+    mocap_on = _mocap_on;
+}
+
+//--------------------------------------------------------------
+vector<int> gvfPianoInputs::get_mocap_on() {
+    return mocap_on;
 }
 
 //--------------------------------------------------------------
@@ -178,6 +241,18 @@ vector<ofVec3f> gvfPianoInputs::get_acc_data() {
 }
 
 //--------------------------------------------------------------
+const vector<RigidBody>& gvfPianoInputs::get_mocap_data() {
+    return mocap_data;
+    
+}
+
+//--------------------------------------------------------------
+const vector<ofVec3f>& gvfPianoInputs::get_mocap_bounds() {
+    return mocap_input.get_bounds();
+}
+
+
+//--------------------------------------------------------------
 ofEvent<ofxMidiMessage>& gvfPianoInputs::GetPianoEvent() {
     return piano.GetPianoEvent();
 }
@@ -199,7 +274,7 @@ void gvfPianoInputs::StartFile() {
     
     if (!is_reading) {
         csv_recorder.clear();
-        string filename = "gesture-" + ofToString(file_num) + ".csv";
+        string filename = csv_path + ofToString(file_num) + ".csv";
         csv_recorder.createFile(ofToDataPath(filename));
         csv_recorder.fileSeparator = ' ';
         
@@ -211,13 +286,20 @@ void gvfPianoInputs::StartFile() {
 void gvfPianoInputs::EndFile() {
     
     if (!is_reading) {
-        string filename = "gesture-" + ofToString(file_num) + ".csv";
-        
-        csv_recorder.saveFile(ofToDataPath(filename));
-        
-        ++ file_num;
+        string filename = csv_path + ofToString(file_num++) + ".csv";
+        csv_recorder.saveFile(filename);
         is_writing = false;
     }
+}
+
+int gvfPianoInputs::GetMocapSize() {
+    return mocap_input.get_n_body_parts();
+}
+
+void gvfPianoInputs::SetCsvPath(string path) {
+    
+    csv_path = path;
+    
 }
 
 //--------------------------------------------------------------
@@ -231,17 +313,17 @@ void gvfPianoInputs::WriteCsvData(wng::ofxCsv* _csv_recorder) {
     
     int position = 1;
     
-    // Write Kinect
-    for (int i = 0; i < NITE_JOINT_COUNT; ++i) {
-        for (int j = 0; j < 3; ++j) {
-            _csv_recorder->setFloat(row, i * 3 + j + position, kinect_data.positions[i][j]);
-        }
-    }
-    
-    position += NITE_JOINT_COUNT * 3;
-    
-    _csv_recorder->setInt(row, position, kinect_data.state); // Kinect tracking state
-    ++position;
+//    // Write Kinect
+//    for (int i = 0; i < NITE_JOINT_COUNT; ++i) {
+//        for (int j = 0; j < 3; ++j) {
+//            _csv_recorder->setFloat(row, i * 3 + j + position, kinect_data.positions[i][j]);
+//        }
+//    }
+//    
+//    position += NITE_JOINT_COUNT * 3;
+//    
+//    _csv_recorder->setInt(row, position, kinect_data.state); // Kinect tracking state
+//    ++position;
     
     // Write Acc Data
     for (int i = 0; i < accelerometers.size(); ++i) {
@@ -251,6 +333,18 @@ void gvfPianoInputs::WriteCsvData(wng::ofxCsv* _csv_recorder) {
     }
     
     position += accelerometers.size() * 3;
+    
+    // Write Mocap Data
+    for (int i = 0; i < mocap_data.size(); ++i) {
+        // Write vector
+        for (int j = 0; j < 3; ++j)
+            _csv_recorder->setFloat(row, position + i * 7 + j, mocap_data[i].position[j]);
+        // Write Quat
+        for (int j = 3; j < 7; ++j)
+            _csv_recorder->setFloat(row, position + i * 7 + j, mocap_data[i].orientation[j]);
+    }
+    
+    position += mocap_data.size() * 7;
     
 }
 
@@ -280,17 +374,17 @@ bool gvfPianoInputs::ReadCsvData() {
         
         int position = 1;
         
-        // Read Kinect
-        for (int i = 0; i < NITE_JOINT_COUNT; ++i) {
-            for (int j = 0; j < 3; ++j) {
-                kinect_data.positions[i][j] = csv_reader.getFloat(csv_row, i * 3 + position + j);
-            }
-        }
-    
-        position += 3 * NITE_JOINT_COUNT;
-        
-        kinect_data.state = (nite::SkeletonState) csv_reader.getInt(csv_row, position);
-        ++position;
+//        // Read Kinect
+//        for (int i = 0; i < NITE_JOINT_COUNT; ++i) {
+//            for (int j = 0; j < 3; ++j) {
+//                kinect_data.positions[i][j] = csv_reader.getFloat(csv_row, i * 3 + position + j);
+//            }
+//        }
+//    
+//        position += 3 * NITE_JOINT_COUNT;
+//        
+//        kinect_data.state = (nite::SkeletonState) csv_reader.getInt(csv_row, position);
+//        ++position;
         
         // Read Acc
         for (int i = 0; i < acc_data.size(); ++i) {
@@ -298,6 +392,23 @@ bool gvfPianoInputs::ReadCsvData() {
                 acc_data[i][j] = csv_reader.getFloat(csv_row, i * 3 + position + j);
             }
         }
+        
+        position += acc_data.size() * 3;
+        
+        // Read Mocap
+        for (int i = 0; i < mocap_data.size(); ++i) {
+            // Get Vector
+            for (int j = 0; j < 3; ++j) {
+                mocap_data[i].position[j] = csv_reader.getFloat(csv_row, position + i * 7 + j);
+            }
+            // Get Quat
+            for (int j = 3; j < 7; ++j) {
+                mocap_data[i].orientation[j] = csv_reader.getFloat(csv_row, position + i * 7 + j);
+            }
+            
+        }
+        
+        position += mocap_data.size() * 7;
                 
         ++ csv_row;
     }

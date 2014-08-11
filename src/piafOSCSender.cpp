@@ -17,37 +17,98 @@ void piafOSCSender::setup(){
     
 }
 
-void piafOSCSender::SendGVFOutcome(int gesture_id, float probability, float phase,
-                                   float speed, vector<float> scale, vector<float> rotation) {
+void piafOSCSender::SendInfo(int info, string address) {
     
-    // Send Data for Most Probable Gesture
-        
-    ofxOscMessage gvf_outcomes;
+    ofxOscMessage message;
     
-    gvf_outcomes.setAddress("/gvf_most_probable");
-    gvf_outcomes.addIntArg(gesture_id);
+    message.setAddress(address);
+    message.addIntArg(info);
     
-    gvf_outcomes.addFloatArg(probability);
-    gvf_outcomes.addFloatArg(phase);
-    gvf_outcomes.addFloatArg(speed);
+    sender.sendMessage(message);
+
+}
+
+void piafOSCSender::SendInfo(float info, string address) {
     
-    if (scale.size() != 0)
-        gvf_outcomes.addFloatArg(scale[0]);
+    ofxOscMessage message;
     
-    if (rotation.size() != 0)
-        gvf_outcomes.addFloatArg(rotation[0]);
+    message.setAddress(address);
+    message.addFloatArg(info);
     
-//    int scaleDim = scale.size();
-//    gvf_outcomes.addIntArg(scaleDim);
-//    for (int i = 0; i < scaleDim; ++i)
-//        gvf_outcomes.addFloatArg(scale[i]);
-//    
-//    int rotationDim = rotation.size();
-//    gvf_outcomes.addIntArg(rotationDim);
-//    for (int i = 0; i < rotationDim; ++i)
-//        gvf_outcomes.addFloatArg(rotation[i]);
-    
-    sender.sendMessage(gvf_outcomes);
+    sender.sendMessage(message);
     
 }
 
+void piafOSCSender::SendDataPoint(int point_id, string data_name, ofVec3f point) {
+    
+    ofxOscMessage data_point;
+    
+    data_point.setAddress("/data");
+    data_point.addIntArg(point_id);
+    data_point.addStringArg(data_name);
+    
+    for (int i = 0; i < 3; ++i) {
+        data_point.addFloatArg(point[i]);
+    }
+    
+    sender.sendMessage(data_point);
+}
+
+void piafOSCSender::SendDataPoint(int point_id, const RigidBody& body_part) {
+    
+    ofxOscMessage data_point;
+    
+    data_point.setAddress("/data");
+    data_point.addIntArg(point_id);
+    data_point.addStringArg(body_part.name);
+    
+    for (int i = 0; i < 3; ++i) {
+        data_point.addFloatArg(body_part.position[i]);
+    }
+    for (int i = 0; i < 4; ++i) {
+        data_point.addFloatArg(body_part.orientation[i]);
+    }
+    
+    sender.sendMessage(data_point);
+}
+
+void piafOSCSender::SendGVFOutcome(int gesture_id, ofxGVFEstimation estimation) {
+    
+    ofxOscMessage gvf_outcome;
+    
+    gvf_outcome.setAddress("/estimation");
+    gvf_outcome.addIntArg(gesture_id);
+    
+    gvf_outcome.addFloatArg(estimation.probability);
+    gvf_outcome.addFloatArg(estimation.phase);
+    gvf_outcome.addFloatArg(estimation.speed);
+
+    gvf_outcome.addIntArg(estimation.scale.size());
+    for (int i = 0; i < estimation.scale.size(); ++i) {
+        gvf_outcome.addFloatArg(estimation.scale[i]);
+    }
+    
+    gvf_outcome.addIntArg(estimation.rotation.size());
+    for (int i = 0; i < estimation.rotation.size(); ++i) {
+        gvf_outcome.addFloatArg(estimation.rotation[i]);
+    }
+
+    // Padding option
+//    for (int i = 0; i < 3; ++i) {
+//        if (i < estimation.scale.size())
+//            gvf_outcome.addFloatArg(estimation.scale[i]);
+//        else
+//            gvf_outcome.addFloatArg(0.); // padding
+//    }
+//    
+//    gvf_outcome.addIntArg(estimation.rotation.size());
+//    for (int i = 0; i < 3; ++i) {
+//        if (i < estimation.rotation.size())
+//            gvf_outcome.addFloatArg(estimation.rotation[i]);
+//        else
+//            gvf_outcome.addFloatArg(0.); // padding
+//    }
+    
+    sender.sendMessage(gvf_outcome);
+    
+}

@@ -16,7 +16,7 @@ void piafInterface::setup(GVFHandler* _handler, gvfPianoInputs* _inputs) {
     
     kinect_display.setup(inputs->get_kinect_input(), gvf_handler);
     
-    kinect_display_on = true;
+    kinect_display_on = false;
     
     ofSetCircleResolution(120);
     
@@ -27,6 +27,9 @@ void piafInterface::setup(GVFHandler* _handler, gvfPianoInputs* _inputs) {
     SetSettingsGUI();
     SetTemplatesGUI();
     
+    acc_active = false;
+    kinect_active = false;
+    
 }
 
 //--------------------------------------------------------------
@@ -36,14 +39,14 @@ void piafInterface::draw() {
         
     ofPushMatrix();
     
-    SkeletonDataPoint skeleton = inputs->get_kinect_data();
-    
-    if (kinect_display_on) {
-        kinect_display.DrawKinect(skeleton);
-    }
-    else {
-        kinect_display.Draw(skeleton, inputs->get_joints_on());
-    }
+//    SkeletonDataPoint skeleton = inputs->get_kinect_data();
+//    
+//    if (kinect_display_on) {
+//        kinect_display.DrawKinect(skeleton);
+//    }
+//    else {
+//        kinect_display.Draw(skeleton, inputs->get_joints_on());
+//    }
     
     ofPopMatrix();
     
@@ -66,44 +69,72 @@ void piafInterface::SetInputsGUI() {
     
     inputs_gui = new ofxUISuperCanvas("INPUTS");
     
+#if KINECT_ON
+        inputs_gui->addSpacer();
+        inputs_gui->addLabel("KINECT");
+        kinect_status = inputs_gui->addTextArea("textarea", "NULL KINECT", OFX_UI_FONT_SMALL);
+        inputs_gui->addLabelToggle("KINECT_DISPLAY", kinect_display_on);
+    
+    // Potentially display Kinect image in menu.
+    //    inputs_gui->addImage("kinect", kinect_image,
+    //                         kinect_image->getWidth() / 2.0,
+    //                         kinect_image->getHeight() / 2.0);
+    
+#endif
+    
     inputs_gui->addSpacer();
-    inputs_gui->addLabel("KINECT");
-    kinect_status = inputs_gui->addTextArea("textarea", "NULL KINECT", OFX_UI_FONT_SMALL);
-    inputs_gui->addLabelToggle("KINECT_DISPLAY", kinect_display_on);
     
-// Potentially display Kinect image in menu. 
-//    inputs_gui->addImage("kinect", kinect_image,
-//                         kinect_image->getWidth() / 2.0,
-//                         kinect_image->getHeight() / 2.0);
-    
-    inputs_gui->addSpacer();
-    
-    // Accelerometer Inputs
-    for (int i = 0; i < inputs->GetAccInputs().size(); ++i) {
+#if MOCAP_ON
+    // Mocap Inputs
+    for (int i = 0; i < inputs->GetMocapSize(); ++i) {
         inputs_gui->addSpacer();
         
-        string acc_name = "ACCELEROMETER " + ofToString(inputs->GetAccInputs()[i]->get_id());
-        acc_toggles.push_back(inputs_gui->addLabelToggle(acc_name, false));
+        string mocap_name = "RIGID BODY " + ofToString(i);
+        mocap_toggles.push_back(inputs_gui->addLabelToggle(mocap_name, false));
         
-        acc_inputs.push_back(ofxUIMultiMovingGraph::addToCanvas(inputs_gui, "MOVING", vector<ofVec3f>(256), 256, -1.0, 1.0));
-        acc_inputs[i]->setColorFill(ofColor::blue);
+        mocap_inputs.push_back(ofxUIMultiMovingGraph::addToCanvas(inputs_gui, "MOVING", vector<ofVec3f>(256), 256, -500.0, 500.0));
+        mocap_inputs[i]->setColorFill(ofColor::blue);
     }
+    for (int i = 0; i < inputs->get_mocap_on().size(); ++i) {
+        mocap_toggles[inputs->get_mocap_on()[i]]->setValue(true);
+    }
+#endif
     
     inputs_gui->addSpacer();
     
-    vector<string> skeleton_items;
-    for (int i = 0; i < NITE_JOINT_COUNT; ++i) {
-        skeleton_items.push_back(NiteJointStrings[i]);
+#if ACC_ON
+    if (acc_active) {
+        // Accelerometer Inputs
+        for (int i = 0; i < inputs->GetAccInputs().size(); ++i) {
+            inputs_gui->addSpacer();
+            
+            string acc_name = "ACCELEROMETER " + ofToString(inputs->GetAccInputs()[i]->get_id());
+            acc_toggles.push_back(inputs_gui->addLabelToggle(acc_name, false));
+            
+            acc_inputs.push_back(ofxUIMultiMovingGraph::addToCanvas(inputs_gui, "MOVING", vector<ofVec3f>(256), 256, -1.0, 1.0));
+            acc_inputs[i]->setColorFill(ofColor::yellow);
+        }
     }
-    skeleton_list = inputs_gui->addDropDownList("JOINT SELECTION", skeleton_items);
-    skeleton_list->setAllowMultiple(true);
-    for (int i = 0; i < inputs->get_joints_on().size(); ++i) {
-        skeleton_list->getToggles()[inputs->get_joints_on()[i]]->setValue(true);
+#endif
+    
+    inputs_gui->addSpacer();
+    
+    if (kinect_active) {
+        vector<string> skeleton_items;
+        for (int i = 0; i < NITE_JOINT_COUNT; ++i) {
+            skeleton_items.push_back(NiteJointStrings[i]);
+        }
+        skeleton_list = inputs_gui->addDropDownList("JOINT SELECTION", skeleton_items);
+        skeleton_list->setAllowMultiple(true);
+        for (int i = 0; i < inputs->get_joints_on().size(); ++i) {
+            skeleton_list->getToggles()[inputs->get_joints_on()[i]]->setValue(true);
+        }
     }
     
     // TODO: Add settings for ranges of inputs. 
     
     inputs_gui->addButton("RESET INPUTS", true);
+    inputs_gui->addButton("RESET BOUNDS", true);
     
     inputs_gui->autoSizeToFitWidgets();
 	ofAddListener(inputs_gui->newGUIEvent, this, &piafInterface::InputsGUIEvent);
@@ -113,6 +144,7 @@ void piafInterface::SetInputsGUI() {
 //--------------------------------------------------------------
 void piafInterface::UpdateInputsGUI() {
     
+#if KINECT_ON
     // Kinect Image
     if (kinect_display_on)
         inputs->get_kinect_input()->UpdateImage();
@@ -136,9 +168,19 @@ void piafInterface::UpdateInputsGUI() {
             kinect_status->setTextString("ERROR");
             break;
     }
+#endif
     
-    for (int i = 0; i < inputs->GetAccInputs().size(); ++i)
-        acc_inputs[i]->addPoint(inputs->get_acc_data()[i]);
+#if ACC_ON
+    if (acc_active) {
+        for (int i = 0; i < inputs->GetAccInputs().size(); ++i)
+            acc_inputs[i]->addPoint(inputs->get_acc_data()[i]);
+    }
+#endif
+    
+#if MOCAP_ON
+    for (int i = 0; i < inputs->GetMocapSize(); ++i)
+        mocap_inputs[i]->addPoint(inputs->get_mocap_data()[i].position);
+#endif
     
 }
 
@@ -158,10 +200,16 @@ void piafInterface::InputsGUIEvent(ofxUIEventArgs &e) {
         }
     }
     
+    if (name == "RESET BOUNDS") {
+        inputs->ResetBounds();
+    }
+    
     if (name == "RESET INPUTS") {
         if(gvf_handler->getState() == ofxGVF::STATE_CLEAR) {
-            
+
+#if KINECT_ON
             inputs->set_joints_on(skeleton_list->getSelectedIndeces());
+#endif
             
             vector<int> acc_on;
             for (int i = 0; i < acc_toggles.size(); ++i) {
@@ -170,8 +218,34 @@ void piafInterface::InputsGUIEvent(ofxUIEventArgs &e) {
             }
             inputs->set_acc_on(acc_on);
             
+            vector<int> mocap_on;
+            for (int i = 0; i < mocap_toggles.size(); ++i) {
+                if (mocap_toggles[i]->getValue())
+                    mocap_on.push_back(i);
+            }
+            inputs->set_mocap_on(mocap_on);
+            
             // Re-initialise GVF
             gvf_handler->init(inputs->get_input_size(), inputs->get_input_ranges()[0], inputs->get_input_ranges()[1]);
+            
+            // Scaling display (hasty to be improved)
+            for (int i = 0; i < inputs->GetMocapSize(); ++i) {
+                
+                ofVec3f min_range = inputs->get_mocap_bounds()[2 * i + 0];
+                ofVec3f max_range = inputs->get_mocap_bounds()[2 * i + 1];
+                
+                float min = min_range[0];
+                float max = max_range[0];
+                
+                for (int i = 1; i < 3; ++i) {
+                    if (min > min_range[i])
+                        min = min_range[i];
+                    if (max < max_range[i])
+                        max = max_range[i];
+                }
+                
+                mocap_inputs[i]->setMaxAndMin(max, min);
+            }
             
             // Refresh interface
             delete gvf_gui;
@@ -205,9 +279,10 @@ void piafInterface::SetGvfGUI() {
     
     gvf_gui->addSpacer();
     gvf_gui->setGlobalButtonDimension(32);
+    gvf_gui->addButton("SET DUMP FOLDER", false)->setLabelVisible(true);
+    gvf_gui->addButton("SET GESTURE FOLDER", false)->setLabelVisible(true);
     gvf_gui->addButton("SAVE", false)->setLabelVisible(true);
     gvf_gui->addButton("LOAD", false)->setLabelVisible(true);
-    gvf_gui->addButton("SET DUMP FOLDER", false)->setLabelVisible(true);
     
     
     gvf_gui->addSpacer();
@@ -237,7 +312,6 @@ void piafInterface::GvfGUIEvent(ofxUIEventArgs &e) {
     
     string name = e.getName();
 	int kind = e.getKind();
-	cout << "got event from: " << name << endl;
 	
     if (kind == OFX_UI_WIDGET_BUTTON) {
         
@@ -266,6 +340,24 @@ void piafInterface::GvfGUIEvent(ofxUIEventArgs &e) {
                 cout << path;
                 
                 gvf_handler->set_csv_path(path);
+                
+            }
+            else if(name == "SET GESTURE FOLDER") {
+                
+                string path;
+                
+                ofFileDialogResult dialogResult = ofSystemSaveDialog("gvf_gesture-", "Select gesture location.");
+                if(!dialogResult.bSuccess)
+                    return;
+                
+                dialogResult.getPath();
+                
+                stringstream ss;
+                ss << dialogResult.filePath;
+                path = ss.str();
+                cout << path;
+                
+                inputs->SetCsvPath(path);
                 
             }
         }
@@ -337,8 +429,8 @@ void piafInterface::SetSettingsGUI() {
     settings_gui = new ofxUISuperCanvas("GVF Settings");
     
     // Parameters
-    settings_gui->addNumberDialer("N Particles", 10, 10000, gvf_handler->getNumberOfParticles(), 0);
-    settings_gui->addNumberDialer("Resampling Threshold", 100, 10000, gvf_handler->getResamplingThreshold(), 0);
+//    settings_gui->addNumberDialer("N Particles", 10, 10000, gvf_handler->getNumberOfParticles(), 0);
+//    settings_gui->addNumberDialer("Resampling Threshold", 100, 10000, gvf_handler->getResamplingThreshold(), 0);
     tolerance = settings_gui->addNumberDialer("Tolerance",  0.01, 1000.0, gvf_handler->getTolerance(), 3);
     settings_gui->addNumberDialer("Distribution", 0.0, 2.0, gvf_handler->getDistribution(), 2);
     
@@ -346,10 +438,10 @@ void piafInterface::SetSettingsGUI() {
     settings_gui->addNumberDialer("Phase Variance", 0.000001, 0.1, gvf_handler->getPhaseVariance(), 6);
     settings_gui->addNumberDialer("Speed Variance", 0.000001, 0.1, gvf_handler->getSpeedVariance(), 5);
     for (int i = 0; i < gvf_handler->getScaleVariance().size(); ++i) {
-        settings_gui->addNumberDialer("Scale Variance", 0.000001, 0.1, gvf_handler->getScaleVariance()[i], 5); 
+        settings_gui->addNumberDialer("Scale Variance" + ofToString(i), 0.000001, 0.1, gvf_handler->getScaleVariance()[i], 5);
     }
     for (int i = 0; i < gvf_handler->getRotationVariance().size(); ++i) {
-        settings_gui->addNumberDialer("Rotation Variance", 0.000001, 0.1, gvf_handler->getRotationVariance()[i], 5);
+        settings_gui->addNumberDialer("Rotation Variance" + ofToString(i), 0.000001, 0.1, gvf_handler->getRotationVariance()[i], 5);
     }
 
     settings_gui->setPosition(column_width * 2,0);
@@ -387,11 +479,23 @@ void piafInterface::SettingsGUIEvent(ofxUIEventArgs &e) {
         else if (name == "Speed Variance") {
             gvf_handler->setSpeedVariance(value);
         }
-        else if (name == "Scale Variance") {
-            gvf_handler->setScaleVariance(value);
+        else if (name == "Scale Variance0") {
+            gvf_handler->setScaleVariance(value, 0);
         }
-        else if (name == "Rotation Variance") {
-            gvf_handler->setRotationVariance(value);
+        else if (name == "Scale Variance1") {
+            gvf_handler->setScaleVariance(value, 1);
+        }
+        else if (name == "Scale Variance2") {
+            gvf_handler->setScaleVariance(value, 2);
+        }
+        else if (name == "Rotation Variance0") {
+            gvf_handler->setRotationVariance(value, 0);
+        }
+        else if (name == "Rotation Variance1") {
+            gvf_handler->setRotationVariance(value, 1);
+        }
+        else if (name == "Rotation Variance2") {
+            gvf_handler->setRotationVariance(value, 2);
         }
     }
     

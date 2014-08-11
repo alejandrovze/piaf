@@ -33,6 +33,7 @@ public:
     float getMin();
     ofVec2f getMaxAndMind();
     void setMaxAndMin(float _max, float _min);
+    void set_auto_bounds(bool _auto_bounds);
     
     static ofxUIMultiMovingGraph* addToCanvas(ofxUICanvas* canvas, string _name, vector<ofVec3f> _buffer, int _bufferSize, float _min, float _max, float _h = OFX_UI_GLOBAL_GRAPH_HEIGHT);
     
@@ -43,6 +44,7 @@ protected:    //inherited: ofxUIRectangle *rect; ofxUIWidget *parent;
     
 private:
     void drawLine(ofColor line_color, int dim);
+    bool auto_bounds;
     
 };
 
